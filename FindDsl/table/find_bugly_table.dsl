@@ -45,11 +45,12 @@ filter
 		var(2) = findcellindexes($header, var(1));
 		var(3) = callscript("getfieldstring", $header, row, "kv");
 		var(4) = parseurlargs(var(3), "+");
-		var(5) = hashtableget(var(4), "C03_B2");
-		var(6) = hashtableget(var(4), "C03_B3");
-		var(7) = hashtableget(var(4), "C03_B4");
-		var(8) = callscript("getfieldstring", $header, row, "crash_id");
-		var(9) = callscript("getfieldstring", $header, row, "issue_id");
+		var(5) = hashtableget(var(4), "C03_B1");
+		var(6) = hashtableget(var(4), "C03_B2");
+		var(7) = hashtableget(var(4), "C03_B3");
+		var(8) = hashtableget(var(4), "C03_B4");
+		var(9) = callscript("getfieldstring", $header, row, "crash_id");
+		var(10) = callscript("getfieldstring", $header, row, "issue_id");
 		
 		$f_kv = var(3);
 		$ukv = stringreplace(unescapeurl($f_kv), ";", "\n");
@@ -85,26 +86,28 @@ filter
 		};
 		
 		if($f_kv=="kv" && $f_stack=="stack" && $f_exception=="exception_message"){
-		    var(0) = rowtoline(row, 0, var(2))+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",scene,hz,native,graphics,unknown,pss,vss,mono,"+$f_kv+","+$f_stack+","+$f_exception;
+		    var(0) = rowtoline(row, 0, var(2))+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",menpai,lvl,scene,hz,native,graphics,unknown,pss,vss,mono,"+$f_kv+","+$f_stack+","+$f_exception;
 		}elseif(!isnullorempty(var(5)) && !isnullorempty(var(6)) && !isnullorempty(var(7))){
-		    var(5) = stringreplace(var(5), "scene_", "");
-		    var(5) = stringreplace(var(5), "hz_", "");
-		    var(6) = stringreplace(var(6), "native_", "");
-		    var(6) = stringreplace(var(6), "graphics_", "");
-		    var(6) = stringreplace(var(6), "unknown_", "");
-		    var(7) = stringreplace(var(7), "pss_", "");
-		    var(7) = stringreplace(var(7), "vss_", "");
-		    var(7) = stringreplace(var(7), "mono_", "");
-    		var(0) = rowtoline(row, 0, var(2))+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+","+var(5)+","+var(6)+","+var(7)+","+$f_kv+","+$f_stack+","+$f_exception;
+		    var(5) = stringreplace(var(5), "menpai_", "");
+		    var(5) = stringreplace(var(5), "level_", "");
+		    var(6) = stringreplace(var(6), "scene_", "");
+		    var(6) = stringreplace(var(6), "hz_", "");
+		    var(7) = stringreplace(var(7), "native_", "");
+		    var(7) = stringreplace(var(7), "graphics_", "");
+		    var(7) = stringreplace(var(7), "unknown_", "");
+		    var(8) = stringreplace(var(8), "pss_", "");
+		    var(8) = stringreplace(var(8), "vss_", "");
+		    var(8) = stringreplace(var(8), "mono_", "");
+    		var(0) = rowtoline(row, 0, var(2))+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+","+var(5)+","+var(6)+","+var(7)+","+var(8)+","+$f_kv+","+$f_stack+","+$f_exception;
     	}else{
-    	    var(0) = rowtoline(row, 0, var(2))+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",,,,,,,,,"+$f_kv+","+$f_stack+","+$f_exception;
+    	    var(0) = rowtoline(row, 0, var(2))+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",,,,,,,,,,,"+$f_kv+","+$f_stack+","+$f_exception;
     	};
 		
     	if(stringcontains(var(0),contains) && stringcontainsany(var(0),containsany) && stringnotcontains(var(0),notcontains) && stringnotcontainsany(var(0), notcontainsany)){
     		info = var(0);
     	    value = 0;
-    	    assetpath = var(8);
-    	    scenepath = var(9);
+    	    assetpath = var(9);
+    	    scenepath = var(10);
     	    $exinfo = $uos+"\n\n"+$ukv+"\n\n"+$exception_message+"\n\n"+$cstack;
     	    extralist = newextralist($exinfo => $exinfo);
     	    1;
