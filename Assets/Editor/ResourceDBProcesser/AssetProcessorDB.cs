@@ -922,36 +922,59 @@ public class AssetProcessorDB : ScriptableObject
             return rt;
         }
         string fileName = Path.GetFileNameWithoutExtension(im.assetPath).ToLower();
-        //no alpha use ASTC_RGB_8x8
-        if (im.alphaSource == TextureImporterAlphaSource.None) {
-            if (im.textureType == TextureImporterType.NormalMap || fileName.EndsWith("_nm")) {
-                if (settings.format != TextureImporterFormat.ASTC_RGB_6x6) {
-                    rt = true;
-                    settings.format = TextureImporterFormat.ASTC_RGB_6x6;
-                    Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_6x6");
-                }
-            }
-            else {
+        if (im.textureShape == TextureImporterShape.TextureCube) {
+            if (settings.maxTextureSize > 128)
+                settings.maxTextureSize = 128;
+            //no alpha use ASTC_RGB_8x8
+            if (im.alphaSource == TextureImporterAlphaSource.None) {
                 if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
                     rt = true;
                     settings.format = TextureImporterFormat.ASTC_RGB_8x8;
-                    Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
+                    Debug.Log("SetASTC(cube) succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
                 }
             }
-        }
-        //with alpha use ASTC_RGBA_6x6
-        else {
-            if (im.textureType == TextureImporterType.NormalMap || fileName.EndsWith("_nm")) {
-                if (settings.format != TextureImporterFormat.ASTC_RGBA_6x6) {
-                    rt = true;
-                    settings.format = TextureImporterFormat.ASTC_RGBA_6x6;
-                    Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGBA_6x6");
-                }
-            } else {
+            //with alpha use ASTC_RGBA_8x8
+            else {
                 if (settings.format != TextureImporterFormat.ASTC_RGBA_8x8) {
                     rt = true;
                     settings.format = TextureImporterFormat.ASTC_RGBA_8x8;
-                    Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
+                    Debug.Log("SetASTC(cube) succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
+                }
+            }
+        }
+        else {
+            //no alpha use ASTC_RGB_8x8
+            if (im.alphaSource == TextureImporterAlphaSource.None) {
+                if (im.textureType == TextureImporterType.NormalMap || fileName.EndsWith("_nm")) {
+                    if (settings.format != TextureImporterFormat.ASTC_RGB_6x6) {
+                        rt = true;
+                        settings.format = TextureImporterFormat.ASTC_RGB_6x6;
+                        Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_6x6");
+                    }
+                }
+                else {
+                    if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
+                        rt = true;
+                        settings.format = TextureImporterFormat.ASTC_RGB_8x8;
+                        Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
+                    }
+                }
+            }
+            //with alpha use ASTC_RGBA_6x6
+            else {
+                if (im.textureType == TextureImporterType.NormalMap || fileName.EndsWith("_nm")) {
+                    if (settings.format != TextureImporterFormat.ASTC_RGBA_6x6) {
+                        rt = true;
+                        settings.format = TextureImporterFormat.ASTC_RGBA_6x6;
+                        Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGBA_6x6");
+                    }
+                }
+                else {
+                    if (settings.format != TextureImporterFormat.ASTC_RGBA_8x8) {
+                        rt = true;
+                        settings.format = TextureImporterFormat.ASTC_RGBA_8x8;
+                        Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
+                    }
                 }
             }
         }
@@ -969,20 +992,42 @@ public class AssetProcessorDB : ScriptableObject
             return rt;
         }
         string fileName = Path.GetFileNameWithoutExtension(im.assetPath).ToLower();
-        //no alpha use ASTC_RGB_8x8
-        if (im.alphaSource == TextureImporterAlphaSource.None) {
-            if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
-                rt = true;
-                settings.format = TextureImporterFormat.ASTC_RGB_8x8;
-                Debug.Log("SetSceneASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
+        if (im.textureShape == TextureImporterShape.TextureCube) {
+            if (settings.maxTextureSize > 128)
+                settings.maxTextureSize = 128;
+            //no alpha use ASTC_RGB_8x8
+            if (im.alphaSource == TextureImporterAlphaSource.None) {
+                if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
+                    rt = true;
+                    settings.format = TextureImporterFormat.ASTC_RGB_8x8;
+                    Debug.Log("SetSceneASTC(cube) succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
+                }
+            }
+            //with alpha use ASTC_RGBA_8x8
+            else {
+                if (settings.format != TextureImporterFormat.ASTC_RGBA_8x8) {
+                    rt = true;
+                    settings.format = TextureImporterFormat.ASTC_RGBA_8x8;
+                    Debug.Log("SetSceneASTC(cube) succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
+                }
             }
         }
-        //with alpha use ASTC_RGBA_8x8
         else {
-            if (settings.format != TextureImporterFormat.ASTC_RGBA_8x8) {
-                rt = true;
-                settings.format = TextureImporterFormat.ASTC_RGBA_8x8;
-                Debug.Log("SetSceneASTC succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
+            //no alpha use ASTC_RGB_8x8
+            if (im.alphaSource == TextureImporterAlphaSource.None) {
+                if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
+                    rt = true;
+                    settings.format = TextureImporterFormat.ASTC_RGB_8x8;
+                    Debug.Log("SetSceneASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
+                }
+            }
+            //with alpha use ASTC_RGBA_8x8
+            else {
+                if (settings.format != TextureImporterFormat.ASTC_RGBA_8x8) {
+                    rt = true;
+                    settings.format = TextureImporterFormat.ASTC_RGBA_8x8;
+                    Debug.Log("SetSceneASTC succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
+                }
             }
         }
         im.SetPlatformTextureSettings(settings);
@@ -1037,7 +1082,9 @@ public class AssetProcessorDB : ScriptableObject
             }
         } else {
             var assetName = Path.GetFileNameWithoutExtension(im.assetPath);
-            if (assetName.StartsWith("UI_") || assetName.StartsWith("E_UI_")) {
+            if (assetName.StartsWith("UI_", StringComparison.OrdinalIgnoreCase) || 
+                assetName.StartsWith("E_UI_", StringComparison.OrdinalIgnoreCase) ||
+                assetName.StartsWith("UISCENE_", StringComparison.OrdinalIgnoreCase)) {
                 if (im.mipmapEnabled) {
                     rt = true;
                     im.mipmapEnabled = false;

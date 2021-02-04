@@ -106,7 +106,7 @@ public class PrefabParamsDB : ScriptableObject
 
     private static bool UpdatePrefab(ResourceParams param, UnityEngine.GameObject prefab, bool onlySetting)
     {
-        bool rt = ResourceEditUtility.SetParamsToResource("setparamstoprefab", param, prefab);
+        bool rt = ResourceEditUtility.SetParamsToResource("prefabsetparams", param, prefab);
         rt = rt || ResourceEditUtility.ForceSaveAndReimport;
         if (!onlySetting && rt) {
             if (ResourceEditUtility.EnableSaveAndReimport) {
@@ -127,7 +127,7 @@ public class PrefabParamsDB : ScriptableObject
         } else {
 
         }
-        bool rt = ResourceEditUtility.GetParamsFromResource("getparamsfromprefab", param, prefab);
+        bool rt = ResourceEditUtility.GetParamsFromResource("prefabgetparams", param, prefab);
         return rt;
     }
 

@@ -461,6 +461,7 @@ internal static class ResourceEditUtility
         calc.Register("getdefaulttexturesetting", new ExpressionFactoryHelper<ResourceEditApi.GetDefaultTextureSettingExp>());
         calc.Register("gettexturesetting", new ExpressionFactoryHelper<ResourceEditApi.GetTextureSettingExp>());
         calc.Register("settexturesetting", new ExpressionFactoryHelper<ResourceEditApi.SetTextureSettingExp>());
+        calc.Register("textureisnotastc", new ExpressionFactoryHelper<ResourceEditApi.TextureIsNotAstcExp>());
         calc.Register("isastctexture", new ExpressionFactoryHelper<ResourceEditApi.IsAstcTextureExp>());
         calc.Register("setastctexture", new ExpressionFactoryHelper<ResourceEditApi.SetAstcTextureExp>());
         calc.Register("issceneastctexture", new ExpressionFactoryHelper<ResourceEditApi.IsSceneAstcTextureExp>());
@@ -3097,6 +3098,40 @@ namespace ResourceEditApi
             return r;
         }
     }
+    internal class TextureIsNotAstcExp : SimpleExpressionBase
+    {
+        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        {
+            int r = 0;
+            if (operands.Count >= 1) {
+                var importer = Calculator.GetVariable("importer").As<TextureImporter>();
+                var setting = operands[0].As<TextureImporterPlatformSettings>();
+                if (null != importer && null != setting) {
+                    bool ret = true;
+                    if (setting.overridden) {
+                        switch (setting.format) {
+                            case TextureImporterFormat.ASTC_RGBA_10x10:
+                            case TextureImporterFormat.ASTC_RGBA_12x12:
+                            case TextureImporterFormat.ASTC_RGBA_4x4:
+                            case TextureImporterFormat.ASTC_RGBA_5x5:
+                            case TextureImporterFormat.ASTC_RGBA_6x6:
+                            case TextureImporterFormat.ASTC_RGBA_8x8:
+                            case TextureImporterFormat.ASTC_RGB_10x10:
+                            case TextureImporterFormat.ASTC_RGB_12x12:
+                            case TextureImporterFormat.ASTC_RGB_4x4:
+                            case TextureImporterFormat.ASTC_RGB_5x5:
+                            case TextureImporterFormat.ASTC_RGB_6x6:
+                            case TextureImporterFormat.ASTC_RGB_8x8:
+                                ret = false;
+                                break;
+                        }
+                    }
+                    r = ret ? 1 : 0;
+                }
+            }
+            return r;
+        }
+    }
     internal class IsAstcTextureExp : SimpleExpressionBase
     {
         protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
@@ -3180,6 +3215,10 @@ namespace ResourceEditApi
                 var sizeNoAlpha = 8;
                 var sizeAlpha = 8;
                 if (null != importer && null != setting) {
+                    if (importer.textureShape == TextureImporterShape.TextureCube) {
+                        if (setting.maxTextureSize > 128)
+                            setting.maxTextureSize = 128;
+                    }
                     string fileName = Path.GetFileNameWithoutExtension(importer.assetPath).ToLower();
                     if (importer.textureType == TextureImporterType.NormalMap || fileName.EndsWith("_nm")) {
                         sizeNoAlpha = 6;
@@ -3321,6 +3360,10 @@ namespace ResourceEditApi
                 var sizeNoAlpha = 8;
                 var sizeAlpha = 8;
                 if (null != importer && null != setting) {
+                    if (importer.textureShape == TextureImporterShape.TextureCube) {
+                        if (setting.maxTextureSize > 128)
+                            setting.maxTextureSize = 128;
+                    }
                     if (importer.alphaSource == TextureImporterAlphaSource.None) {
                         switch (sizeNoAlpha) {
                             case 4:

@@ -97,3 +97,5 @@ MonoBehaviour:
     DslPath: ProcessDsl/assetprocessor/effect_fbx.dsl
   - ResPath: Assets/ResourceAB/Character
     DslPath: ProcessDsl/assetprocessor/texture_size.dsl
+  - ResPath: Assets/GUI/Effects/logo/chouka
+    DslPath: ProcessDsl/assetprocessor/effect_texture.dsl

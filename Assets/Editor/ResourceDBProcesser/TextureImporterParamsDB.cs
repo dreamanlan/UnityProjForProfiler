@@ -109,7 +109,7 @@ public class TextureImporterParamsDB : ScriptableObject
     }
     private static bool UpdateTexture(ResourceParams param, TextureImporter textureImporter, bool onlySetting)
     {
-        bool rt = ResourceEditUtility.SetParamsToResource("setparamstotexture", param, textureImporter);
+        bool rt = ResourceEditUtility.SetParamsToResource("texturesetparams", param, textureImporter);
         rt = rt || ResourceEditUtility.ForceSaveAndReimport;
         if (!onlySetting && rt) {
             if (ResourceEditUtility.EnableSaveAndReimport) {
@@ -131,7 +131,7 @@ public class TextureImporterParamsDB : ScriptableObject
         } else {
 
         }
-        bool rt = ResourceEditUtility.GetParamsFromResource("getparamsfromtexture", param, textureImporter);
+        bool rt = ResourceEditUtility.GetParamsFromResource("texturegetparams", param, textureImporter);
         return rt;
     }
 
