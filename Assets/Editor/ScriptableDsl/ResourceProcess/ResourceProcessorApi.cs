@@ -3125,8 +3125,8 @@ namespace ResourceEditApi
                                 ret = false;
                                 break;
                         }
+                        r = ret ? 1 : 0;
                     }
-                    r = ret ? 1 : 0;
                 }
             }
             return r;
