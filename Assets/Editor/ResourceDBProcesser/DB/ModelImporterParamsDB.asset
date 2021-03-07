@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ModelImporterParamsDB
   m_EditorClassIdentifier: 
   m_Data:
-    m_Count: 88
+    m_Count: 123
     m_Keys:
     - 7ed0a6201a7d09946b4690cc99e59065
     - 56b02a63246506f47b99f5a4cb72777a
@@ -103,6 +103,41 @@ MonoBehaviour:
     - 123e1ce7858e78f49a4f3d83f3442f6a
     - 07d5d29abb8df744eaa4f1942dc3b3cf
     - b0abbdb18e8655f47910bae38ec6496a
+    - 7d288cf9a18d87e4a8e08fddebf32c96
+    - 681daa1bb25113e46999d1e9ac561fbd
+    - a22bd0c33cfff8447bce2ef66ccc2c15
+    - c588a81becaeaef45865e2d1bd253ccf
+    - 1b25dc721097bac41b6ee97990db8ae2
+    - 93881ca0cedcc2d4cb0f206adf6cebdc
+    - ba16acbf1b26c15448835deadc08cd77
+    - 6bcc18ecffe3ec04dae262f2e35d29d8
+    - f4f813fe98d42794b91f4a54ed42d556
+    - d74b896be95de6043a00dcdef1a6ad3c
+    - f48c69754a49f1049ac724372bdefeaa
+    - e5470f6b6357d554e9a71913b0ead58f
+    - c540e488799411042832f46cd00cff86
+    - 77fda4b8139c95e48b98c275527bb7ed
+    - 19d6f1bca82fb9c48b6a8ac8820a197e
+    - 9fa9b06c612cc1a4196b3934374a48c6
+    - 7bc4e66d18e1d0e4e91387e57f0db0dd
+    - 0ff28353bcaaa6a4cab8b21a91751b9c
+    - 721535e3cc24dde4a8b8da9798d44e31
+    - 288ae4aa38f8a8a43afb82c17bae38d6
+    - a19b5c46216a9b54f9e01bd1c9fbb962
+    - d48b837ad59cb26499ee34731df3cabe
+    - 8466fa22f61af574585f95a3c3aa5600
+    - 7555340427e21a749b2524b4570d3843
+    - b3a93d6b2f526184d8e5aa29fc76e436
+    - 5bf4b0028b042e64fbd40d75cd5a15a0
+    - 317a5e3a176795f418c99b489ba0ef74
+    - 3f5000c7551775b4f8baa9fcc5c98668
+    - 05cc2913cff95d844945ed50cd6828c0
+    - 69a4ee1fa7481fd4db8378c879f0f215
+    - 11716b19b42c45b49a5605ab492c51aa
+    - 94a7d6d0dd5f198418ae7603f2807587
+    - 78bc3735247e29d40838645f39757fc5
+    - 40c636c6d15c4a44793b69d287c40d14
+    - 2a43d8649bd9b804799447ddba127d5a
     m_Vals:
     - m_Resource: Assets/ResourceAB/Character/Monster/m3a0_ShaoNv/m3a0_ShaoNv.FBX
       m_Count: 6
@@ -1649,6 +1684,636 @@ MonoBehaviour:
       - True
       - True
     - m_Resource: Assets/ResourceAB/Character/Player/Body/pYj_F_Body/pYj_F_Body_06/pYj_F_Body_06_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/NPC/t_TanSongYun/t_TanSongYun_High_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_Adult_F_Body_YaTingLiao/pC_F_Adult_Body_YaTingLiao_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_FeiHuaYanYu/pC_F_Adult_Body_FeiHuaYanYu_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_QiHeShang/pC_F_Adult_Body_QiHeShang_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_YueChu/pC_F_Adult_Body_YueChu_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_YueXiaNiYa/pC_F_Adult_Body_YueXiaNiYa_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_ZhuangShengMeng/pC_F_Adult_Body_ZhuangShengMeng_02_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_ZhuangShengMeng/pC_F_Adult_Body_ZhuangShengMeng_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_QiHeShang/pC_M_Adult_Body_QiHeShang_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_QiHeShang/pC_M_Adult_Body_QiHeShang_02_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_YueChu/pC_M_Adult_Body_YueChu_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_YueXiaNiYa/pC_M_Adult_Body_YueXiaNiYa_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_ZhuangShengMeng/pC_M_Adult_Body_ZhuangShengMeng_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_YueChu/pC_M_Adult_Body_YueChu_02_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_HuaWei/pC_F_Adult_Body_HuaWei_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_JinFengYuLu/pC_F_Adult_Body_JinFengYuLu_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_TuShan/pC_F_Adult_Body_TuShan_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_XiaoMeng/pC_F_Adult_Body_XiaoMeng_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_FeiHuaYanYu/pC_M_Adult_Body_FeiHuaYanYu_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_HuaWei/pC_M_Adult_Body_HuaWei_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_LuDaoChengWei/pC_M_Adult_Body_LuDaoChengWei_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_MuLingFeng/pC_M_Adult_Body_MuLingFeng_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/PC_M_Adult_Body_XiaGuXiang/pC_M_Adult_Body_XiaGuXiang_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_XiaoMeng/pC_M_Adult_Body_XiaoMeng_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_MuLingFeng/pC_F_Adult_Body_MuLingFeng_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_MoXiang/pC_M_Adult_Body_MoXiang_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/PC_M_Adult_Body_MeiYinJiangShan/pC_M_Adult_Body_MeiYinJiangShan_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/PC_M_Adult_Body_MeiYinJiangShan/pC_M_Adult_Body_MeiYinJiangShan_02_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_TuShan/pC_M_Adult_Body_TuShan_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_LongJi/pC_F_Adult_Body_LongJi_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_LongJi/pC_M_Adult_Body_LongJi_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_XiangCaoMeiRen/pC_F_Adult_Body_XiangCaoMeiRen_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_MoXiang/pC_F_Adult_Body_MoXiang_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_F_Adult_Body/pC_F_Adult_Body_MeiYinJiangShan/pC_F_Adult_Body_MeiYinJiangShan_Cloth.FBX
+      m_Count: 7
+      m_Keys:
+      - compression
+      - rotationError
+      - posistionError
+      - scaleError
+      - meshCompression
+      - optimizeMesh
+      - isReadable
+      m_Vals:
+      - KeyframeReduction
+      - 0.5
+      - 0.5
+      - 0.5
+      - Off
+      - True
+      - True
+    - m_Resource: Assets/ResourceAB/Character/Player/Body/pC_M_Adult_Body/pC_M_Adult_Body_XiangCaoMeiRen/pC_M_Adult_Body_XiangCaoMeiRen_Cloth.FBX
       m_Count: 7
       m_Keys:
       - compression

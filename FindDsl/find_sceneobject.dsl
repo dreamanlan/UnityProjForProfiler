@@ -24,8 +24,8 @@ group
 		order = count;
 		value = count;
 		info = format("{0}=>{1}", group, count);
-	  1;
+		1;
 	}else{
-	  0;
+		0;
 	};
 };

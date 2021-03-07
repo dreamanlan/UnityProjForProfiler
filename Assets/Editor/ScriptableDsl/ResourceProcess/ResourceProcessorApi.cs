@@ -2653,9 +2653,16 @@ namespace ResourceEditApi
                 var lines = operands[0].As<IList<string>>();
                 var symbols = operands[1].As<IList<ResourceEditUtility.SymbolInfo>>();
                 var key = operands[2].AsString;
+                var prefix = string.Empty;
+                if (operands.Count >= 4) {
+                    prefix = operands[3].AsString;
+                }
                 if (null != lines && null != symbols && null != key) {
                     for (int i = 0; i < lines.Count; ++i) {
-                        lines[i] = lines[i].TrimEnd();
+                        if (string.IsNullOrEmpty(prefix))
+                            lines[i] = lines[i].TrimEnd();
+                        else
+                            lines[i] = prefix + lines[i].TrimEnd();
                     }
                     int ct = lines.Count;
                     for (int ix = 0; ix < ct; ++ix) {
@@ -2722,9 +2729,16 @@ namespace ResourceEditApi
                 var lines = operands[0].As<IList<string>>();
                 var symbols = operands[1].As<IList<ResourceEditUtility.SymbolInfo>>();
                 var key = operands[2].AsString;
+                var prefix = string.Empty;
+                if (operands.Count >= 4) {
+                    prefix = operands[3].AsString;
+                }
                 if (null != lines && null != symbols && null != key) {
                     for (int i = 0; i < lines.Count; ++i) {
-                        lines[i] = lines[i].TrimEnd();
+                        if (string.IsNullOrEmpty(prefix))
+                            lines[i] = lines[i].TrimEnd();
+                        else
+                            lines[i] = prefix + lines[i].TrimEnd();
                     }
                     int ct = lines.Count;
                     for (int ix = 0; ix < ct; ++ix) {

@@ -28,10 +28,9 @@ assetprocessor
 	SetReadableFalse;
 	SetAnisoLevelN1;
 	SetMipMapTrue;
-	SetFilterBilinear;
 	SetMipMapFilterKaiser;
 	SetStreamingMipMapsTrue;
-	SetFilterBilinear;
+	SetFilterTrilinear;
 	SetDirty;
 	SaveAndReimport;
 };

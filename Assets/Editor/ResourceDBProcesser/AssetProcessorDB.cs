@@ -962,7 +962,25 @@ public class AssetProcessorDB : ScriptableObject
             }
             //with alpha use ASTC_RGBA_6x6
             else {
-                if (im.textureType == TextureImporterType.NormalMap || fileName.EndsWith("_nm")) {
+                //新皮肤
+                if (fileName.StartsWith("qs_") || fileName.Contains("qs_"))
+                {
+                    bool isNielian = fileName.Contains("_nielian");
+                    bool isFace = fileName.Contains("face");
+                    bool isDiffuse = fileName.EndsWith("_d") || fileName.Contains("_d_");
+                    bool isNormalMix = fileName.EndsWith("_n") || fileName.Contains("_n_");
+                    if (isNielian)
+                    {
+                        settings.maxTextureSize = isDiffuse ? 2048 : 1024;
+                    }
+                    else
+                    {
+                        settings.maxTextureSize = isDiffuse ? 1024 : 512;
+                    }
+                    settings.format = TextureImporterFormat.ASTC_RGBA_4x4;
+                    rt = true;
+                }
+                else if (im.textureType == TextureImporterType.NormalMap || fileName.EndsWith("_nm")) {
                     if (settings.format != TextureImporterFormat.ASTC_RGBA_6x6) {
                         rt = true;
                         settings.format = TextureImporterFormat.ASTC_RGBA_6x6;
