@@ -1,10 +1,10 @@
 input("MapSymbols")
 {
     string("il2cpp", ""){
-        file("map");
+        file("*");
     };
     string("unity", ""){
-        file("map");
+        file("*");
     };
     string("gcalloc", ""){
         file("txt");
@@ -13,6 +13,12 @@ input("MapSymbols")
     string("libil2cpp_end", "0");
     string("libunity_start", "0");
     string("libunity_end", "0");
+    int("il2cppsymtype",1){
+        toggle(["bugly","idapro"],[1,2]);
+    };
+    int("unitysymtype",2){
+        toggle(["bugly","idapro"],[1,2]);
+    };
     bool("reloadmap",false);
 	feature("source", "list");
 	feature("menu", "6.Tools/Map Symbols");
@@ -20,12 +26,29 @@ input("MapSymbols")
 }
 process
 {	
-    if(isnull(@syms) || isnull(@syms2) || reloadmap){
-        @syms=loadidaprosymbols(il2cpp);
-        @syms2=loadidaprosymbols(unity);    
+    if(isnull(@syms) && !isnullorempty(il2cpp) || isnull(@syms2) && !isnullorempty(unity) || reloadsymbol){
+        if(!isnullorempty(il2cpp)){
+            if(il2cppsymtype==1){
+                @syms=loadbuglyandroidsymbols(il2cpp);
+            }else{
+                @syms=loadidaprosymbols(il2cpp);
+            };
+        };
+        if(!isnullorempty(unity)){
+            if(unitysymtype==1){
+                @syms2=loadbuglyandroidsymbols(unity);
+            }else{
+                @syms2=loadidaprosymbols(unity);
+            };
+        };
     };
-    $lines=mapmyhooksymbols(readalllines(gcalloc),hex2ulong(libil2cpp_start),hex2ulong(libil2cpp_end),@syms,"libil2cpp");
-    $lines=mapmyhooksymbols($lines,hex2ulong(libunity_start),hex2ulong(libunity_end),@syms2,"libunity");
+    $lines=readalllines(gcalloc);
+    if(!isnull(@syms)){
+        $lines=mapmyhooksymbols($lines,hex2ulong(libil2cpp_start),hex2ulong(libil2cpp_end),@syms,"libil2cpp");
+    };
+    if(!isnull(@syms2)){
+        $lines=mapmyhooksymbols($lines,hex2ulong(libunity_start),hex2ulong(libunity_end),@syms2,"libunity");
+    };
     $dir = getdirectoryname(gcalloc);
     $filename = getfilenamewithoutextension(gcalloc);
     $file = combinepath($dir,$filename+"_with_sym.txt");

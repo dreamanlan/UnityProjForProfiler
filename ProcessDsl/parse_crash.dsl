@@ -1,4 +1,4 @@
-input("MapSymbols")
+input("ParseCrash")
 {
     string("il2cpp", ""){
         file("*");
@@ -25,6 +25,11 @@ input("MapSymbols")
     feature("source", "list");
     feature("menu", "6.Tools/Parse Crash");
     feature("description", "just so so");
+}
+filter
+{
+    info = format("ParseCrash, il2cppsymtype:{0}, unitysymtype:{1}, crashtype:{2}", il2cppsymtype, unitysymtype, crashtype);
+    1;
 }
 process
 {	
@@ -62,10 +67,10 @@ process
         };
     }else{
         if(!isnull(@syms)){
-            $lines=mapbuglyiossymbols($lines,@syms,"libil2cpp");
+            $lines=mapbuglyiossymbols($lines,@syms,"qs");
         };
         if(!isnull(@syms2)){
-            $lines=mapbuglyiossymbols($lines,@syms2,"libunity");
+            $lines=mapbuglyiossymbols($lines,@syms2,"qs");
         };
     };
     writealllines(crash_out,$lines);
