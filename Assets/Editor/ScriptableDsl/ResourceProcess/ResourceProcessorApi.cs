@@ -137,10 +137,12 @@ internal static class ResourceEditUtility
 
                 var sb = new StringBuilder();
                 sb.AppendFormat("{0}=>Sum:{1},Max:{2},Min:{3},Avg:{4},Count:{5}", Group, Sum, Max, Min, Avg, Count);
+                /*
                 for (int i = 0; i < Items.Count; ++i) {
                     sb.Append(",");
                     sb.Append(Items[i].Info);
                 }
+                */
                 Order = Items.Count;
                 Value = Sum;
                 AssetPath = Items[0].AssetPath;
@@ -419,6 +421,9 @@ internal static class ResourceEditUtility
         calc.Register("callscript", new ExpressionFactoryHelper<ResourceEditApi.CallScriptExp>());
         calc.Register("setredirect", new ExpressionFactoryHelper<ResourceEditApi.SetRedirectExp>());
         calc.Register("newitem", new ExpressionFactoryHelper<ResourceEditApi.NewItemExp>());
+        calc.Register("setextraobject", new ExpressionFactoryHelper<ResourceEditApi.SetExtraObjectExp>());
+        calc.Register("getextraobject", new ExpressionFactoryHelper<ResourceEditApi.GetExtraObjectExp>());
+        calc.Register("calcextraobjectfieldcount", new ExpressionFactoryHelper<ResourceEditApi.CalcExtraObjectFieldCountExp>());
         calc.Register("newextralist", new ExpressionFactoryHelper<ResourceEditApi.NewExtraListExp>());
         calc.Register("extralistadd", new ExpressionFactoryHelper<ResourceEditApi.ExtraListAddExp>());
         calc.Register("extralistclear", new ExpressionFactoryHelper<ResourceEditApi.ExtraListClearExp>());
@@ -908,16 +913,16 @@ internal static class ResourceEditUtility
     {
         s_CommandCalculator = null;
     }
-    internal static CalculatorValue EvalScript(string code, Dictionary<string, ParamInfo> args, CalculatorValue obj, CalculatorValue item, Dictionary<string, CalculatorValue> addVars)
+    internal static bool LoadScript(string code, Dictionary<string, ParamInfo> args, Dictionary<string, CalculatorValue> addVars)
     {
-        var r = CalculatorValue.NullObject;
+        bool ret = false;
         string procCode = string.Format("script{{ {0}; }};", code);
         var file = new Dsl.DslFile();
         if (file.LoadFromString(procCode, "command", msg => { Console.WriteLine("{0}", msg); })) {
             var dslInfo = file.DslInfos[0];
             var func = dslInfo as Dsl.FunctionData;
             var stData = dslInfo as Dsl.StatementData;
-            if(null==func && null != stData) {
+            if (null == func && null != stData) {
                 func = stData.First;
             }
             if (null != func) {
@@ -933,9 +938,15 @@ internal static class ResourceEditUtility
                     }
                 }
                 calc.LoadDsl("main", new string[] { "$obj", "$item" }, func);
-                r = calc.Calc("main", obj, item);
+                ret = true;
             }
         }
+        return ret;
+    }
+    internal static CalculatorValue EvalScript(CalculatorValue obj, CalculatorValue item)
+    {
+        var calc = GetCommandCalculator();
+        var r = calc.Calc("main", obj, item);
         return r;
     }
 
@@ -1900,6 +1911,66 @@ namespace ResourceEditApi
                     item.PrepareShowInfo();
                     results.Add(item);
                     r = CalculatorValue.FromObject(item);
+                }
+            }
+            return r;
+        }
+    }
+    internal class SetExtraObjectExp : SimpleExpressionBase
+    {
+        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        {
+            var r = CalculatorValue.NullObject;
+            if (operands.Count >= 2) {
+                var item = operands[0].As<ResourceEditUtility.ItemInfo>();
+                r = operands[1];
+                item.ExtraObject = r;
+            }
+            return r;
+        }
+    }
+    internal class GetExtraObjectExp : SimpleExpressionBase
+    {
+        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        {
+            var r = CalculatorValue.NullObject;
+            if (operands.Count >= 2) {
+                var item = operands[0].As<ResourceEditUtility.ItemInfo>();
+                r = item.ExtraObject;
+            }
+            return r;
+        }
+    }
+    internal class CalcExtraObjectFieldCountExp : SimpleExpressionBase
+    {
+        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        {
+            var r = CalculatorValue.NullObject;
+            if (operands.Count >= 2) {
+                var items = operands[0].As<IList>();
+                var index = operands[1].Get<int>();
+                if (null != items && index >= 0) {
+                    HashSet<string> hash = new HashSet<string>();
+                    foreach(var item in items) {
+                        IList<string> fields;
+                        var itemInfo = item as ResourceEditUtility.ItemInfo;
+                        var groupInfo = item as ResourceEditUtility.GroupInfo;
+                        if (null != itemInfo) {
+                            fields = itemInfo.ExtraObject.As<IList<string>>();
+                        }
+                        else if (null != groupInfo) {
+                            fields = groupInfo.ExtraObject.As<IList<string>>();
+                        }
+                        else {
+                            continue;
+                        }
+                        if (null != fields && index < fields.Count) {
+                            var fv = fields[index];
+                            if (!hash.Contains(fv))
+                                hash.Add(fv);
+                        }
+                    }
+                    r.Set<int>(hash.Count);
                 }
             }
             return r;

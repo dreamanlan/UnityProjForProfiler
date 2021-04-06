@@ -11,8 +11,8 @@ input
       toggle("fields1",0);
       toggle("fields2",1);  
     };
-    string("fields1", "user,product_version,crash_id,elapsed_time,crash_time,issue_id,is_root,ram,rom,is_new_issue");
-    string("fields2", "product_version,user,issue_id,retrace_status,exception_type,process_name,crash_time,crash_id,type,device_id,elapsed_time,is_new_issue,ram,rom,cpu_name,is_root,cpu_type");
+    string("fields1", "product_version,crash_id,elapsed_time,crash_time,issue_id,is_root,ram,rom,is_new_issue");
+    string("fields2", "product_version,issue_id,retrace_status,exception_type,process_name,crash_time,crash_id,type,device_id,elapsed_time,is_new_issue,ram,rom,cpu_name,is_root,cpu_type");
     stringlist("contains", "");
     stringlist("containsany", "");
     stringlist("notcontains", "");
@@ -34,10 +34,15 @@ input
     };
     bool("reloadsymbol",false);
     bool("mapsymbol",false);
+    string("style", "itemlist"){
+        popup(["itemlist", "grouplist"]);
+    };
     float("pathwidth",160){range(20,4096);};
     feature("source", "table");
     feature("menu", "9.Table/find bugly table");
     feature("description", "just so so");
+    feature("itemcommand", "$item.Group = $item.ScenePath");
+    feature("groupcommand", "$item.Info=format(\"{0},DevCount:{1},UserCount:{2}\",$item.Info,calcextraobjectfieldcount($item.Items,8),calcextraobjectfieldcount($item.Items,16));$item.Items.Count>100;");
 }
 filter
 {
@@ -68,6 +73,7 @@ filter
         var(8) = hashtableget(var(4), "C03_B4");
         var(9) = callscript("getfieldstring", $header, row, "crash_id");
         var(10) = callscript("getfieldstring", $header, row, "issue_id");
+        var(11) = callscript("getfieldstring", $header, row, "user");
 
         $f_kv = var(3);
         $ukv = stringreplace(unescapeurl($f_kv), ";", "\n");
@@ -103,7 +109,7 @@ filter
         };
 
         if($f_kv=="kv" && $f_stack=="stack" && $f_exception=="exception_message"){
-            var(0) = rowtoline(row, 0, var(2))+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",menpai,lvl,scene,hz,native,graphics,unknown,pss,vss,mono,"+$f_kv+","+$f_stack+","+$f_exception;
+            var(0) = rowtoline(row, 0, var(2))+","+var(11)+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",menpai,lvl,scene,hz,native,graphics,unknown,pss,vss,mono,"+$f_kv+","+$f_stack+","+$f_exception;
         }elseif(!isnullorempty(var(5)) && !isnullorempty(var(6)) && !isnullorempty(var(7))){
             var(5) = stringreplace(var(5), "menpai_", "");
             var(5) = stringreplace(var(5), "level_", "");
@@ -115,9 +121,9 @@ filter
             var(8) = stringreplace(var(8), "pss_", "");
             var(8) = stringreplace(var(8), "vss_", "");
             var(8) = stringreplace(var(8), "mono_", "");
-            var(0) = rowtoline(row, 0, var(2))+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+","+var(5)+","+var(6)+","+var(7)+","+var(8)+","+$f_kv+","+$f_stack+","+$f_exception;
+            var(0) = rowtoline(row, 0, var(2))+",uid:"+var(11)+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+","+var(5)+","+var(6)+","+var(7)+","+var(8)+","+$f_kv+","+$f_stack+","+$f_exception;
         }else{
-            var(0) = rowtoline(row, 0, var(2))+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",,,,,,,,,,,"+$f_kv+","+$f_stack+","+$f_exception;
+            var(0) = rowtoline(row, 0, var(2))+",uid:"+var(11)+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",,,,,,,,,,,"+$f_kv+","+$f_stack+","+$f_exception;
         };
 
         if(stringcontains(var(0),contains) && stringcontainsany(var(0),containsany) && stringnotcontains(var(0),notcontains) && stringnotcontainsany(var(0), notcontainsany)){
@@ -125,6 +131,7 @@ filter
             value = 0;
             assetpath = var(9);
             scenepath = var(10);
+            extraobject = stringsplit(info, [',']);
             $exinfo = $uos+"\n\n"+$ukv+"\n\n"+$exception_message+"\n\n"+callscript("parseCrash", $cstack);
             extralist = newextralist($exinfo => $exinfo);
             1;

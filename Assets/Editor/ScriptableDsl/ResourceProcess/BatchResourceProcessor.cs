@@ -638,18 +638,22 @@ public class ResourceCommandWindow : EditorWindow
     private void Run()
     {
         m_ScriptableInfo.Content = m_Content;
+        m_ScriptableInfo.Items = ResourceProcessor.Instance.ItemList;
+        m_ScriptableInfo.Groups = ResourceProcessor.Instance.GroupList;
         m_ScriptableInfo.Results = m_Results;
         m_ScriptableInfo.ResourceEditWindow = m_ResourceEditWindow;
         m_ScriptableInfo.ResourceProcessor = ResourceProcessor.Instance;
         m_ScriptableInfo.ResourceEditWindowType = typeof(ResourceEditWindow);
         m_ScriptableInfo.ResourceProcessorType = typeof(ResourceProcessor);
         m_ScriptableInfo.ResourceEditUtilityType = typeof(ResourceEditUtility);
-        var r = ResourceEditUtility.EvalScript(m_Command, ResourceProcessor.Instance.Params, m_Object, m_Item, new Dictionary<string, DslExpression.CalculatorValue> { { "@context", DslExpression.CalculatorValue.FromObject(m_ScriptableInfo) } });
-        if (!r.IsNullObject) {
-            m_Results.Enqueue(string.Format("cmd:{0} result:{1}", m_Command, r.ToString()));
-        }
-        else {
-            m_Results.Enqueue(string.Format("cmd:{0} result:null", m_Command));
+        if(ResourceEditUtility.LoadScript(m_Command, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.CalculatorValue> { { "@context", DslExpression.CalculatorValue.FromObject(m_ScriptableInfo) } })) {
+            var r = ResourceEditUtility.EvalScript(m_Object, m_Item);
+            if (!r.IsNullObject) {
+                m_Results.Enqueue(string.Format("cmd:{0} result:{1}", m_Command, r.ToString()));
+            }
+            else {
+                m_Results.Enqueue(string.Format("cmd:{0} result:null", m_Command));
+            }
         }
         m_Content = m_ScriptableInfo.Content;
     }
@@ -679,6 +683,8 @@ public class ResourceCommandWindow : EditorWindow
     internal class ScriptableInfo
     {
         internal string Content;
+        internal List<ResourceEditUtility.ItemInfo> Items;
+        internal List<ResourceEditUtility.GroupInfo> Groups;
         internal Queue<string> Results;
         internal ResourceEditWindow ResourceEditWindow;
         internal ResourceProcessor ResourceProcessor;

@@ -161,7 +161,7 @@ internal sealed class ResourceEditWindow : EditorWindow
             m_SelectedIndex = newIndex;
             string file = m_Files[m_SelectedIndex];
             if (!string.IsNullOrEmpty(file)) {
-                DeferAction(obj => { ResourceProcessor.Instance.SelectDsl(file); obj.CopyCollectResult(); });
+                DeferAction(obj => { ResourceProcessor.Instance.SelectDsl(file); obj.CopyConfig(); obj.CopyCollectResult(); });
             }
             else {
                 DeferAction(obj => { ResourceProcessor.Instance.ClearDsl(); obj.CopyCollectResult(); });
@@ -860,6 +860,11 @@ internal sealed class ResourceEditWindow : EditorWindow
         CopyCollectResult();
     }
 
+    private void CopyConfig()
+    {
+        m_ItemCommand = ResourceProcessor.Instance.DefaultItemCommand;
+        m_GroupCommand = ResourceProcessor.Instance.DefaultGroupCommand;
+    }
     private void CopyCollectResult()
     {
         m_IsReady = false;
@@ -1061,6 +1066,11 @@ internal sealed class ResourceEditWindow : EditorWindow
             return v;
         });
     }
+    private void ReGroup()
+    {
+        ResourceProcessor.Instance.ReGroup(m_ItemCommand, m_GroupCommand);
+        CopyCollectResult();
+    }
     private void ListItem()
     {
         EditorGUILayout.BeginHorizontal();
@@ -1094,6 +1104,11 @@ internal sealed class ResourceEditWindow : EditorWindow
             Sort(false);
         }
         GUILayout.Label(string.Format("Total value ({0})", m_TotalItemValue));
+        m_ItemCommand = EditorGUILayout.TextField(m_ItemCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 180));
+        m_GroupCommand = EditorGUILayout.TextField(m_GroupCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 120));
+        if (GUILayout.Button("ReGroup", EditorStyles.toolbarButton, GUILayout.Width(60))) {
+            DeferAction(w => ReGroup());
+        }
         EditorGUILayout.EndHorizontal();
         m_Page = Mathf.Max(1, Mathf.Min(m_ItemList.Count / c_ItemsPerPage + 1, m_Page));
         bool showReferences = false;
@@ -1162,14 +1177,21 @@ internal sealed class ResourceEditWindow : EditorWindow
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(buttonName, icon, buttonName), minWidth, maxWidth)) {
-                        DeferAction(obj => {
-                            if (null != item.Object)
-                                ResourceEditUtility.SelectObject(item.Object);
-                            else
-                                ResourceEditUtility.SelectProjectObject(item.AssetPath);
-                            obj.m_SelectedAssetPath = item.AssetPath;
-                            obj.m_SelectedItem = item;
-                        });
+                        if (null != item.Object || AssetDatabase.FindAssets(item.AssetPath).Length > 0) {
+                            DeferAction(obj => {
+                                if (null != item.Object)
+                                    ResourceEditUtility.SelectObject(item.Object);
+                                else
+                                    ResourceEditUtility.SelectProjectObject(item.AssetPath);
+                                obj.m_SelectedAssetPath = item.AssetPath;
+                                obj.m_SelectedItem = item;
+                            });
+                        }
+                        else {
+                            m_SelectedAssetPath = item.AssetPath;
+                            m_SelectedItem = item;
+                            ResourceCommandWindow.InitWindow(this, item.Info, item.ExtraObject, DslExpression.CalculatorValue.FromObject(item));
+                        }
                     }
                     GUI.skin.button.alignment = oldAlignment;
                 }
@@ -1291,6 +1313,11 @@ internal sealed class ResourceEditWindow : EditorWindow
             GroupSort(false);
         }
         GUILayout.Label(string.Format("Total value ({0})", m_TotalItemValue));
+        m_ItemCommand = EditorGUILayout.TextField(m_ItemCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 180));
+        m_GroupCommand = EditorGUILayout.TextField(m_GroupCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 120));
+        if (GUILayout.Button("ReGroup", EditorStyles.toolbarButton, GUILayout.Width(60))) {
+            DeferAction(w => ReGroup());
+        }
         EditorGUILayout.EndHorizontal();
         m_Page = Mathf.Max(1, Mathf.Min(m_GroupList.Count / c_ItemsPerPage + 1, m_Page));
         bool showReferences = false;
@@ -1356,11 +1383,18 @@ internal sealed class ResourceEditWindow : EditorWindow
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(buttonName, icon, buttonName), minWidth, maxWidth)) {
-                        DeferAction(obj => {
-                            ResourceEditUtility.SelectProjectObject(item.AssetPath);
-                            obj.m_SelectedAssetPath = item.AssetPath;
-                            obj.m_SelectedGroup = item;
-                        });
+                        if (AssetDatabase.FindAssets(item.AssetPath).Length > 0) {
+                            DeferAction(obj => {
+                                ResourceEditUtility.SelectProjectObject(item.AssetPath);
+                                obj.m_SelectedAssetPath = item.AssetPath;
+                                obj.m_SelectedGroup = item;
+                            });
+                        }
+                        else {
+                            m_SelectedAssetPath = item.AssetPath;
+                            m_SelectedGroup = item;
+                            ResourceCommandWindow.InitWindow(this, item.Info, item.ExtraObject, DslExpression.CalculatorValue.FromObject(item));
+                        }
                     }
                     GUI.skin.button.alignment = oldAlignment;
                 }
@@ -1454,6 +1488,9 @@ internal sealed class ResourceEditWindow : EditorWindow
     private string[] m_Files = null;
     private int m_SelectedIndex = 0;
 
+    private string m_ItemCommand = string.Empty;
+    private string m_GroupCommand = string.Empty;
+
     private List<ResourceEditUtility.ItemInfo> m_ItemList = new List<ResourceEditUtility.ItemInfo>();
     private List<ResourceEditUtility.GroupInfo> m_GroupList = new List<ResourceEditUtility.GroupInfo>();
     private int m_UnfilteredGroupCount = 0;
@@ -1497,6 +1534,14 @@ internal sealed class ResourceProcessor
     internal string DslDescription
     {
         get { return m_DslDescription; }
+    }
+    internal string DefaultItemCommand
+    {
+        get { return m_DefaultItemCommand; }
+    }
+    internal string DefaultGroupCommand
+    {
+        get { return m_DefaultGroupCommand; }
     }
     internal string SearchSource
     {
@@ -2533,6 +2578,34 @@ internal sealed class ResourceProcessor
                     }
                     EditorUtility.ClearProgressBar();
                 }
+                string infoPath = Path.Combine(Path.GetDirectoryName(path), "n_" + Path.GetFileNameWithoutExtension(path) + ".csv");
+                using (StreamWriter sw = new StreamWriter(infoPath)) {
+                    if (groupList.Count > 0) {
+                        int curCount = 0;
+                        int totalCount = groupList.Count;
+                        foreach (var item in groupList) {
+                            sw.WriteLine(item.Info);
+                            ++curCount;
+                            if (DisplayCancelableProgressBar("保存进度", curCount, totalCount)) {
+                                break;
+                            }
+                        }
+                        sw.Close();
+                    }
+                    else {
+                        int curCount = 0;
+                        int totalCount = itemList.Count;
+                        foreach (var item in itemList) {
+                            sw.WriteLine(item.Info);
+                            ++curCount;
+                            if (DisplayCancelableProgressBar("保存进度", curCount, totalCount)) {
+                                break;
+                            }
+                        }
+                        sw.Close();
+                    }
+                    EditorUtility.ClearProgressBar();
+                }
             }
         }
         else {
@@ -3070,6 +3143,12 @@ internal sealed class ResourceProcessor
             else if (key == "description") {
                 m_DslDescription = val;
             }
+            else if (key == "itemcommand") {
+                m_DefaultItemCommand = val;
+            }
+            else if (key == "groupcommand") {
+                m_DefaultGroupCommand = val;
+            }
             else if (key == "source") {
                 //feature("source", "script" or "list" or "excel" or "table" or "project" or "sceneobjects" or "scenecomponents" or "sceneassets" or "allassets" or "unusedassets" or "assetbundle");
                 m_SearchSource = val;
@@ -3459,12 +3538,22 @@ internal sealed class ResourceProcessor
                 }
             }
         }
-        CalcGroupValue();
+        CalcGroupValue(string.Empty);
         CalcTotalValue();
     }
-    internal void CalcGroupValue()
+    internal void ReGroup(string itemCommand, string groupCommand)
     {
-        m_IsItemListGroupStyle = false;
+        if (!string.IsNullOrEmpty(itemCommand) && ResourceEditUtility.LoadScript(itemCommand, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.CalculatorValue> { { "@context", DslExpression.CalculatorValue.FromObject(m_ItemList) } })) {
+            foreach (var item in m_ItemList) {
+                ResourceEditUtility.EvalScript(item.ExtraObject, DslExpression.CalculatorValue.FromObject(item));
+            }
+        }
+        CalcGroupValue(groupCommand);
+        CalcTotalValue();
+    }
+    internal void CalcGroupValue(string groupCommand)
+    {
+        m_IsItemListGroupStyle = true;
         ResourceEditUtility.ParamInfo paramInfo;
         if (m_Params.TryGetValue("style", out paramInfo)) {
             string str = paramInfo.Value.AsString;
@@ -3505,6 +3594,10 @@ internal sealed class ResourceProcessor
             }
         }
         m_UnfilteredGroupCount = groups.Count;
+        bool hasGroupCommand = false;
+        if (!string.IsNullOrEmpty(groupCommand) && ResourceEditUtility.LoadScript(groupCommand, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.CalculatorValue> { { "@context", DslExpression.CalculatorValue.FromObject(groups) } })) {
+            hasGroupCommand = true;
+        }
         m_GroupList.Clear();
         int curCt = 0;
         int totalCt = m_UnfilteredGroupCount;
@@ -3525,15 +3618,28 @@ internal sealed class ResourceProcessor
                     itemGroup.Order = item.Order;
                     itemGroup.Value = item.Value;
                     itemGroup.Selected = false;
-                    var ret = ResourceEditUtility.Group(itemGroup, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                    if (m_NextGroupIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                    DslExpression.CalculatorValue ret;
+                    if (hasGroupCommand) {
+                        ret = ResourceEditUtility.EvalScript(item.ExtraObject, DslExpression.CalculatorValue.FromObject(itemGroup));
+                    }
+                    else {
+                        ret = ResourceEditUtility.Group(itemGroup, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+                    }
+                    if (!hasGroupCommand && m_NextGroupIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
                         m_GroupList.Add(itemGroup);
                     }
                 }
             }
             else {
-                var ret = ResourceEditUtility.Group(group, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                if (m_NextGroupIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                group.PrepareShowInfo();
+                DslExpression.CalculatorValue ret;
+                if (hasGroupCommand) {
+                    ret = ResourceEditUtility.EvalScript(group.ExtraObject, DslExpression.CalculatorValue.FromObject(group));
+                }
+                else {
+                    ret = ResourceEditUtility.Group(group, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+                }
+                if (!hasGroupCommand && m_NextGroupIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
                     m_GroupList.Add(group);
                 }
             }
@@ -4872,6 +4978,8 @@ internal sealed class ResourceProcessor
 
     private string m_DslMenu = string.Empty;
     private string m_DslDescription = string.Empty;
+    private string m_DefaultItemCommand = string.Empty;
+    private string m_DefaultGroupCommand = string.Empty;
     private string m_SearchSource = string.Empty;
     private List<string> m_AssetProcessors = new List<string>();
     private List<string> m_TypeOrExtList = new List<string>();
