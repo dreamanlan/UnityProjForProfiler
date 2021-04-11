@@ -42,7 +42,7 @@ input
     feature("menu", "9.Table/find bugly table");
     feature("description", "just so so");
     feature("itemcommand", "$item.Group = $item.ScenePath");
-    feature("groupcommand", "$item.Info=format(\"{0},DevCount:{1},UserCount:{2}\",$item.Info,calcextraobjectfieldcount($item.Items,8),calcextraobjectfieldcount($item.Items,16));$item.Items.Count>100;");
+    feature("groupcommand", "if($item.Items.Count>100){$item.Info=format(\"Count:{0},DevCount:{1},UserCount:{2}\",$item.Items.Count,calcextraobjectfieldcount($item.Items,8),calcextraobjectfieldcount($item.Items,16));$exinfo=$item.Items[0].ExtraObject[18]+'\\n\\n'+$item.Items[0].ExtraObject[19]+'\\n\\n'+stringreplace(unescapeurl($item.Items[0].ExtraObject[32]),';','\\n')+'\\n\\n'+unescapeurl($item.Items[0].ExtraObject[34],'+')+'\\n\\n'+callscript('parseCrash',unescapeurl($item.Items[0].ExtraObject[33],'+'));$item.ExtraList=newextralist($exinfo=>$exinfo);1;}else{0;};");
 }
 filter
 {
