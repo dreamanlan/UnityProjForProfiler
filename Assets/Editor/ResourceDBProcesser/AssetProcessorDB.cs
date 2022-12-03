@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -384,10 +384,6 @@ public class AssetProcessorDB : ScriptableObject
                 return SetMipMapBiasOne;
             case AssetProcessorEnum.SetMipMapBiasZero:
                 return SetMipMapBiasZero;
-            case AssetProcessorEnum.SetLowDetailTrue:
-                return SetLowDetailTrue;
-            case AssetProcessorEnum.SetLowDetailFalse:
-                return SetLowDetailFalse;
             case AssetProcessorEnum.SetAndroidMaxSize1024:
                 return SetAndroidMaxSize1024;
             case AssetProcessorEnum.SetIPhoneMaxSize1024:
@@ -655,22 +651,6 @@ public class AssetProcessorDB : ScriptableObject
         return handled || SetMipmapBias(im, 0);
     }
 
-    public static bool SetLowDetailTrue(UnityEngine.Object ai, bool onlySetting, bool handled)
-    {
-        var im = ai as TextureImporter;
-        if (null == im)
-            return handled;
-        return handled || SetLowDetail(im, true);
-    }
-
-    public static bool SetLowDetailFalse(UnityEngine.Object ai, bool onlySetting, bool handled)
-    {
-        var im = ai as TextureImporter;
-        if (null == im)
-            return handled;
-        return handled || SetLowDetail(im, false);
-    }
-
     public static bool SetAndroidMaxSize1024(UnityEngine.Object ai, bool onlySetting, bool handled)
     {
         var im = ai as TextureImporter;
@@ -927,17 +907,17 @@ public class AssetProcessorDB : ScriptableObject
                 settings.maxTextureSize = 128;
             //no alpha use ASTC_RGB_8x8
             if (im.alphaSource == TextureImporterAlphaSource.None) {
-                if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
+                if (settings.format != TextureImporterFormat.ASTC_8x8) {
                     rt = true;
-                    settings.format = TextureImporterFormat.ASTC_RGB_8x8;
+                    settings.format = TextureImporterFormat.ASTC_8x8;
                     Debug.Log("SetASTC(cube) succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
                 }
             }
             //with alpha use ASTC_RGBA_8x8
             else {
-                if (settings.format != TextureImporterFormat.ASTC_RGBA_8x8) {
+                if (settings.format != TextureImporterFormat.ASTC_8x8) {
                     rt = true;
-                    settings.format = TextureImporterFormat.ASTC_RGBA_8x8;
+                    settings.format = TextureImporterFormat.ASTC_8x8;
                     Debug.Log("SetASTC(cube) succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
                 }
             }
@@ -946,16 +926,16 @@ public class AssetProcessorDB : ScriptableObject
             //no alpha use ASTC_RGB_8x8
             if (im.alphaSource == TextureImporterAlphaSource.None) {
                 if (im.textureType == TextureImporterType.NormalMap || fileName.EndsWith("_nm")) {
-                    if (settings.format != TextureImporterFormat.ASTC_RGB_6x6) {
+                    if (settings.format != TextureImporterFormat.ASTC_6x6) {
                         rt = true;
-                        settings.format = TextureImporterFormat.ASTC_RGB_6x6;
+                        settings.format = TextureImporterFormat.ASTC_6x6;
                         Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_6x6");
                     }
                 }
                 else {
-                    if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
+                    if (settings.format != TextureImporterFormat.ASTC_8x8) {
                         rt = true;
-                        settings.format = TextureImporterFormat.ASTC_RGB_8x8;
+                        settings.format = TextureImporterFormat.ASTC_8x8;
                         Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
                     }
                 }
@@ -977,20 +957,20 @@ public class AssetProcessorDB : ScriptableObject
                     {
                         settings.maxTextureSize = isDiffuse ? 1024 : 512;
                     }
-                    settings.format = TextureImporterFormat.ASTC_RGBA_4x4;
+                    settings.format = TextureImporterFormat.ASTC_4x4;
                     rt = true;
                 }
                 else if (im.textureType == TextureImporterType.NormalMap || fileName.EndsWith("_nm")) {
-                    if (settings.format != TextureImporterFormat.ASTC_RGBA_6x6) {
+                    if (settings.format != TextureImporterFormat.ASTC_6x6) {
                         rt = true;
-                        settings.format = TextureImporterFormat.ASTC_RGBA_6x6;
+                        settings.format = TextureImporterFormat.ASTC_6x6;
                         Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGBA_6x6");
                     }
                 }
                 else {
-                    if (settings.format != TextureImporterFormat.ASTC_RGBA_8x8) {
+                    if (settings.format != TextureImporterFormat.ASTC_8x8) {
                         rt = true;
-                        settings.format = TextureImporterFormat.ASTC_RGBA_8x8;
+                        settings.format = TextureImporterFormat.ASTC_8x8;
                         Debug.Log("SetASTC succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
                     }
                 }
@@ -1015,17 +995,17 @@ public class AssetProcessorDB : ScriptableObject
                 settings.maxTextureSize = 128;
             //no alpha use ASTC_RGB_8x8
             if (im.alphaSource == TextureImporterAlphaSource.None) {
-                if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
+                if (settings.format != TextureImporterFormat.ASTC_8x8) {
                     rt = true;
-                    settings.format = TextureImporterFormat.ASTC_RGB_8x8;
+                    settings.format = TextureImporterFormat.ASTC_8x8;
                     Debug.Log("SetSceneASTC(cube) succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
                 }
             }
             //with alpha use ASTC_RGBA_8x8
             else {
-                if (settings.format != TextureImporterFormat.ASTC_RGBA_8x8) {
+                if (settings.format != TextureImporterFormat.ASTC_8x8) {
                     rt = true;
-                    settings.format = TextureImporterFormat.ASTC_RGBA_8x8;
+                    settings.format = TextureImporterFormat.ASTC_8x8;
                     Debug.Log("SetSceneASTC(cube) succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
                 }
             }
@@ -1033,17 +1013,17 @@ public class AssetProcessorDB : ScriptableObject
         else {
             //no alpha use ASTC_RGB_8x8
             if (im.alphaSource == TextureImporterAlphaSource.None) {
-                if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
+                if (settings.format != TextureImporterFormat.ASTC_8x8) {
                     rt = true;
-                    settings.format = TextureImporterFormat.ASTC_RGB_8x8;
+                    settings.format = TextureImporterFormat.ASTC_8x8;
                     Debug.Log("SetSceneASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
                 }
             }
             //with alpha use ASTC_RGBA_8x8
             else {
-                if (settings.format != TextureImporterFormat.ASTC_RGBA_8x8) {
+                if (settings.format != TextureImporterFormat.ASTC_8x8) {
                     rt = true;
-                    settings.format = TextureImporterFormat.ASTC_RGBA_8x8;
+                    settings.format = TextureImporterFormat.ASTC_8x8;
                     Debug.Log("SetSceneASTC succ:" + im.assetPath + " " + platform + " ASTC_RGBA_8x8");
                 }
             }
@@ -1063,9 +1043,9 @@ public class AssetProcessorDB : ScriptableObject
         }
         //lightmap use ASTC_RGB_8x8       
         if (im.textureType == TextureImporterType.Lightmap) {
-            if (settings.format != TextureImporterFormat.ASTC_RGB_8x8) {
+            if (settings.format != TextureImporterFormat.ASTC_8x8) {
                 rt = true;
-                settings.format = TextureImporterFormat.ASTC_RGB_8x8;
+                settings.format = TextureImporterFormat.ASTC_8x8;
                 Debug.Log("SetLightmapASTC succ:" + im.assetPath + " " + platform + " ASTC_RGB_8x8");
             }
             im.SetPlatformTextureSettings(settings);
@@ -1160,46 +1140,6 @@ public class AssetProcessorDB : ScriptableObject
             im.mipMapBias = value;
             Debug.Log("SetMipmapBias succ:" + im.assetPath + " " + value);
         }
-        return rt;
-    }
-
-    private static bool SetLowDetail(TextureImporter im, bool value)
-    {
-        bool rt = false;
-		int val = value ? 1 : 0;
-#if UNITY_EDITOR_WIN
-        //if (im.lowDetail != val) {
-        //    rt = true;
-        //    im.lowDetail = val;
-        //    Debug.Log("SetLowDetail succ:" + im.assetPath + " " + value);
-        //}
-#endif
-        return rt;
-    }
-
-    private static bool SetCustomFlag(TextureImporter im, int value)
-    {
-        bool rt = false;
-#if UNITY_EDITOR_WIN
-        if (im.customFlag != value) {
-            rt = true;
-            im.customFlag = value;
-            Debug.Log("SetCustomFlag succ:" + im.assetPath + " " + value);
-        }
-#endif
-        return rt;
-    }
-
-    private static bool SetCustomValue(TextureImporter im, int value)
-    {
-        bool rt = false;
-#if UNITY_EDITOR_WIN
-        if (im.customValue != value) {
-            rt = true;
-            im.customValue = value;
-            Debug.Log("SetCustomValue succ:" + im.assetPath + " " + value);
-        }
-#endif
         return rt;
     }
 
@@ -1327,9 +1267,9 @@ public class AssetProcessorDB : ScriptableObject
     private static bool SetMeshImportMaterials(ModelImporter mi, bool import)
     {
         bool rt = false;
-        if (mi.importMaterials != import) {
+        if ((import && mi.materialImportMode != ModelImporterMaterialImportMode.ImportViaMaterialDescription) || (!import && mi.materialImportMode == ModelImporterMaterialImportMode.ImportViaMaterialDescription)) {
             rt = true;
-            mi.importMaterials = import;
+            mi.materialImportMode = import ? ModelImporterMaterialImportMode.ImportViaMaterialDescription : ModelImporterMaterialImportMode.None;
             Debug.Log("SetMeshImportMaterials succ:" + mi.assetPath + " " + import);
         }
         return rt;

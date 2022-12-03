@@ -15,7 +15,6 @@ using Unity.MemoryProfilerForExtension.Editor.UI;
 using Unity.MemoryProfilerForExtension.Editor.EnumerationUtilities;
 using Unity.MemoryProfilerForExtension.Editor.Database;
 using Unity.Profiling;
-using CsLibrary;
 
 public class BatchResourceProcessWindow : EditorWindow
 {
@@ -388,7 +387,7 @@ public class BatchLoadWindow : EditorWindow
                         var path = Path.GetDirectoryName(filePath);
                         var snapName = Path.GetFileNameWithoutExtension(filePath);
 
-                        string exportPath1 = Path.Combine(path, snapName + "_MANAGEDHEAP_SnapshotExport_" + CsLibrary.DateTime.Now.ToString("dd_MM_yyyy_hh_mm_ss") + ".csv");
+                        string exportPath1 = Path.Combine(path, snapName + "_MANAGEDHEAP_SnapshotExport_" + DateTime.Now.ToString("dd_MM_yyyy_hh_mm_ss") + ".csv");
                         if (!String.IsNullOrEmpty(exportPath1)) {
                             System.IO.StreamWriter sw = new System.IO.StreamWriter(exportPath1);
                             sw.WriteLine("Managed_Objects,Size,Address");
@@ -403,7 +402,7 @@ public class BatchLoadWindow : EditorWindow
                             sw.Close();
                         }
 
-                        string exportPath2 = Path.Combine(path, snapName + "_MANAGED_SnapshotExport_" + CsLibrary.DateTime.Now.ToString("dd_MM_yyyy_hh_mm_ss") + ".csv");
+                        string exportPath2 = Path.Combine(path, snapName + "_MANAGED_SnapshotExport_" + DateTime.Now.ToString("dd_MM_yyyy_hh_mm_ss") + ".csv");
                         if (!String.IsNullOrEmpty(exportPath2)) {
                             m_ManagedGroups.Clear();
                             System.IO.StreamWriter sw = new System.IO.StreamWriter(exportPath2);
@@ -489,7 +488,7 @@ public class BatchLoadWindow : EditorWindow
                             }
                         }
 
-                        string exportPath = Path.Combine(path, snapName + "_NATIVE_SnapshotExport_" + CsLibrary.DateTime.Now.ToString("dd_MM_yyyy_hh_mm_ss") + ".csv");
+                        string exportPath = Path.Combine(path, snapName + "_NATIVE_SnapshotExport_" + DateTime.Now.ToString("dd_MM_yyyy_hh_mm_ss") + ".csv");
                         if (!String.IsNullOrEmpty(exportPath)) {
                             m_NativeGroups.Clear();
                             System.IO.StreamWriter sw = new System.IO.StreamWriter(exportPath);
@@ -580,7 +579,7 @@ public class BatchLoadWindow : EditorWindow
     private List<string> m_List = new List<string>();
     private Vector2 m_Pos = Vector2.zero;
 
-    private static HashSet<string> s_ManagedGroupNames = new HashSet<string> { "CsLibrary", "PluginFramework", "SkillDisplayer", "DisplayerConfigInDll", "TableConfig", "MessageDefine", "StorySystem", "Dsl", "WeTest", "PigeonCoopToolkit", "SLua", "Mono", "Wup", "Cinemachine", "Apollo", "FairyGUI", "UnityEngine", "FMOD", "SevenZip", "System" };
+    private static HashSet<string> s_ManagedGroupNames = new HashSet<string> { "System" };
     private static ProfilerMarker s_CrawlManagedData = new ProfilerMarker("CrawlManagedData");
     
     private static string CleanStrings(string text)

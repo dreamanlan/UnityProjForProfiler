@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -37,7 +37,7 @@ public class AssetInformation : ScriptableObject
             } catch {
                 AssetBundleInfo abInfo;
                 if (assetBuildInfoDict.TryGetValue(abName, out abInfo)) {
-                    CsLibrary.LogSystem.Error("assetBundle duplicate:{0}->[{1}] and [{2}]", abName, string.Join(",", assetBuildItems[i].assetNames), string.Join(",", abInfo.assetNames));
+                    Debug.LogErrorFormat("assetBundle duplicate:{0}->[{1}] and [{2}]", abName, string.Join(",", assetBuildItems[i].assetNames), string.Join(",", abInfo.assetNames));
                 }
             }
             for (int j = 0; j < assetBuildItems[i].assetNames.Length; j++) {
@@ -48,7 +48,7 @@ public class AssetInformation : ScriptableObject
                 } catch {
                     string otherBundleName;
                     if (assetBundleNameDict.TryGetValue(assetName, out otherBundleName)) {
-                        CsLibrary.LogSystem.Error("asset duplicate:{0}->[{1}] and [{2}]", assetName, bundleName, otherBundleName);
+                        Debug.LogErrorFormat("asset duplicate:{0}->[{1}] and [{2}]", assetName, bundleName, otherBundleName);
                     }
                 }
             }
@@ -64,7 +64,7 @@ public class AssetInformation : ScriptableObject
     {
         PrepareLUT();
         string assetBundleName;
-        if (!assetBundleNameDict.TryGetValue(assetName.StrToLower(), out assetBundleName))
+        if (!assetBundleNameDict.TryGetValue(assetName.ToLower(), out assetBundleName))
             return null;
 
         return GetAssetBuildInfoByAssetBundleName(assetBundleName);
@@ -79,7 +79,7 @@ public class AssetInformation : ScriptableObject
     {
         PrepareLUT();
         AssetBundleInfo info;
-        if (assetBuildInfoDict.TryGetValue(assetBundleName.StrToLower(), out info))
+        if (assetBuildInfoDict.TryGetValue(assetBundleName.ToLower(), out info))
             return info;
 
         return null;

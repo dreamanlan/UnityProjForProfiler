@@ -12,7 +12,6 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using CsLibrary;
 
 #if UNITY_EDITOR || UNITY_STANDALONE || DEVELOPMENT_BUILD && UNITY_ANDROID
 #region 解释器
@@ -8623,6 +8622,18 @@ namespace DslExpression
         {
             m_NamedGlobalVariableIndexes.Clear();
             m_GlobalVariables.Clear();
+        }
+        public IEnumerable<string> GlobalVariableNames
+        {
+            get { return m_NamedGlobalVariableIndexes.Keys; }
+        }
+        public void RemoveGlobalVariable(string v)
+        {
+            int index;
+            if (m_NamedGlobalVariableIndexes.TryGetValue(v, out index)) {
+                SetGlobalVaraibleByIndex(index, CalculatorValue.NullObject);
+                m_NamedGlobalVariableIndexes.Remove(v);
+            }
         }
         public bool TryGetGlobalVariable(string v, out CalculatorValue result)
         {

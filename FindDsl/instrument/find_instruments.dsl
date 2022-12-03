@@ -14,7 +14,7 @@ filter
 	  info = format("frame:{0} fps:{1} time:{2} gc:{3}",
 	  		instrument.frame, instrument.fps, instrument.totalCpuTime, instrument.totalGcMemory
 	    );
-	  value = memory.totalGcMemory;
+	  value = instrument.totalGcMemory;
 	  1;
 	}else{
 	  0;

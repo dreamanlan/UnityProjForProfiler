@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.UI;
@@ -15,15 +15,11 @@ using System.IO;
 using System.Linq;
 #if UNITY_2018_3_OR_NEWER
 using UnityEngine.Profiling;
-using UnityEditorInternal.Profiling;
+using UnityEditor.Profiling;
 #endif
-using UnityEditor.Profiling.Memory.Experimental;
 using Unity.MemoryProfilerForExtension.Editor;
-using Unity.MemoryProfilerForExtension.Editor.UI;
-using Unity.MemoryProfilerForExtension.Editor.EnumerationUtilities;
 using Unity.MemoryProfilerForExtension.Editor.Database;
 using Unity.Profiling;
-using CsLibrary;
 
 internal sealed class ResourceEditWindow : EditorWindow
 {
@@ -214,7 +210,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                         if (info.NextRunScriptTime <= curTime) {
                             var r = ResourceProcessor.Instance.CallScript(null, info.Script, DslExpression.CalculatorValue.FromObject(info));
                             if (!r.IsNullObject) {
-                                info.NextRunScriptTime = curTime + r.Get<double>();
+                                info.NextRunScriptTime = curTime + r.GetDouble();
                             }
                         }
                     }
@@ -344,7 +340,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                             newVal = v.ToString();
                         }
                     }
-                    else if (info.Type == typeof(UnityEngine.GUIElement)) {
+                    else if (info.Type == typeof(UnityEngine.GUIContent)) {
                         if (GUILayout.Button(new GUIContent(string.Format("Return [{0}]", oldVal), oldVal))) {
                             var redirectDsl = oldVal;
                             var redirectArgs = info.Options;
@@ -665,7 +661,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                 else {
                     ResourceEditUtility.ParamInfo val;
                     if (paramInfos.TryGetValue("pathwidth", out val)) {
-                        m_PathWidth = val.Value.Get<float>();
+                        m_PathWidth = val.Value.GetFloat();
                     }
                     if (m_UnfilteredGroupCount <= 0) {
                         ListItem();
@@ -2265,7 +2261,7 @@ internal sealed class ResourceProcessor
                 if (ix >= 0 && ix < batches.Length) {
                     batch = batches[ix];
                 }
-                if (RecordInstrumentFrame(m_RecordIndex, index, ProfilerColumn.FunctionName, ProfilerViewType.Hierarchy, triangle, batch)) {
+                if (RecordInstrumentFrame(m_RecordIndex, index, HierarchyFrameDataView.columnName, (int)ProfilerViewType.Hierarchy, triangle, batch)) {
                     ++m_RecordIndex;
                 }
             }
@@ -2273,7 +2269,7 @@ internal sealed class ResourceProcessor
 
             if (lastIndex >= 0) {
                 ProfilerProperty prop = new ProfilerProperty();
-                prop.SetRoot(lastIndex, ProfilerColumn.FunctionName, ProfilerViewType.Hierarchy);
+                prop.SetRoot(lastIndex, HierarchyFrameDataView.columnName, (int)ProfilerViewType.Hierarchy);
                 prop.onlyShowGPUSamples = false;
 
                 int ix = lastIndex - firstIndex;
@@ -2290,7 +2286,7 @@ internal sealed class ResourceProcessor
                 sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \triangles:{4} \tbatches:{5}", prop.depth, prop.frameFPS, prop.frameTime, prop.frameGpuTime, triangle, batch);
                 sb.AppendLine();
                 while (prop.Next(true)) {
-                    sb.AppendFormat("{0}:{1}->{2}\t{3}\t{4}\t{5}\t{6}", prop.depth, prop.propertyName, prop.propertyPath, prop.GetColumn(ProfilerColumn.Calls), prop.GetColumn(ProfilerColumn.GCMemory), prop.GetColumn(ProfilerColumn.SelfPercent), prop.GetColumn(ProfilerColumn.SelfTime));
+                    sb.AppendFormat("{0}:{1}->{2}\t{3}\t{4}\t{5}\t{6}", prop.depth, prop.propertyName, prop.propertyPath, prop.GetColumn(HierarchyFrameDataView.columnCalls), prop.GetColumn(HierarchyFrameDataView.columnGcMemory), prop.GetColumn(HierarchyFrameDataView.columnSelfPercent), prop.GetColumn(HierarchyFrameDataView.columnSelfTime));
                     sb.AppendLine();
                 }
                 m_Text = sb.ToString();
@@ -2312,7 +2308,7 @@ internal sealed class ResourceProcessor
                     File.Delete(path);
                 }
                 using (StreamWriter sw = new StreamWriter(path)) {
-                    sw.WriteLine("index\tframe\tdepth\tname\tpath\tfps\tcalls\tgc\ttotal_time\ttotal_percent\tself_time\tself_percent\ttotal_gpu_time\ttotal_gpu_percent\tself_gpu_time\tself_gpu_percent");
+                    sw.WriteLine("index\tframe\tdepth\tname\tpath\tfps\tcalls\tgc\ttotal_time\ttotal_percent\tself_time\tself_percent");
                     int curCount = 0;
                     int totalCount = 0;
                     foreach (var pair in m_InstrumentInfos) {
@@ -2320,21 +2316,20 @@ internal sealed class ResourceProcessor
                     }
                     foreach (var pair in m_InstrumentInfos) {
                         var info = pair.Value;
-                        sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}\t{14}\t{15}",
-                            info.index, info.frame, 0, "frame_stat_tag", "frame_stat_tag",
+                        sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
+                            info.index, info.frame, 0, info.sortType.ToString(), info.viewType.ToString(),
                             info.fps, info.totalCalls, info.totalGcMemory,
-                            info.totalCpuTime, 100, info.sortType, info.viewType,
-                            info.totalGpuTime, 100, info.triangle, info.batch);
+                            info.totalCpuTime, info.triangle,
+                            info.totalGpuTime, info.batch);
                         ++curCount;
                         if (DisplayCancelableProgressBar("保存进度", curCount, totalCount)) {
                             goto L_EndSaveIns;
                         }
                         foreach (var record in info.records) {
-                            sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}\t{14}\t{15}",
+                            sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
                                 info.index, info.frame, record.depth, record.name, record.layerPath,
                                 info.fps, record.calls, record.gcMemory,
-                                record.totalTime, record.totalPercent, record.selfTime, record.selfPercent,
-                                record.totalGpuTime, record.totalGpuPercent, record.selfGpuTime, record.selfGpuPercent);
+                                record.totalTime, record.totalPercent, record.selfTime, record.selfPercent);
                             ++curCount;
                             if (DisplayCancelableProgressBar("保存进度", curCount, totalCount)) {
                                 goto L_EndSaveIns;
@@ -2381,12 +2376,8 @@ internal sealed class ResourceProcessor
                     var totalPercent = float.Parse(fields[9]);
                     var selfTime = float.Parse(fields[10]);
                     var selfPercent = float.Parse(fields[11]);
-                    var totalGpuTime = float.Parse(fields[12]);
-                    var totalGpuPercent = float.Parse(fields[13]);
-                    var selfGpuTime = float.Parse(fields[14]);
-                    var selfGpuPercent = float.Parse(fields[15]);
 
-                    if (name == "frame_stat_tag" && layerPath == "frame_stat_tag") {
+                    if (!string.IsNullOrEmpty(name) && char.IsNumber(name[0]) && !string.IsNullOrEmpty(layerPath) && char.IsNumber(layerPath[0])) {
                         var info = new ResourceEditUtility.InstrumentInfo();
                         info.index = index;
                         info.frame = frame;
@@ -2394,11 +2385,11 @@ internal sealed class ResourceProcessor
                         info.totalCalls = calls;
                         info.totalGcMemory = gc;
                         info.totalCpuTime = totalTime;
-                        info.totalGpuTime = totalGpuTime;
-                        info.sortType = (int)selfTime;
-                        info.viewType = (int)selfPercent;
-                        info.triangle = selfGpuTime;
-                        info.batch = selfGpuPercent;
+                        info.totalGpuTime = selfTime;
+                        info.sortType = int.Parse(name);
+                        info.viewType = int.Parse(layerPath);
+                        info.triangle = totalPercent;
+                        info.batch = selfPercent;
 
                         m_InstrumentInfos[index] = info;
                         m_LastFrame = frame;
@@ -2418,10 +2409,7 @@ internal sealed class ResourceProcessor
                             record.totalPercent = totalPercent;
                             record.selfTime = selfTime;
                             record.selfPercent = selfPercent;
-                            record.totalGpuTime = totalGpuTime;
-                            record.totalGpuPercent = totalGpuPercent;
-                            record.selfGpuTime = selfGpuTime;
-                            record.selfGpuPercent = selfGpuPercent;
+                            info.records.Add(record);
                         }
                     }
 
@@ -2735,7 +2723,7 @@ internal sealed class ResourceProcessor
                     var func = syntaxComponent as Dsl.FunctionData;
                     var info = syntaxComponent as Dsl.StatementData;
                     if(null==func && null != info) {
-                        func = info.First;
+                        func = info.First.AsFunction;
                     }
                     int num = null != info ? info.GetFunctionNum() : 1;
                     if (num == 1) {
@@ -2756,15 +2744,15 @@ internal sealed class ResourceProcessor
                             check = true;
 
                             if (secondId == "filter") {
-                                m_FilterCalculator.LoadDsl(m_NextFilterIndex.ToString(), info.Second);
+                                m_FilterCalculator.LoadDsl(m_NextFilterIndex.ToString(), info.Second.AsFunction);
                                 ++m_NextFilterIndex;
                             }
                             else if (secondId == "process") {
-                                m_ProcessCalculator.LoadDsl(m_NextProcessIndex.ToString(), info.Second);
+                                m_ProcessCalculator.LoadDsl(m_NextProcessIndex.ToString(), info.Second.AsFunction);
                                 ++m_NextProcessIndex;
                             }
                             else {
-                                ParseAssetProcessor(info.Second);
+                                ParseAssetProcessor(info.Second.AsFunction);
                             }
                         }
                     }
@@ -2775,18 +2763,18 @@ internal sealed class ResourceProcessor
                         if (firstId == "input" && secondId == "filter" && (thirdId == "group" || thirdId == "process" || thirdId == "assetprocessor")) {
                             check = true;
 
-                            m_FilterCalculator.LoadDsl(m_NextFilterIndex.ToString(), info.Second);
+                            m_FilterCalculator.LoadDsl(m_NextFilterIndex.ToString(), info.Second.AsFunction);
                             ++m_NextFilterIndex;
                             if (thirdId == "group") {
-                                m_GroupCalculator.LoadDsl(m_NextGroupIndex.ToString(), info.Last);
+                                m_GroupCalculator.LoadDsl(m_NextGroupIndex.ToString(), info.Last.AsFunction);
                                 ++m_NextGroupIndex;
                             }
                             else if (thirdId == "process") {
-                                m_ProcessCalculator.LoadDsl(m_NextProcessIndex.ToString(), info.Last);
+                                m_ProcessCalculator.LoadDsl(m_NextProcessIndex.ToString(), info.Last.AsFunction);
                                 ++m_NextProcessIndex;
                             }
                             else {
-                                ParseAssetProcessor(info.Last);
+                                ParseAssetProcessor(info.Last.AsFunction);
                             }
                         }
                     }
@@ -2799,16 +2787,16 @@ internal sealed class ResourceProcessor
                         if (firstId == "input" && secondId == "filter" && thirdId == "group" && (fourthId == "process" || fourthId == "assetprocessor")) {
                             check = true;
 
-                            m_FilterCalculator.LoadDsl(m_NextFilterIndex.ToString(), info.Second);
+                            m_FilterCalculator.LoadDsl(m_NextFilterIndex.ToString(), info.Second.AsFunction);
                             ++m_NextFilterIndex;
-                            m_GroupCalculator.LoadDsl(m_NextGroupIndex.ToString(), info.Functions[2]);
+                            m_GroupCalculator.LoadDsl(m_NextGroupIndex.ToString(), info.Functions[2].AsFunction);
                             ++m_NextGroupIndex;
                             if (fourthId == "process") {
-                                m_ProcessCalculator.LoadDsl(m_NextProcessIndex.ToString(), info.Last);
+                                m_ProcessCalculator.LoadDsl(m_NextProcessIndex.ToString(), info.Last.AsFunction);
                                 ++m_NextProcessIndex;
                             }
                             else {
-                                ParseAssetProcessor(info.Last);
+                                ParseAssetProcessor(info.Last.AsFunction);
                             }
                         }
                     }
@@ -2828,7 +2816,7 @@ internal sealed class ResourceProcessor
                         var func = syntaxComponent as Dsl.FunctionData;
                         var info = syntaxComponent as Dsl.StatementData;
                         if (null == func && null != info) {
-                            func = info.First;
+                            func = info.First.AsFunction;
                         }
                         int num = null != info ? info.GetFunctionNum() : 1;
                         if (num == 1) {
@@ -2844,7 +2832,7 @@ internal sealed class ResourceProcessor
                                 continue;
                             }
                         }
-                        var first = info.First;
+                        var first = info.First.AsFunction;
                         var input = first;
                         if (first.IsHighOrder)
                             input = first.LowerOrderFunction;
@@ -3115,7 +3103,7 @@ internal sealed class ResourceProcessor
         else if (id == "button") {
             //button(name, val);
             string v = val;
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(UnityEngine.GUIElement), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(UnityEngine.GUIContent), Value = v, StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "table") {
@@ -3341,8 +3329,8 @@ internal sealed class ResourceProcessor
     {
         if (null != m_ScriptCalculator) {
             if (null != calc) {
-                foreach (var pair in calc.NamedGlobalVariables) {
-                    m_ScriptCalculator.SetGlobalVariable(pair.Key, pair.Value);
+                foreach (var key in calc.GlobalVariableNames) {
+                    m_ScriptCalculator.SetGlobalVariable(key, calc.GetGlobalVariable(key));
                 }
             }
             else {
@@ -3353,8 +3341,8 @@ internal sealed class ResourceProcessor
             }
             var ret = m_ScriptCalculator.Calc(name, args);
             if (null != calc) {
-                foreach (var pair in m_ScriptCalculator.NamedGlobalVariables) {
-                    calc.SetGlobalVariable(pair.Key, pair.Value);
+                foreach (var key in m_ScriptCalculator.GlobalVariableNames) {
+                    calc.SetGlobalVariable(key, m_ScriptCalculator.GetGlobalVariable(key));
                 }
             }
             return ret;
@@ -3625,7 +3613,7 @@ internal sealed class ResourceProcessor
                     else {
                         ret = ResourceEditUtility.Group(itemGroup, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
                     }
-                    if (!hasGroupCommand && m_NextGroupIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                    if (!hasGroupCommand && m_NextGroupIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                         m_GroupList.Add(itemGroup);
                     }
                 }
@@ -3639,7 +3627,7 @@ internal sealed class ResourceProcessor
                 else {
                     ret = ResourceEditUtility.Group(group, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
                 }
-                if (!hasGroupCommand && m_NextGroupIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                if (!hasGroupCommand && m_NextGroupIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                     m_GroupList.Add(group);
                 }
             }
@@ -3716,7 +3704,7 @@ internal sealed class ResourceProcessor
                                     m_ProcessedAssets.Add(item.AssetPath);
                                 if (!ResourceEditUtility.UseSpecificSettingDB || !TextureImporterParamsDB.DBInstance.Data.Contains(item.AssetPath) && !ModelImporterParamsDB.DBInstance.Data.Contains(item.AssetPath) && !PrefabParamsDB.DBInstance.Data.Contains(item.AssetPath)) {
                                     var o = ResourceEditUtility.Process(item, m_ProcessCalculator, m_NextProcessIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                                    if (!o.IsNullObject && o.Get<bool>()) {
+                                    if (!o.IsNullObject && o.GetBool()) {
                                         ++ct;
                                     }
                                 }
@@ -3741,7 +3729,7 @@ internal sealed class ResourceProcessor
                                     m_ProcessedAssets.Add(item.AssetPath);
                                 if (!ResourceEditUtility.UseSpecificSettingDB || !TextureImporterParamsDB.DBInstance.Data.Contains(item.AssetPath) && !ModelImporterParamsDB.DBInstance.Data.Contains(item.AssetPath) && !PrefabParamsDB.DBInstance.Data.Contains(item.AssetPath)) {
                                     var o = ResourceEditUtility.GroupProcess(item, m_ProcessCalculator, m_NextProcessIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                                    if (!o && o.Get<bool>()) {
+                                    if (!o && o.GetBool()) {
                                         ++ct;
                                     }
                                 }
@@ -3965,7 +3953,7 @@ internal sealed class ResourceProcessor
             var importer = AssetImporter.GetAtPath(assetPath);
             var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = string.Empty, Importer = importer, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
             var ret = ResourceEditUtility.Filter(item, null, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                 m_ItemList.AddRange(m_Results);
             }
             canceled = DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount);
@@ -4030,7 +4018,7 @@ internal sealed class ResourceProcessor
                 var importer = AssetImporter.GetAtPath(assetPath);
                 var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = string.Empty, Importer = importer, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
                 var ret = ResourceEditUtility.Filter(item, null, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                     m_ItemList.AddRange(m_Results);
                 }
                 if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
@@ -4070,7 +4058,7 @@ internal sealed class ResourceProcessor
             var importer = AssetImporter.GetAtPath(assetPath);
             var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = string.Empty, Importer = importer, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
             var ret = ResourceEditUtility.Filter(item, null, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                 m_ItemList.AddRange(m_Results);
             }
             if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
@@ -4112,7 +4100,7 @@ internal sealed class ResourceProcessor
                     }
                     var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = assetObj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
                     var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "all_asset_bundle_info", DslExpression.CalculatorValue.FromObject(m_AssetBundleInfo) }, { "asset_bundle_info", DslExpression.CalculatorValue.FromObject(assetBundleInfo) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                    if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                    if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                         m_ItemList.AddRange(m_Results);
                     }
                     if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
@@ -4132,7 +4120,7 @@ internal sealed class ResourceProcessor
                     AssetImporter importer = null;
                     var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = assetObj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
                     var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "all_asset_bundle_info", DslExpression.CalculatorValue.FromObject(m_AssetBundleInfo) }, { "asset_bundle_info", DslExpression.CalculatorValue.FromObject(abInfo) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                    if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                    if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                         m_ItemList.AddRange(m_Results);
                     }
                     if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
@@ -4163,7 +4151,7 @@ internal sealed class ResourceProcessor
                     var importer = AssetImporter.GetAtPath(assetPath);
                     var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = string.Empty, Importer = importer, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
                     var ret = ResourceEditUtility.Filter(item, null, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                    if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                    if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                         m_ItemList.AddRange(m_Results);
                     }
                     if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
@@ -4227,7 +4215,7 @@ internal sealed class ResourceProcessor
                     }
                     var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = path, Importer = importer, Object = comp, Info = key, Order = m_ItemList.Count, Group = key, Selected = false };
                     var ret = ResourceEditUtility.Filter(item, null, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                    if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                    if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                         m_ItemList.AddRange(m_Results);
                     }
                 }
@@ -4280,7 +4268,7 @@ internal sealed class ResourceProcessor
             }
             var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = path, Importer = importer, Object = obj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
             var ret = ResourceEditUtility.Filter(item, null, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                 m_ItemList.AddRange(m_Results);
             }
         }
@@ -4423,7 +4411,7 @@ internal sealed class ResourceProcessor
                         if (null != row) {
                             var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
                             var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "book", DslExpression.CalculatorValue.FromObject(book) }, { "sheet", DslExpression.CalculatorValue.FromObject(sheet) }, { "row", DslExpression.CalculatorValue.FromObject(row) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                                 m_ItemList.AddRange(m_Results);
                             }
                             if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
@@ -4482,7 +4470,7 @@ internal sealed class ResourceProcessor
                     if (null != row) {
                         var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
                         var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "sheet", DslExpression.CalculatorValue.FromObject(table) }, { "row", DslExpression.CalculatorValue.FromObject(row) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                        if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                        if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                             m_ItemList.AddRange(m_Results);
                         }
                         if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
@@ -4527,7 +4515,7 @@ internal sealed class ResourceProcessor
                             }
                             var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = obj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
                             var ret = ResourceEditUtility.Filter(item, null, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-                            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+                            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                                 m_ItemList.AddRange(m_Results);
                             }
                         }
@@ -4559,7 +4547,7 @@ internal sealed class ResourceProcessor
             }
             var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = obj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
             var ret = ResourceEditUtility.Filter(item, null, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                 m_ItemList.AddRange(m_Results);
             }
         }
@@ -4722,7 +4710,7 @@ internal sealed class ResourceProcessor
         }
         var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = assetObj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
         var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "memory", DslExpression.CalculatorValue.FromObject(memory) }, { "group_info", DslExpression.CalculatorValue.FromObject(groupInfo) }, { "all_groups", DslExpression.CalculatorValue.FromObject(infos) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-        if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+        if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
             m_ItemList.AddRange(m_Results);
         }
     }
@@ -4742,7 +4730,7 @@ internal sealed class ResourceProcessor
         }
         var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = assetObj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
         var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "group_info", DslExpression.CalculatorValue.FromObject(groupInfo) }, { "all_groups", DslExpression.CalculatorValue.FromObject(infos) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-        if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+        if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
             m_ItemList.AddRange(m_Results);
         }
     }
@@ -4757,7 +4745,7 @@ internal sealed class ResourceProcessor
             ++m_CurSearchCount;
             var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
             var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "instrument", DslExpression.CalculatorValue.FromObject(info) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                 m_ItemList.AddRange(m_Results);
             }
             if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
@@ -4766,10 +4754,10 @@ internal sealed class ResourceProcessor
         }
     }
 
-    private bool RecordInstrumentFrame(int index, int frame, ProfilerColumn sortType, ProfilerViewType viewType, float triangle, float batch)
+    private bool RecordInstrumentFrame(int index, int frame, int sortColumn, int viewType, float triangle, float batch)
     {
         ProfilerProperty prop = new ProfilerProperty();
-        prop.SetRoot(frame, sortType, viewType);
+        prop.SetRoot(frame, sortColumn, viewType);
         prop.onlyShowGPUSamples = false;
 
         if (!prop.frameDataReady)
@@ -4778,7 +4766,7 @@ internal sealed class ResourceProcessor
         var info = new ResourceEditUtility.InstrumentInfo();
         info.index = index;
         info.frame = frame + 1;
-        info.sortType = (int)sortType;
+        info.sortType = (int)sortColumn;
         info.viewType = (int)viewType;
         info.triangle = triangle;
         info.batch = batch;
@@ -4792,18 +4780,14 @@ internal sealed class ResourceProcessor
             var data = new ResourceEditUtility.InstrumentRecord();
             data.depth = prop.depth;
             data.fps = info.fps;
-            data.calls = int.Parse(prop.GetColumn(ProfilerColumn.Calls));
-            data.gcMemory = InstrumentString2Float(prop.GetColumn(ProfilerColumn.GCMemory));
+            data.calls = int.Parse(prop.GetColumn(HierarchyFrameDataView.columnCalls));
+            data.gcMemory = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnGcMemory));
             data.name = prop.propertyName;
             data.layerPath = prop.propertyPath;
-            data.totalTime = InstrumentString2Float(prop.GetColumn(ProfilerColumn.TotalTime));
-            data.totalPercent = InstrumentString2Float(prop.GetColumn(ProfilerColumn.TotalPercent));
-            data.selfTime = InstrumentString2Float(prop.GetColumn(ProfilerColumn.SelfTime));
-            data.selfPercent = InstrumentString2Float(prop.GetColumn(ProfilerColumn.SelfPercent));
-            data.totalGpuTime = InstrumentString2Float(prop.GetColumn(ProfilerColumn.TotalGPUTime));
-            data.totalGpuPercent = InstrumentString2Float(prop.GetColumn(ProfilerColumn.TotalGPUPercent));
-            data.selfGpuTime = InstrumentString2Float(prop.GetColumn(ProfilerColumn.SelfGPUTime));
-            data.selfGpuPercent = InstrumentString2Float(prop.GetColumn(ProfilerColumn.SelfGPUPercent));
+            data.totalTime = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnTotalTime));
+            data.totalPercent = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnTotalPercent));
+            data.selfTime = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnSelfTime));
+            data.selfPercent = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnSelfPercent));
 
             info.totalCalls += data.calls;
             info.totalGcMemory += data.gcMemory;
@@ -4813,7 +4797,7 @@ internal sealed class ResourceProcessor
         var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
         var addVars = new Dictionary<string, DslExpression.CalculatorValue> { { "instrument", DslExpression.CalculatorValue.FromObject(info) } };
         var ret = ResourceEditUtility.Filter(item, addVars, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
-        if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.Get<int>() > 0) {
+        if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
             m_InstrumentInfos[index] = info;
             return true;
         }
@@ -4822,7 +4806,7 @@ internal sealed class ResourceProcessor
     private float InstrumentString2Float(string val)
     {
         try {
-            if (val == "N/A") {
+            if (string.IsNullOrWhiteSpace(val) || val == "N/A") {
                 return 0;
             }
             int ix = val.IndexOf('%');
@@ -5044,7 +5028,7 @@ internal sealed class ResourceProcessor
                     var func = info as Dsl.FunctionData;
                     var stData = info as Dsl.StatementData;
                     if (null == func && null != stData) {
-                        func = stData.First;
+                        func = stData.First.AsFunction;
                     }
                     if (null!=func && func.GetId() == "input") {
                         foreach (var comp in func.Params) {
@@ -5104,8 +5088,8 @@ internal sealed class ResourceProcessor
                     Dsl.FunctionData last = null;
                     var stData = info as Dsl.StatementData;
                     if (null != stData) {
-                        first = stData.First;
-                        last = stData.Last;
+                        first = stData.First.AsFunction;
+                        last = stData.Last.AsFunction;
                     }
                     if (null != stData && first.GetId() == "input" && last.GetId() == "assetprocessor") {
                         var cd = first;

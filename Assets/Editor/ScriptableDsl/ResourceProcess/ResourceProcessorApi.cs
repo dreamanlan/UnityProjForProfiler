@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 using UnityEditor.UI;
@@ -17,8 +17,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Linq;
-using CsLibrary;
 using DslExpression;
+
+internal enum ProfilerViewType
+{
+    Hierarchy,
+    Timeline,
+    RawHierarchy
+}
 
 internal static class ResourceEditUtility
 {
@@ -76,7 +82,7 @@ internal static class ResourceEditUtility
         }
         internal bool IsEqual(string assetPath, string scenePath, string info, double order, double value)
         {
-            if (AssetPath == assetPath && ScenePath == scenePath && Info == info && Geometry.IsSameDouble(Order, order) && Geometry.IsSameDouble(Value, value))
+            if (AssetPath == assetPath && ScenePath == scenePath && Info == info && Math.Abs(Order - order) < double.Epsilon && Math.Abs(Value - value) < double.Epsilon)
                 return true;
             else
                 return false;
@@ -190,10 +196,6 @@ internal static class ResourceEditUtility
         internal float totalPercent;
         internal float selfTime;
         internal float selfPercent;
-        internal float totalGpuTime;
-        internal float totalGpuPercent;
-        internal float selfGpuTime;
-        internal float selfGpuPercent;
         internal float fps;
         internal int calls;
         internal float gcMemory;
@@ -608,12 +610,12 @@ internal static class ResourceEditUtility
                 }
                 if (calc.TryGetGlobalVariable("order", out v)) {
                     if (!v.IsNullObject) {
-                        item.Order = v.Get<double>();
+                        item.Order = v.GetDouble();
                     }
                 }
                 if (calc.TryGetGlobalVariable("value", out v)) {
                     if (!v.IsNullObject) {
-                        item.Value = v.Get<double>();
+                        item.Value = v.GetDouble();
                     }
                 }
                 if (calc.TryGetGlobalVariable("group", out v)) {
@@ -774,12 +776,12 @@ internal static class ResourceEditUtility
                 }
                 if (calc.TryGetGlobalVariable("order", out v)) {
                     if (!v.IsNullObject) {
-                        item.Order = v.Get<double>();
+                        item.Order = v.GetDouble();
                     }
                 }
                 if (calc.TryGetGlobalVariable("value", out v)) {
                     if (!v.IsNullObject) {
-                        item.Value = v.Get<double>();
+                        item.Value = v.GetDouble();
                     }
                 }
                 if (calc.TryGetGlobalVariable("extralist", out v)) {
@@ -892,7 +894,7 @@ internal static class ResourceEditUtility
         if (null != calc) {
             var r = calc.Calc(proc, CalculatorValue.FromObject(resParams), CalculatorValue.FromObject(obj));
             if (!r.IsNullObject) {
-                ret = r.Get<bool>();
+                ret = r.GetBool();
             }
         }
         return ret;
@@ -904,7 +906,7 @@ internal static class ResourceEditUtility
         if (null != calc) {
             var r = calc.Calc(proc, CalculatorValue.FromObject(resParams), CalculatorValue.FromObject(obj));
             if (!r.IsNullObject) {
-                ret = r.Get<bool>();
+                ret = r.GetBool();
             }
         }
         return ret;
@@ -923,7 +925,7 @@ internal static class ResourceEditUtility
             var func = dslInfo as Dsl.FunctionData;
             var stData = dslInfo as Dsl.StatementData;
             if (null == func && null != stData) {
-                func = stData.First;
+                func = stData.First.AsFunction;
             }
             if (null != func) {
                 var calc = GetCommandCalculator();
@@ -1530,21 +1532,21 @@ namespace ResourceEditApi
                 }
                 if (param.TryGetValue("rotationError", out val)) {
                     var v = float.Parse(val);
-                    if (Math.Abs(v - importer.animationRotationError) > Geometry.c_FloatPrecision) {
+                    if (Math.Abs(v - importer.animationRotationError) > float.Epsilon) {
                         importer.animationRotationError = v;
                         r = true;
                     }
                 }
                 if (param.TryGetValue("posistionError", out val)) {
                     var v = float.Parse(val);
-                    if (Math.Abs(v - importer.animationPositionError) > Geometry.c_FloatPrecision) {
+                    if (Math.Abs(v - importer.animationPositionError) > float.Epsilon) {
                         importer.animationPositionError = v;
                         r = true;
                     }
                 }
                 if (param.TryGetValue("scaleError", out val)) {
                     var v = float.Parse(val);
-                    if (Math.Abs(v - importer.animationScaleError) > Geometry.c_FloatPrecision) {
+                    if (Math.Abs(v - importer.animationScaleError) > float.Epsilon) {
                         importer.animationScaleError = v;
                         r = true;
                     }
@@ -1948,7 +1950,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 2) {
                 var items = operands[0].As<IList>();
-                var index = operands[1].Get<int>();
+                var index = operands[1].GetInt();
                 if (null != items && index >= 0) {
                     HashSet<string> hash = new HashSet<string>();
                     foreach(var item in items) {
@@ -1970,7 +1972,7 @@ namespace ResourceEditApi
                                 hash.Add(fv);
                         }
                     }
-                    r.Set<int>(hash.Count);
+                    r.Set(hash.Count);
                 }
             }
             return r;
@@ -2224,7 +2226,7 @@ namespace ResourceEditApi
                 }
                 else {
                     try {
-                        ulong addr = obj.Get<ulong>();
+                        ulong addr = obj.GetULong();
                         r = CalculatorValue.FromObject(ResourceProcessor.Instance.FindShortestPathToRoot(addr));
                     }
                     catch {
@@ -2247,7 +2249,7 @@ namespace ResourceEditApi
                 }
                 else {
                     try {
-                        ulong addr = obj.Get<ulong>();
+                        ulong addr = obj.GetULong();
                         r = CalculatorValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByHash(addr));
                     }
                     catch {
@@ -2270,7 +2272,7 @@ namespace ResourceEditApi
                 }
                 else {
                     try {
-                        ulong addr = obj.Get<ulong>();
+                        ulong addr = obj.GetULong();
                         r = CalculatorValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByList(addr));
                     }
                     catch {
@@ -2293,7 +2295,7 @@ namespace ResourceEditApi
                 }
                 else {
                     try {
-                        ulong addr = obj.Get<ulong>();
+                        ulong addr = obj.GetULong();
                         ResourceProcessor.Instance.OpenLink(addr);
                     }
                     catch {
@@ -2316,7 +2318,7 @@ namespace ResourceEditApi
                 }
                 else {
                     try {
-                        ulong addr = obj.Get<ulong>();
+                        ulong addr = obj.GetULong();
                         ResourceProcessor.Instance.OpenReferenceLink(addr);
                     }
                     catch {
@@ -2332,7 +2334,7 @@ namespace ResourceEditApi
         {
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 1) {
-                var index = operands[0].Get<int>();
+                var index = operands[0].GetInt();
                 List<string> list = new List<string>();
                 for (int i = 1; i < operands.Count; ++i) {
                     string str = operands[i].AsString;
@@ -2374,7 +2376,7 @@ namespace ResourceEditApi
         {
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 1) {
-                var index = operands[0].Get<int>();
+                var index = operands[0].GetInt();
                 r = ResourceProcessor.Instance.GetCurrentTableName(index);
             }
             return r;
@@ -2386,7 +2388,7 @@ namespace ResourceEditApi
         {
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 1) {
-                var index = operands[0].Get<int>();
+                var index = operands[0].GetInt();
                 r = CalculatorValue.FromObject(ResourceProcessor.Instance.GetCurrentTable(index));
             }
             return r;
@@ -2399,7 +2401,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
-                ulong addr = obj.Get<ulong>();
+                ulong addr = obj.GetULong();
                 r = CalculatorValue.FromObject(ResourceProcessor.Instance.ObjectDataFromAddress(addr));
             }
             return r;
@@ -2412,7 +2414,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
-                int index = obj.Get<int>();
+                int index = obj.GetInt();
                 r = CalculatorValue.FromObject(ResourceProcessor.Instance.ObjectDataFromUnifiedObjectIndex(index));
             }
             return r;
@@ -2425,7 +2427,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
-                int index = obj.Get<int>();
+                int index = obj.GetInt();
                 r = CalculatorValue.FromObject(ResourceProcessor.Instance.ObjectDataFromNativeObjectIndex(index));
             }
             return r;
@@ -2438,7 +2440,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
-                int index = obj.Get<int>();
+                int index = obj.GetInt();
                 r = CalculatorValue.FromObject(ResourceProcessor.Instance.ObjectDataFromManagedObjectIndex(index));
             }
             return r;
@@ -2682,7 +2684,7 @@ namespace ResourceEditApi
             if (operands.Count >= 3) {
                 var lines = operands[0].As<IList<string>>();
                 var key = operands[1].AsString;
-                var baseAddr = operands[2].Get<ulong>();
+                var baseAddr = operands[2].GetULong();
                 if (null != lines && null != key && baseAddr > 0) {
                     for (int i = 0; i < lines.Count; ++i) {
                         lines[i] = lines[i].TrimEnd();
@@ -2861,8 +2863,8 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 4) {
                 var lines = operands[0].As<IList<string>>();
-                var section_start = operands[1].Get<ulong>();
-                var section_end = operands[2].Get<ulong>();
+                var section_start = operands[1].GetULong();
+                var section_end = operands[2].GetULong();
                 var symbols = operands[3].As<IList<ResourceEditUtility.SymbolInfo>>();
                 var key = string.Empty;
                 if (operands.Count >= 5)
@@ -3012,7 +3014,7 @@ namespace ResourceEditApi
                 string subst = operands[2].AsString;
                 int count = -1;
                 if (operands.Count >= 4)
-                    count = operands[3].Get<int>();
+                    count = operands[3].GetInt();
                 var outLines = new List<string>();
                 if (null != lines && null != regex && null != subst) {
                     int ct = lines.Count;
@@ -3195,18 +3197,12 @@ namespace ResourceEditApi
                     bool ret = true;
                     if (setting.overridden) {
                         switch (setting.format) {
-                            case TextureImporterFormat.ASTC_RGBA_10x10:
-                            case TextureImporterFormat.ASTC_RGBA_12x12:
-                            case TextureImporterFormat.ASTC_RGBA_4x4:
-                            case TextureImporterFormat.ASTC_RGBA_5x5:
-                            case TextureImporterFormat.ASTC_RGBA_6x6:
-                            case TextureImporterFormat.ASTC_RGBA_8x8:
-                            case TextureImporterFormat.ASTC_RGB_10x10:
-                            case TextureImporterFormat.ASTC_RGB_12x12:
-                            case TextureImporterFormat.ASTC_RGB_4x4:
-                            case TextureImporterFormat.ASTC_RGB_5x5:
-                            case TextureImporterFormat.ASTC_RGB_6x6:
-                            case TextureImporterFormat.ASTC_RGB_8x8:
+                            case TextureImporterFormat.ASTC_10x10:
+                            case TextureImporterFormat.ASTC_12x12:
+                            case TextureImporterFormat.ASTC_4x4:
+                            case TextureImporterFormat.ASTC_5x5:
+                            case TextureImporterFormat.ASTC_6x6:
+                            case TextureImporterFormat.ASTC_8x8:
                                 ret = false;
                                 break;
                         }
@@ -3236,50 +3232,50 @@ namespace ResourceEditApi
                     if (importer.alphaSource == TextureImporterAlphaSource.None) {
                         switch (sizeNoAlpha) {
                             case 4:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_4x4;
+                                ret = setting.format == TextureImporterFormat.ASTC_4x4;
                                 break;
                             case 5:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_5x5;
+                                ret = setting.format == TextureImporterFormat.ASTC_5x5;
                                 break;
                             case 6:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_6x6;
+                                ret = setting.format == TextureImporterFormat.ASTC_6x6;
                                 break;
                             case 8:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_8x8;
+                                ret = setting.format == TextureImporterFormat.ASTC_8x8;
                                 break;
                             case 10:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_10x10;
+                                ret = setting.format == TextureImporterFormat.ASTC_10x10;
                                 break;
                             case 12:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_12x12;
+                                ret = setting.format == TextureImporterFormat.ASTC_12x12;
                                 break;
                             default:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_8x8;
+                                ret = setting.format == TextureImporterFormat.ASTC_8x8;
                                 break;
                         }
                     }
                     else {
                         switch (sizeAlpha) {
                             case 4:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_4x4;
+                                ret = setting.format == TextureImporterFormat.ASTC_4x4;
                                 break;
                             case 5:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_5x5;
+                                ret = setting.format == TextureImporterFormat.ASTC_5x5;
                                 break;
                             case 6:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_6x6;
+                                ret = setting.format == TextureImporterFormat.ASTC_6x6;
                                 break;
                             case 8:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_8x8;
+                                ret = setting.format == TextureImporterFormat.ASTC_8x8;
                                 break;
                             case 10:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_10x10;
+                                ret = setting.format == TextureImporterFormat.ASTC_10x10;
                                 break;
                             case 12:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_12x12;
+                                ret = setting.format == TextureImporterFormat.ASTC_12x12;
                                 break;
                             default:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_6x6;
+                                ret = setting.format == TextureImporterFormat.ASTC_6x6;
                                 break;
                         }
                     }
@@ -3312,50 +3308,50 @@ namespace ResourceEditApi
                     if (importer.alphaSource == TextureImporterAlphaSource.None) {
                         switch (sizeNoAlpha) {
                             case 4:
-                                setting.format = TextureImporterFormat.ASTC_RGB_4x4;
+                                setting.format = TextureImporterFormat.ASTC_4x4;
                                 break;
                             case 5:
-                                setting.format = TextureImporterFormat.ASTC_RGB_5x5;
+                                setting.format = TextureImporterFormat.ASTC_5x5;
                                 break;
                             case 6:
-                                setting.format = TextureImporterFormat.ASTC_RGB_6x6;
+                                setting.format = TextureImporterFormat.ASTC_6x6;
                                 break;
                             case 8:
-                                setting.format = TextureImporterFormat.ASTC_RGB_8x8;
+                                setting.format = TextureImporterFormat.ASTC_8x8;
                                 break;
                             case 10:
-                                setting.format = TextureImporterFormat.ASTC_RGB_10x10;
+                                setting.format = TextureImporterFormat.ASTC_10x10;
                                 break;
                             case 12:
-                                setting.format = TextureImporterFormat.ASTC_RGB_12x12;
+                                setting.format = TextureImporterFormat.ASTC_12x12;
                                 break;
                             default:
-                                setting.format = TextureImporterFormat.ASTC_RGB_8x8;
+                                setting.format = TextureImporterFormat.ASTC_8x8;
                                 break;
                         }
                     }
                     else {
                         switch (sizeAlpha) {
                             case 4:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_4x4;
+                                setting.format = TextureImporterFormat.ASTC_4x4;
                                 break;
                             case 5:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_5x5;
+                                setting.format = TextureImporterFormat.ASTC_5x5;
                                 break;
                             case 6:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_6x6;
+                                setting.format = TextureImporterFormat.ASTC_6x6;
                                 break;
                             case 8:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_8x8;
+                                setting.format = TextureImporterFormat.ASTC_8x8;
                                 break;
                             case 10:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_10x10;
+                                setting.format = TextureImporterFormat.ASTC_10x10;
                                 break;
                             case 12:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_12x12;
+                                setting.format = TextureImporterFormat.ASTC_12x12;
                                 break;
                             default:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_6x6;
+                                setting.format = TextureImporterFormat.ASTC_6x6;
                                 break;
                         }
                     }
@@ -3381,50 +3377,50 @@ namespace ResourceEditApi
                     if (importer.alphaSource == TextureImporterAlphaSource.None) {
                         switch (sizeNoAlpha) {
                             case 4:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_4x4;
+                                ret = setting.format == TextureImporterFormat.ASTC_4x4;
                                 break;
                             case 5:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_5x5;
+                                ret = setting.format == TextureImporterFormat.ASTC_5x5;
                                 break;
                             case 6:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_6x6;
+                                ret = setting.format == TextureImporterFormat.ASTC_6x6;
                                 break;
                             case 8:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_8x8;
+                                ret = setting.format == TextureImporterFormat.ASTC_8x8;
                                 break;
                             case 10:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_10x10;
+                                ret = setting.format == TextureImporterFormat.ASTC_10x10;
                                 break;
                             case 12:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_12x12;
+                                ret = setting.format == TextureImporterFormat.ASTC_12x12;
                                 break;
                             default:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGB_8x8;
+                                ret = setting.format == TextureImporterFormat.ASTC_8x8;
                                 break;
                         }
                     }
                     else {
                         switch (sizeAlpha) {
                             case 4:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_4x4;
+                                ret = setting.format == TextureImporterFormat.ASTC_4x4;
                                 break;
                             case 5:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_5x5;
+                                ret = setting.format == TextureImporterFormat.ASTC_5x5;
                                 break;
                             case 6:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_6x6;
+                                ret = setting.format == TextureImporterFormat.ASTC_6x6;
                                 break;
                             case 8:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_8x8;
+                                ret = setting.format == TextureImporterFormat.ASTC_8x8;
                                 break;
                             case 10:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_10x10;
+                                ret = setting.format == TextureImporterFormat.ASTC_10x10;
                                 break;
                             case 12:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_12x12;
+                                ret = setting.format == TextureImporterFormat.ASTC_12x12;
                                 break;
                             default:
-                                ret = setting.format == TextureImporterFormat.ASTC_RGBA_6x6;
+                                ret = setting.format == TextureImporterFormat.ASTC_6x6;
                                 break;
                         }
                     }
@@ -3452,50 +3448,50 @@ namespace ResourceEditApi
                     if (importer.alphaSource == TextureImporterAlphaSource.None) {
                         switch (sizeNoAlpha) {
                             case 4:
-                                setting.format = TextureImporterFormat.ASTC_RGB_4x4;
+                                setting.format = TextureImporterFormat.ASTC_4x4;
                                 break;
                             case 5:
-                                setting.format = TextureImporterFormat.ASTC_RGB_5x5;
+                                setting.format = TextureImporterFormat.ASTC_5x5;
                                 break;
                             case 6:
-                                setting.format = TextureImporterFormat.ASTC_RGB_6x6;
+                                setting.format = TextureImporterFormat.ASTC_6x6;
                                 break;
                             case 8:
-                                setting.format = TextureImporterFormat.ASTC_RGB_8x8;
+                                setting.format = TextureImporterFormat.ASTC_8x8;
                                 break;
                             case 10:
-                                setting.format = TextureImporterFormat.ASTC_RGB_10x10;
+                                setting.format = TextureImporterFormat.ASTC_10x10;
                                 break;
                             case 12:
-                                setting.format = TextureImporterFormat.ASTC_RGB_12x12;
+                                setting.format = TextureImporterFormat.ASTC_12x12;
                                 break;
                             default:
-                                setting.format = TextureImporterFormat.ASTC_RGB_8x8;
+                                setting.format = TextureImporterFormat.ASTC_8x8;
                                 break;
                         }
                     }
                     else {
                         switch (sizeAlpha) {
                             case 4:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_4x4;
+                                setting.format = TextureImporterFormat.ASTC_4x4;
                                 break;
                             case 5:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_5x5;
+                                setting.format = TextureImporterFormat.ASTC_5x5;
                                 break;
                             case 6:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_6x6;
+                                setting.format = TextureImporterFormat.ASTC_6x6;
                                 break;
                             case 8:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_8x8;
+                                setting.format = TextureImporterFormat.ASTC_8x8;
                                 break;
                             case 10:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_10x10;
+                                setting.format = TextureImporterFormat.ASTC_10x10;
                                 break;
                             case 12:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_12x12;
+                                setting.format = TextureImporterFormat.ASTC_12x12;
                                 break;
                             default:
-                                setting.format = TextureImporterFormat.ASTC_RGBA_6x6;
+                                setting.format = TextureImporterFormat.ASTC_6x6;
                                 break;
                         }
                     }
@@ -3673,7 +3669,7 @@ namespace ResourceEditApi
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 if (null != importer) {
                     r = true;
-                    importer.importMaterials = true;
+                    importer.materialImportMode = ModelImporterMaterialImportMode.ImportViaMaterialDescription;
                     importer.materialLocation = ModelImporterMaterialLocation.External;
                     importer.materialName = ModelImporterMaterialName.BasedOnTextureName;
                     importer.materialSearch = ModelImporterMaterialSearch.RecursiveUp;
@@ -3691,7 +3687,7 @@ namespace ResourceEditApi
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 if (null != importer) {
                     r = true;
-                    importer.importMaterials = true;
+                    importer.materialImportMode = ModelImporterMaterialImportMode.ImportViaMaterialDescription;
                     importer.materialLocation = ModelImporterMaterialLocation.InPrefab;
                 }
             }
@@ -3729,11 +3725,11 @@ namespace ResourceEditApi
                 var obj0 = operands[0].As<GameObject>();
                 bool includeChildren = false;
                 if (operands.Count >= 2) {
-                    includeChildren = operands[1].Get<bool>();
+                    includeChildren = operands[1].GetBool();
                 }
                 int scope = (int)ScopeEnum.All; //0--none 1--non particle 2--particle 3--all
                 if (operands.Count >= 3) {
-                    scope = operands[2].Get<int>();
+                    scope = operands[2].GetInt();
                 }
                 if (null != obj0) {
                     List<GameObject> list = new List<GameObject>();
@@ -4379,7 +4375,7 @@ namespace ResourceEditApi
                 var obj0 = operands[0].As<GameObject>();
                 bool includeChildren = false;
                 if (operands.Count >= 2) {
-                    includeChildren = operands[1].Get<bool>();
+                    includeChildren = operands[1].GetBool();
                 }
                 if (null != obj0) {
                     List<GameObject> list = new List<GameObject>();
@@ -4473,7 +4469,7 @@ namespace ResourceEditApi
                 var obj0 = operands[0].As<GameObject>();
                 bool includeChildren = false;
                 if (operands.Count >= 2) {
-                    includeChildren = operands[1].Get<bool>();
+                    includeChildren = operands[1].GetBool();
                 }
                 if (null != obj0) {
                     List<GameObject> list = new List<GameObject>();
@@ -4500,7 +4496,7 @@ namespace ResourceEditApi
                             Vector2 lastSize = Vector2.one;
                             for (int i = 0; i < areas.Count; ++i) {
                                 var area = areas[i];
-                                if (area < Geometry.c_FloatPrecision) {
+                                if (area < float.Epsilon) {
                                     uvRatios.Add("0");
                                 }
                                 else {
@@ -4516,7 +4512,7 @@ namespace ResourceEditApi
                                     if (maxVal < r) {
                                         maxVal = r;
                                     }
-                                    if (firstRatio1 * 1000 < Geometry.c_FloatPrecision) {
+                                    if (firstRatio1 * 1000 < float.Epsilon) {
                                         firstRatio1 = r;
                                     }
                                     uvRatios.Add(r.ToString("f6"));
@@ -4527,7 +4523,7 @@ namespace ResourceEditApi
                             Vector2 lastSize = Vector2.one;
                             for (int i = 0; i < areas.Count; ++i) {
                                 var area = areas[i];
-                                if (area < Geometry.c_FloatPrecision) {
+                                if (area < float.Epsilon) {
                                     uvTiledRatios.Add("0");
                                 }
                                 else {
@@ -4543,7 +4539,7 @@ namespace ResourceEditApi
                                     if (maxVal < r) {
                                         maxVal = r;
                                     }
-                                    if (firstRatio2 * 1000 < Geometry.c_FloatPrecision) {
+                                    if (firstRatio2 * 1000 < float.Epsilon) {
                                         firstRatio2 = r;
                                     }
                                     uvTiledRatios.Add(r.ToString("f6"));
@@ -4627,7 +4623,7 @@ namespace ResourceEditApi
                 var shader = operands[0].As<Shader>();
                 if (null != shader) {
                     if (operands.Count >= 2) {
-                        int type = operands[1].Get<int>();
+                        int type = operands[1].GetInt();
                         int count = 0;
                         int ct = ShaderUtil.GetPropertyCount(shader);
                         for (int i = 0; i < ct; ++i) {
@@ -4655,7 +4651,7 @@ namespace ResourceEditApi
                 var shader = operands[0].As<Shader>();
                 int type = (int)ShaderUtil.ShaderPropertyType.TexEnv;
                 if (operands.Count >= 2) {
-                    type = operands[1].Get<int>();
+                    type = operands[1].GetInt();
                 }
                 if (null != shader) {
                     List<string> list = new List<string>();
@@ -4732,7 +4728,7 @@ namespace ResourceEditApi
         protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
         {
             if (operands.Count > 0) {
-                int sceneId = operands[0].Get<int>();
+                int sceneId = operands[0].GetInt();
                 var hash = BuildHashSet(sceneId);
                 return CalculatorValue.FromObject(hash.ToList());
             }
@@ -4873,7 +4869,7 @@ namespace ResourceEditApi
         private static void ReadDslStringFromStatementData(Dsl.StatementData val, HashSet<string> strSet)
         {
             foreach (var funcData in val.Functions) {
-                ReadDslStringFromFunctionData(funcData, strSet);
+                ReadDslStringFromFunctionData(funcData.AsFunction, strSet);
             }
         }
         private static void ReadDslStringFromFunctionData(Dsl.FunctionData val, HashSet<string> strSet)
@@ -5226,7 +5222,7 @@ namespace ResourceEditApi
                 var sheet = operands[0].As<NPOI.SS.UserModel.ISheet>();
                 var dict = new Dictionary<int, string>();
                 for (int ix = 1; ix < operands.Count - 1; ix += 2) {
-                    var index = operands[ix].Get<int>();
+                    var index = operands[ix].GetInt();
                     var val = operands[ix + 1].ToString();
                     dict.Add(index, val);
                 }
@@ -5283,7 +5279,7 @@ namespace ResourceEditApi
                 var sheet = operands[0].As<NPOI.SS.UserModel.ISheet>();
                 var dict = new Dictionary<int, Regex>();
                 for (int ix = 1; ix < operands.Count - 1; ix += 2) {
-                    var index = operands[ix].Get<int>();
+                    var index = operands[ix].GetInt();
                     var val = ResourceEditUtility.GetRegex(operands[ix + 1].ToString());
                     dict.Add(index, val);
                 }
@@ -5585,7 +5581,7 @@ namespace ResourceEditApi
                 int skipCols = 0;
                 List<int> colIndexes = null;
                 if (operands.Count >= 2) {
-                    skipCols = operands[1].Get<int>();
+                    skipCols = operands[1].GetInt();
                 }
                 if (operands.Count >= 3) {
                     var colObjs = operands[2].As<IList>();
@@ -5635,7 +5631,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 3) {
                 var sheet = operands[0].As<NPOI.SS.UserModel.ISheet>();
-                int skipRows = operands[1].Get<int>();
+                int skipRows = operands[1].GetInt();
                 List<int> colIndexes = new List<int>();
                 var colObjs = operands[2].As<IList>();
                 if (null != colObjs) {
@@ -5783,7 +5779,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.SectionInfo>>();
-                var addr = operands[1].Get<ulong>();
+                var addr = operands[1].GetULong();
                 if (null != list && addr > 0) {
                     var low = 0;
                     var high = list.Count - 1;
@@ -5890,7 +5886,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.SectionInfo[]>>();
-                int index = operands[1].Get<int>();
+                int index = operands[1].GetInt();
                 if (null != list && index >= 0) {
                     int ct = list.Count;
                     int delta = 1;
@@ -6004,7 +6000,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.MapsInfo>>();
-                var addr = operands[1].Get<ulong>();
+                var addr = operands[1].GetULong();
                 if (null != list && addr > 0) {
                     var low = 0;
                     var high = list.Count - 1;
@@ -6111,7 +6107,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.MapsInfo[]>>();
-                int index = operands[1].Get<int>();
+                int index = operands[1].GetInt();
                 if (null != list && index >= 0) {
                     int ct = list.Count;
                     int delta = 1;
@@ -6267,7 +6263,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.SmapsInfo>>();
-                var addr = operands[1].Get<ulong>();
+                var addr = operands[1].GetULong();
                 if (null != list && addr > 0) {
                     var low = 0;
                     var high = list.Count - 1;
@@ -6374,7 +6370,7 @@ namespace ResourceEditApi
             var r = CalculatorValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.SmapsInfo[]>>();
-                int index = operands[1].Get<int>();
+                int index = operands[1].GetInt();
                 if (null != list && index >= 0) {
                     int ct = list.Count;
                     int delta = 1;
@@ -6435,7 +6431,7 @@ namespace ResourceEditApi
                 bool isHex = true;
                 Regex regex = null;
                 if (operands.Count >= 2) {
-                    isHex = operands[1].Get<bool>();
+                    isHex = operands[1].GetBool();
                 }
                 if (operands.Count >= 3) {
                     var str = operands[2].AsString;
@@ -6650,7 +6646,7 @@ namespace ResourceEditApi
                 var hash = operands[0].As<HashSet<int>>();
                 var vobj = operands[1];
                 if (null != hash && !vobj.IsNullObject) {
-                    var v = vobj.Get<int>();
+                    var v = vobj.GetInt();
                     r = hash.Count == 0 || hash.Contains(v);
                 }
             }
@@ -6666,7 +6662,7 @@ namespace ResourceEditApi
                 var hash = operands[0].As<HashSet<uint>>();
                 var vobj = operands[1];
                 if (null != hash && !vobj.IsNullObject) {
-                    var v = vobj.Get<uint>();
+                    var v = vobj.GetUInt();
                     r = hash.Count == 0 || hash.Contains(v);
                 }
             }
@@ -6682,7 +6678,7 @@ namespace ResourceEditApi
                 var hash = operands[0].As<HashSet<long>>();
                 var vobj = operands[1];
                 if (null != hash && !vobj.IsNullObject) {
-                    var v = vobj.Get<long>();
+                    var v = vobj.GetLong();
                     r = hash.Count == 0 || hash.Contains(v);
                 }
             }
@@ -6698,7 +6694,7 @@ namespace ResourceEditApi
                 var hash = operands[0].As<HashSet<ulong>>();
                 var vobj = operands[1];
                 if (null != hash && !vobj.IsNullObject) {
-                    var v = vobj.Get<ulong>();
+                    var v = vobj.GetULong();
                     r = hash.Count == 0 || hash.Contains(v);
                 }
             }
@@ -6714,7 +6710,7 @@ namespace ResourceEditApi
                 var hash = operands[0].As<HashSet<float>>();
                 var vobj = operands[1];
                 if (null != hash && !vobj.IsNullObject) {
-                    var v = vobj.Get<float>();
+                    var v = vobj.GetFloat();
                     r = hash.Count == 0 || hash.Contains(v);
                 }
             }
@@ -6730,7 +6726,7 @@ namespace ResourceEditApi
                 var hash = operands[0].As<HashSet<double>>();
                 var vobj = operands[1];
                 if (null != hash && !vobj.IsNullObject) {
-                    var v = vobj.Get<double>();
+                    var v = vobj.GetDouble();
                     r = hash.Count == 0 || hash.Contains(v);
                 }
             }
