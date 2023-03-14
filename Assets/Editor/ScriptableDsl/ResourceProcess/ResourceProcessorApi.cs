@@ -920,7 +920,7 @@ internal static class ResourceEditUtility
         bool ret = false;
         string procCode = string.Format("script{{ {0}; }};", code);
         var file = new Dsl.DslFile();
-        if (file.LoadFromString(procCode, "command", msg => { Debug.LogErrorFormat("{0}", msg); })) {
+        if (file.LoadFromString(procCode, msg => { Debug.LogErrorFormat("{0}", msg); })) {
             var dslInfo = file.DslInfos[0];
             var func = dslInfo as Dsl.FunctionData;
             var stData = dslInfo as Dsl.StatementData;
