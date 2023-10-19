@@ -46,7 +46,7 @@ using Unity.MemoryProfilerForExtension.Editor.EnumerationUtilities;
 [assembly: InternalsVisibleTo("Unity.MemoryProfilerForExtension.Editor.Tests")]
 namespace Unity.MemoryProfilerForExtension.Editor
 {
-    using QueryMemoryProfiler = UnityEngine.Profiling.Memory.Experimental.MemoryProfiler;
+    using QueryMemoryProfiler = Unity.Profiling.Memory.MemoryProfiler;
     internal class MemoryProfilerWindow : EditorWindow, UI.IViewPaneEventListener
     {
         static class Content
@@ -202,11 +202,11 @@ namespace Unity.MemoryProfilerForExtension.Editor
             return curMode;
         }
 
-        CaptureFlags m_CaptureFlags = CaptureFlags.ManagedObjects
-            | CaptureFlags.NativeObjects
-            | CaptureFlags.NativeAllocations
-            | CaptureFlags.NativeAllocationSites
-            | CaptureFlags.NativeStackTraces;
+        Unity.Profiling.Memory.CaptureFlags m_CaptureFlags = Unity.Profiling.Memory.CaptureFlags.ManagedObjects
+            | Unity.Profiling.Memory.CaptureFlags.NativeObjects
+            | Unity.Profiling.Memory.CaptureFlags.NativeAllocations
+            | Unity.Profiling.Memory.CaptureFlags.NativeAllocationSites
+            | Unity.Profiling.Memory.CaptureFlags.NativeStackTraces;
 
 
         Button m_BackwardsInHistoryButton;
@@ -994,7 +994,7 @@ namespace Unity.MemoryProfilerForExtension.Editor
 
 #if UNITY_2019_3_OR_NEWER
             bool screenshotCaptureResult = false;
-            Action<string, bool, DebugScreenCapture> screenshotCaptureFunc = (string path, bool result, DebugScreenCapture screenCapture) =>
+            Action<string, bool, Unity.Profiling.DebugScreenCapture> screenshotCaptureFunc = (string path, bool result, Unity.Profiling.DebugScreenCapture screenCapture) =>
             {
                 m_ScreenshotInProgress = false;
                 screenshotCaptureResult = result;
@@ -1008,8 +1008,8 @@ namespace Unity.MemoryProfilerForExtension.Editor
                     path = Path.ChangeExtension(path, k_SnapshotTempScreenshotFileExtension);
                 }
 
-                Texture2D tex = new Texture2D(screenCapture.width, screenCapture.height, screenCapture.imageFormat, false);
-                CopyDataToTexture(tex, screenCapture.rawImageDataReference);
+                Texture2D tex = new Texture2D(screenCapture.Width, screenCapture.Height, screenCapture.ImageFormat, false);
+                CopyDataToTexture(tex, screenCapture.RawImageDataReference);
                 File.WriteAllBytes(path, tex.EncodeToPNG());
                 if (Application.isPlaying)
                     Destroy(tex);

@@ -58,7 +58,7 @@ namespace Unity.MemoryProfilerForExtension.Editor.Legacy.LegacyFormats
             // Write metadata
             writer.WriteEntryArray(EntryType.Metadata_UserMetadata, metaDataBytes);
 
-            writer.WriteEntry(EntryType.Metadata_CaptureFlags, (UInt32)UnityEngine.Profiling.Memory.Experimental.CaptureFlags.ManagedObjects); //capture just managed
+            writer.WriteEntry(EntryType.Metadata_CaptureFlags, (UInt32)Unity.Profiling.Memory.CaptureFlags.ManagedObjects); //capture just managed
 
             // Write managed heap sections
             status.IncrementStep();
