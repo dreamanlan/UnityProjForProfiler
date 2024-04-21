@@ -14,7 +14,7 @@ using UnityEditor;
 #endif
 
 #if UNITY_EDITOR || UNITY_STANDALONE || DEVELOPMENT_BUILD && UNITY_ANDROID
-#region 解释器
+#region interpreter
 #pragma warning disable 8600,8601,8602,8603,8604,8618,8619,8620,8625
 namespace DslExpression
 {
@@ -7485,7 +7485,7 @@ namespace DslExpression
         {
             if (!string.IsNullOrEmpty(to) && !Directory.Exists(to))
                 Directory.CreateDirectory(to);
-            // 子文件夹
+            // sub directories
             foreach (string sub in Directory.GetDirectories(from)) {
                 var srcPath = Path.GetFullPath(sub);
                 if (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX) {
@@ -7499,7 +7499,7 @@ namespace DslExpression
                 var sName = Path.GetFileName(sub);
                 CopyFolder(targetRoot, sub, Path.Combine(to, sName), filterAndNewExts, ref ct);
             }
-            // 文件
+            // file
             for (int i = 0; i < filterAndNewExts.Count; i += 2) {
                 string filter = filterAndNewExts[i];
                 string newExt = string.Empty;
@@ -7621,7 +7621,7 @@ namespace DslExpression
         {
             if (!string.IsNullOrEmpty(to) && !Directory.Exists(to))
                 Directory.CreateDirectory(to);
-            // 文件
+            // file
             for (int i = 0; i < filterAndNewExts.Count; i += 2) {
                 string filter = filterAndNewExts[i];
                 string newExt = string.Empty;
