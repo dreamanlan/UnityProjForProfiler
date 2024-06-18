@@ -187,7 +187,7 @@ internal sealed class ResourceEditWindow : EditorWindow
             DeferAction(obj => { obj.CopyToClipboard(); });
         }
         if (GUILayout.Button("命令", EditorStyles.toolbarButton)) {
-            DeferAction(obj => { ResourceCommandWindow.InitWindow(obj, string.Empty, DslExpression.CalculatorValue.NullObject, DslExpression.CalculatorValue.NullObject); });
+            DeferAction(obj => { ResourceCommandWindow.InitWindow(obj, string.Empty, DslExpression.BoxedValue.NullObject, DslExpression.BoxedValue.NullObject); });
         }
         GUILayout.Space(20);
         if (GUILayout.Button("批处理", EditorStyles.toolbarButton)) {
@@ -208,7 +208,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                     if (!string.IsNullOrEmpty(info.Script)) {
                         double curTime = EditorApplication.timeSinceStartup;
                         if (info.NextRunScriptTime <= curTime) {
-                            var r = ResourceProcessor.Instance.CallScript(null, info.Script, DslExpression.CalculatorValue.FromObject(info));
+                            var r = ResourceProcessor.Instance.CallScript(null, info.Script, DslExpression.BoxedValue.FromObject(info));
                             if (!r.IsNullObject) {
                                 info.NextRunScriptTime = curTime + r.GetDouble();
                             }
@@ -488,7 +488,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                 int.TryParse(str, out iv);
                                 list.Add(iv);
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(list);
+                            val.Value = DslExpression.BoxedValue.FromObject(list);
                         }
                         else if (val.Type == typeof(List<uint>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -498,7 +498,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                 uint.TryParse(str, out iv);
                                 list.Add(iv);
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(list);
+                            val.Value = DslExpression.BoxedValue.FromObject(list);
                         }
                         else if (val.Type == typeof(List<long>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -508,7 +508,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                 long.TryParse(str, out iv);
                                 list.Add(iv);
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(list);
+                            val.Value = DslExpression.BoxedValue.FromObject(list);
                         }
                         else if (val.Type == typeof(List<ulong>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -518,7 +518,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                 ulong.TryParse(str, out iv);
                                 list.Add(iv);
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(list);
+                            val.Value = DslExpression.BoxedValue.FromObject(list);
                         }
                         else if (val.Type == typeof(List<float>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -528,7 +528,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                 float.TryParse(str, out fv);
                                 list.Add(fv);
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(list);
+                            val.Value = DslExpression.BoxedValue.FromObject(list);
                         }
                         else if (val.Type == typeof(List<double>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -538,11 +538,11 @@ internal sealed class ResourceEditWindow : EditorWindow
                                 double.TryParse(str, out fv);
                                 list.Add(fv);
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(list);
+                            val.Value = DslExpression.BoxedValue.FromObject(list);
                         }
                         else if (val.Type == typeof(List<string>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
-                            val.Value = DslExpression.CalculatorValue.FromObject(v);
+                            val.Value = DslExpression.BoxedValue.FromObject(v);
                         }
                         else if (val.Type == typeof(HashSet<int>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -554,7 +554,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                     hash.Add(iv);
                                 }
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(hash);
+                            val.Value = DslExpression.BoxedValue.FromObject(hash);
                         }
                         else if (val.Type == typeof(HashSet<uint>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -566,7 +566,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                     hash.Add(iv);
                                 }
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(hash);
+                            val.Value = DslExpression.BoxedValue.FromObject(hash);
                         }
                         else if (val.Type == typeof(HashSet<long>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -578,7 +578,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                     hash.Add(iv);
                                 }
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(hash);
+                            val.Value = DslExpression.BoxedValue.FromObject(hash);
                         }
                         else if (val.Type == typeof(HashSet<ulong>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -590,7 +590,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                     hash.Add(iv);
                                 }
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(hash);
+                            val.Value = DslExpression.BoxedValue.FromObject(hash);
                         }
                         else if (val.Type == typeof(HashSet<float>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -602,7 +602,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                     hash.Add(fv);
                                 }
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(hash);
+                            val.Value = DslExpression.BoxedValue.FromObject(hash);
                         }
                         else if (val.Type == typeof(HashSet<double>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -614,7 +614,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                     hash.Add(fv);
                                 }
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(hash);
+                            val.Value = DslExpression.BoxedValue.FromObject(hash);
                         }
                         else if (val.Type == typeof(HashSet<string>)) {
                             var v = pair.Value.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -624,7 +624,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                                     hash.Add(str);
                                 }
                             }
-                            val.Value = DslExpression.CalculatorValue.FromObject(hash);
+                            val.Value = DslExpression.BoxedValue.FromObject(hash);
                         }
                         else if (val.Type == typeof(ResourceEditUtility.DataTable)) {
                             val.Value = pair.Value;
@@ -905,7 +905,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                     IEnumerator<string> refByEnumer = null;
                     if (null != refbys)
                         refByEnumer = refbys.GetEnumerator();
-                    IEnumerator<KeyValuePair<string, DslExpression.CalculatorValue>> extraEnumer = null;
+                    IEnumerator<KeyValuePair<string, DslExpression.BoxedValue>> extraEnumer = null;
                     if (null != item.ExtraList)
                         extraEnumer = item.ExtraList.GetEnumerator();
                     if (ct == 0) {
@@ -967,7 +967,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                     IEnumerator<string> refByEnumer = null;
                     if (null != refbys)
                         refByEnumer = refbys.GetEnumerator();
-                    IEnumerator<KeyValuePair<string, DslExpression.CalculatorValue>> extraEnumer = null;
+                    IEnumerator<KeyValuePair<string, DslExpression.BoxedValue>> extraEnumer = null;
                     if (null != item.ExtraList)
                         extraEnumer = item.ExtraList.GetEnumerator();
                     if (ct == 0) {
@@ -1110,7 +1110,7 @@ internal sealed class ResourceEditWindow : EditorWindow
         bool showReferences = false;
         float rightWidth = 0;
         if (null != m_SelectedItem && null == m_SelectedItem.ExtraList && !string.IsNullOrEmpty(m_SelectedItem.ExtraListBuildScript)) {
-            m_SelectedItem.ExtraList = ResourceProcessor.Instance.CallScript(null, m_SelectedItem.ExtraListBuildScript, DslExpression.CalculatorValue.FromObject(m_SelectedItem)).As<IList<KeyValuePair<string, DslExpression.CalculatorValue>>>();
+            m_SelectedItem.ExtraList = ResourceProcessor.Instance.CallScript(null, m_SelectedItem.ExtraListBuildScript, DslExpression.BoxedValue.FromObject(m_SelectedItem)).As<IList<KeyValuePair<string, DslExpression.BoxedValue>>>();
         }
         if (!string.IsNullOrEmpty(m_SelectedAssetPath) && (ResourceProcessor.Instance.ReferenceAssets.Count > 0 || ResourceProcessor.Instance.ReferenceByAssets.Count > 0) ||
             null != m_SelectedItem && null != m_SelectedItem.ExtraList) {
@@ -1186,7 +1186,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                         else {
                             m_SelectedAssetPath = item.AssetPath;
                             m_SelectedItem = item;
-                            ResourceCommandWindow.InitWindow(this, item.Info, item.ExtraObject, DslExpression.CalculatorValue.FromObject(item));
+                            ResourceCommandWindow.InitWindow(this, item.Info, item.ExtraObject, DslExpression.BoxedValue.FromObject(item));
                         }
                     }
                     GUI.skin.button.alignment = oldAlignment;
@@ -1257,14 +1257,14 @@ internal sealed class ResourceEditWindow : EditorWindow
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(info, icon, info), GUILayout.MinWidth(80), GUILayout.MaxWidth(rightWidth))) {
                         if (!string.IsNullOrEmpty(m_SelectedItem.ExtraListClickScript)) {
-                            ResourceProcessor.Instance.CallScript(null, m_SelectedItem.ExtraListClickScript, DslExpression.CalculatorValue.FromObject(pair), DslExpression.CalculatorValue.FromObject(m_SelectedItem));
+                            ResourceProcessor.Instance.CallScript(null, m_SelectedItem.ExtraListClickScript, DslExpression.BoxedValue.FromObject(pair), DslExpression.BoxedValue.FromObject(m_SelectedItem));
                         }
                         else if (pair.Value.IsObject && pair.Value.ObjectVal is ObjectData) {
                             var data = (ObjectData)pair.Value.ObjectVal;
                             ResourceProcessor.Instance.OpenLink(data);
                         }
                         else {
-                            ResourceCommandWindow.InitWindow(this, info, DslExpression.CalculatorValue.FromObject(pair), DslExpression.CalculatorValue.FromObject(m_SelectedItem));
+                            ResourceCommandWindow.InitWindow(this, info, DslExpression.BoxedValue.FromObject(pair), DslExpression.BoxedValue.FromObject(m_SelectedItem));
                         }
                     }
                     GUI.skin.button.alignment = oldAlignment;
@@ -1319,7 +1319,7 @@ internal sealed class ResourceEditWindow : EditorWindow
         bool showReferences = false;
         float rightWidth = 0;
         if (null != m_SelectedGroup && null == m_SelectedGroup.ExtraList && !string.IsNullOrEmpty(m_SelectedGroup.ExtraListBuildScript)) {
-            m_SelectedGroup.ExtraList = ResourceProcessor.Instance.CallScript(null, m_SelectedGroup.ExtraListBuildScript, DslExpression.CalculatorValue.FromObject(m_SelectedGroup)).As<IList<KeyValuePair<string, DslExpression.CalculatorValue>>>();
+            m_SelectedGroup.ExtraList = ResourceProcessor.Instance.CallScript(null, m_SelectedGroup.ExtraListBuildScript, DslExpression.BoxedValue.FromObject(m_SelectedGroup)).As<IList<KeyValuePair<string, DslExpression.BoxedValue>>>();
         }
         if (!string.IsNullOrEmpty(m_SelectedAssetPath) && (ResourceProcessor.Instance.ReferenceAssets.Count > 0 || ResourceProcessor.Instance.ReferenceByAssets.Count > 0) ||
             null != m_SelectedGroup && null != m_SelectedGroup.ExtraList) {
@@ -1389,7 +1389,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                         else {
                             m_SelectedAssetPath = item.AssetPath;
                             m_SelectedGroup = item;
-                            ResourceCommandWindow.InitWindow(this, item.Info, item.ExtraObject, DslExpression.CalculatorValue.FromObject(item));
+                            ResourceCommandWindow.InitWindow(this, item.Info, item.ExtraObject, DslExpression.BoxedValue.FromObject(item));
                         }
                     }
                     GUI.skin.button.alignment = oldAlignment;
@@ -1460,14 +1460,14 @@ internal sealed class ResourceEditWindow : EditorWindow
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(info, icon, info), GUILayout.MinWidth(80), GUILayout.MaxWidth(rightWidth))) {
                         if (!string.IsNullOrEmpty(m_SelectedGroup.ExtraListClickScript)) {
-                            ResourceProcessor.Instance.CallScript(null, m_SelectedGroup.ExtraListClickScript, DslExpression.CalculatorValue.FromObject(pair), DslExpression.CalculatorValue.FromObject(m_SelectedGroup));
+                            ResourceProcessor.Instance.CallScript(null, m_SelectedGroup.ExtraListClickScript, DslExpression.BoxedValue.FromObject(pair), DslExpression.BoxedValue.FromObject(m_SelectedGroup));
                         }
                         else if (pair.Value.IsObject && pair.Value.GetObject() is ObjectData) {
                             var data = (ObjectData)pair.Value.GetObject();
                             ResourceProcessor.Instance.OpenLink(data);
                         }
                         else {
-                            ResourceCommandWindow.InitWindow(this, info, DslExpression.CalculatorValue.FromObject(pair), DslExpression.CalculatorValue.FromObject(m_SelectedGroup));
+                            ResourceCommandWindow.InitWindow(this, info, DslExpression.BoxedValue.FromObject(pair), DslExpression.BoxedValue.FromObject(m_SelectedGroup));
                         }
                     }
                     GUI.skin.button.alignment = oldAlignment;
@@ -1927,18 +1927,18 @@ internal sealed class ResourceProcessor
         }
         EditorUtility.ClearProgressBar();
     }
-    internal IList<KeyValuePair<string, DslExpression.CalculatorValue>> FindShortestPathToRoot(ulong addr)
+    internal IList<KeyValuePair<string, DslExpression.BoxedValue>> FindShortestPathToRoot(ulong addr)
     {
         var data = ObjectDataFromAddress(addr);
         return FindShortestPathToRoot(data);
     }
-    internal IList<KeyValuePair<string, DslExpression.CalculatorValue>> FindShortestPathToRoot(ObjectData obj)
+    internal IList<KeyValuePair<string, DslExpression.BoxedValue>> FindShortestPathToRoot(ObjectData obj)
     {
-        var list = new List<KeyValuePair<string, DslExpression.CalculatorValue>>();
+        var list = new List<KeyValuePair<string, DslExpression.BoxedValue>>();
         if (null != s_ShortestPathToRootFinder) {
             var refbys = s_ShortestPathToRootFinder.FindFor(obj);
             if (null != refbys) {
-                list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>("=ShortestPathToRoot=", DslExpression.CalculatorValue.NullObject));
+                list.Add(new KeyValuePair<string, DslExpression.BoxedValue>("=ShortestPathToRoot=", DslExpression.BoxedValue.NullObject));
                 foreach (var data in refbys) {
                     if (data.IsField()) {
                         var parent = data.m_Parent.obj;
@@ -1946,7 +1946,7 @@ internal sealed class ResourceProcessor
                         if (parent.managedTypeIndex >= 0 && parent.managedTypeIndex < s_CachedSnapshot.typeDescriptions.Count) {
                             name = s_CachedSnapshot.typeDescriptions.typeDescriptionName[parent.managedTypeIndex];
                         }
-                        list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>(string.Format("{0}.{1}", name, data.GetFieldName(s_CachedSnapshot)), DslExpression.CalculatorValue.FromObject(data.displayObject)));
+                        list.Add(new KeyValuePair<string, DslExpression.BoxedValue>(string.Format("{0}.{1}", name, data.GetFieldName(s_CachedSnapshot)), DslExpression.BoxedValue.FromObject(data.displayObject)));
                     }
                     else if (data.IsArrayItem()) {
                         var parent = data.m_Parent.obj;
@@ -1958,14 +1958,14 @@ internal sealed class ResourceProcessor
                             }
                             string rank = arrInfo.ArrayRankToString();
                             var indexStr = arrInfo.IndexToRankedString(data.arrayIndex);
-                            list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>(string.Format("{0}(rank:{1})[{2}]", type, rank, indexStr), DslExpression.CalculatorValue.FromObject(data.displayObject)));
+                            list.Add(new KeyValuePair<string, DslExpression.BoxedValue>(string.Format("{0}(rank:{1})[{2}]", type, rank, indexStr), DslExpression.BoxedValue.FromObject(data.displayObject)));
                         }
                         else {
                             string name = string.Empty;
                             if (data.managedTypeIndex >= 0 && data.managedTypeIndex < s_CachedSnapshot.typeDescriptions.Count) {
                                 name = s_CachedSnapshot.typeDescriptions.typeDescriptionName[data.managedTypeIndex];
                             }
-                            list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>(string.Format("{0}[{1}]", name, parent.arrayIndex), DslExpression.CalculatorValue.FromObject(data.displayObject)));
+                            list.Add(new KeyValuePair<string, DslExpression.BoxedValue>(string.Format("{0}[{1}]", name, parent.arrayIndex), DslExpression.BoxedValue.FromObject(data.displayObject)));
                         }
                     }
                     else if(data.isManaged) {
@@ -1973,7 +1973,7 @@ internal sealed class ResourceProcessor
                         if (data.managedTypeIndex >= 0 && data.managedTypeIndex < s_CachedSnapshot.typeDescriptions.Count) {
                             name = s_CachedSnapshot.typeDescriptions.typeDescriptionName[data.managedTypeIndex];
                         }
-                        list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>(name, DslExpression.CalculatorValue.FromObject(data.displayObject)));
+                        list.Add(new KeyValuePair<string, DslExpression.BoxedValue>(name, DslExpression.BoxedValue.FromObject(data.displayObject)));
                     }
                     else if (data.isNative) {
                         string name = string.Empty;
@@ -1985,22 +1985,22 @@ internal sealed class ResourceProcessor
                                 type = s_CachedSnapshot.nativeTypes.typeName[typeIndex];
                             }
                         }
-                        list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>(name + "(" + type + ")", DslExpression.CalculatorValue.FromObject(data.displayObject)));
+                        list.Add(new KeyValuePair<string, DslExpression.BoxedValue>(name + "(" + type + ")", DslExpression.BoxedValue.FromObject(data.displayObject)));
                     }
                     else {
-                        list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>(data.ToString(), DslExpression.CalculatorValue.FromObject(data.displayObject)));
+                        list.Add(new KeyValuePair<string, DslExpression.BoxedValue>(data.ToString(), DslExpression.BoxedValue.FromObject(data.displayObject)));
                     }
                 }
                 string reason;
                 s_ShortestPathToRootFinder.IsRoot(refbys.Last(), out reason);
-                list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>("This is a root because:" + reason, DslExpression.CalculatorValue.NullObject));
+                list.Add(new KeyValuePair<string, DslExpression.BoxedValue>("This is a root because:" + reason, DslExpression.BoxedValue.NullObject));
             }
             else {
-                list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>("No root is keeping this object alive.It will be collected next UnloadUnusedAssets() or scene load", DslExpression.CalculatorValue.NullObject));
+                list.Add(new KeyValuePair<string, DslExpression.BoxedValue>("No root is keeping this object alive.It will be collected next UnloadUnusedAssets() or scene load", DslExpression.BoxedValue.NullObject));
             }
         }
-        list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>(string.Empty, DslExpression.CalculatorValue.NullObject));
-        list.Add(new KeyValuePair<string, DslExpression.CalculatorValue>("[goto self]", DslExpression.CalculatorValue.FromObject(obj.displayObject)));
+        list.Add(new KeyValuePair<string, DslExpression.BoxedValue>(string.Empty, DslExpression.BoxedValue.NullObject));
+        list.Add(new KeyValuePair<string, DslExpression.BoxedValue>("[goto self]", DslExpression.BoxedValue.FromObject(obj.displayObject)));
         return list;
     }
     internal HashSet<ObjectData> GetObjectDataRefByHash(ulong addr)
@@ -2470,7 +2470,7 @@ internal sealed class ResourceProcessor
                                 IEnumerator<string> refByEnumer = null;
                                 if (null != refbys)
                                     refByEnumer = refbys.GetEnumerator();
-                                IEnumerator<KeyValuePair<string, DslExpression.CalculatorValue>> extraEnumer = null;
+                                IEnumerator<KeyValuePair<string, DslExpression.BoxedValue>> extraEnumer = null;
                                 if (null != item.ExtraList)
                                     extraEnumer = item.ExtraList.GetEnumerator();
                                 if (ct == 0) {
@@ -2530,7 +2530,7 @@ internal sealed class ResourceProcessor
                                 IEnumerator<string> refByEnumer = null;
                                 if (null != refbys)
                                     refByEnumer = refbys.GetEnumerator();
-                                IEnumerator<KeyValuePair<string, DslExpression.CalculatorValue>> extraEnumer = null;
+                                IEnumerator<KeyValuePair<string, DslExpression.BoxedValue>> extraEnumer = null;
                                 if (null != item.ExtraList)
                                     extraEnumer = item.ExtraList.GetEnumerator();
                                 if (ct == 0) {
@@ -2617,7 +2617,7 @@ internal sealed class ResourceProcessor
                 ResourceEditUtility.ItemInfo lastItem = null;
                 HashSet<string> refs = new HashSet<string>();
                 HashSet<string> refbys = new HashSet<string>();
-                List<KeyValuePair<string, DslExpression.CalculatorValue>> extraList = new List<KeyValuePair<string, DslExpression.CalculatorValue>>();
+                List<KeyValuePair<string, DslExpression.BoxedValue>> extraList = new List<KeyValuePair<string, DslExpression.BoxedValue>>();
                 for (i = 1; i < lines.Length; ++i) {
                     var fields = lines[i].Split('\t');
                     var assetPath = fields[0];
@@ -2637,7 +2637,7 @@ internal sealed class ResourceProcessor
                         if (!string.IsNullOrEmpty(refByAsset))
                             refbys.Add(refByAsset);
                         if (!string.IsNullOrEmpty(extraKeyVal))
-                            extraList.Add(new KeyValuePair<string, DslExpression.CalculatorValue>(extraKeyVal, extraKeyVal));
+                            extraList.Add(new KeyValuePair<string, DslExpression.BoxedValue>(extraKeyVal, extraKeyVal));
                     }
 
                     if (null == lastItem || !lastItem.IsEqual(assetPath, scenePath, info, order, value)) {
@@ -2654,7 +2654,7 @@ internal sealed class ResourceProcessor
 
                         refs = new HashSet<string>();
                         refbys = new HashSet<string>();
-                        extraList = new List<KeyValuePair<string, DslExpression.CalculatorValue>>();
+                        extraList = new List<KeyValuePair<string, DslExpression.BoxedValue>>();
 
                         m_ItemList.Add(item);
                         lastItem = item;
@@ -2929,7 +2929,7 @@ internal sealed class ResourceProcessor
                 int.TryParse(str, out iv);
                 list.Add(iv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<int>), Value = DslExpression.CalculatorValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<int>), Value = DslExpression.BoxedValue.FromObject(list), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "uintlist") {
@@ -2941,7 +2941,7 @@ internal sealed class ResourceProcessor
                 uint.TryParse(str, out iv);
                 list.Add(iv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<uint>), Value = DslExpression.CalculatorValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<uint>), Value = DslExpression.BoxedValue.FromObject(list), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "longlist") {
@@ -2953,7 +2953,7 @@ internal sealed class ResourceProcessor
                 long.TryParse(str, out iv);
                 list.Add(iv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<long>), Value = DslExpression.CalculatorValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<long>), Value = DslExpression.BoxedValue.FromObject(list), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "ulonglist") {
@@ -2965,7 +2965,7 @@ internal sealed class ResourceProcessor
                 ulong.TryParse(str, out iv);
                 list.Add(iv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<ulong>), Value = DslExpression.CalculatorValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<ulong>), Value = DslExpression.BoxedValue.FromObject(list), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "floatlist") {
@@ -2977,7 +2977,7 @@ internal sealed class ResourceProcessor
                 float.TryParse(str, out fv);
                 list.Add(fv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<float>), Value = DslExpression.CalculatorValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<float>), Value = DslExpression.BoxedValue.FromObject(list), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "doublelist") {
@@ -2989,13 +2989,13 @@ internal sealed class ResourceProcessor
                 double.TryParse(str, out fv);
                 list.Add(fv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<double>), Value = DslExpression.CalculatorValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<double>), Value = DslExpression.BoxedValue.FromObject(list), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "stringlist") {
             //stringlist(name, val);
             var v = val.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<string>), Value = DslExpression.CalculatorValue.FromObject(v), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<string>), Value = DslExpression.BoxedValue.FromObject(v), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "inthash") {
@@ -3009,7 +3009,7 @@ internal sealed class ResourceProcessor
                     hash.Add(iv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<int>), Value = DslExpression.CalculatorValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<int>), Value = DslExpression.BoxedValue.FromObject(hash), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "uinthash") {
@@ -3023,7 +3023,7 @@ internal sealed class ResourceProcessor
                     hash.Add(iv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<uint>), Value = DslExpression.CalculatorValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<uint>), Value = DslExpression.BoxedValue.FromObject(hash), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "longhash") {
@@ -3037,7 +3037,7 @@ internal sealed class ResourceProcessor
                     hash.Add(iv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<long>), Value = DslExpression.CalculatorValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<long>), Value = DslExpression.BoxedValue.FromObject(hash), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "ulonghash") {
@@ -3051,7 +3051,7 @@ internal sealed class ResourceProcessor
                     hash.Add(iv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<ulong>), Value = DslExpression.CalculatorValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<ulong>), Value = DslExpression.BoxedValue.FromObject(hash), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "floathash") {
@@ -3065,7 +3065,7 @@ internal sealed class ResourceProcessor
                     hash.Add(fv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<float>), Value = DslExpression.CalculatorValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<float>), Value = DslExpression.BoxedValue.FromObject(hash), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "doublehash") {
@@ -3079,7 +3079,7 @@ internal sealed class ResourceProcessor
                     hash.Add(fv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<double>), Value = DslExpression.CalculatorValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<double>), Value = DslExpression.BoxedValue.FromObject(hash), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "stringhash") {
@@ -3091,7 +3091,7 @@ internal sealed class ResourceProcessor
                     hash.Add(str);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<string>), Value = DslExpression.CalculatorValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<string>), Value = DslExpression.BoxedValue.FromObject(hash), StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "bool") {
@@ -3283,22 +3283,22 @@ internal sealed class ResourceProcessor
             }
         }
     }
-    internal List<DslExpression.CalculatorValue> NewCalculatorValueList()
+    internal List<DslExpression.BoxedValue> NewCalculatorValueList()
     {
         return m_ScriptCalculator.NewCalculatorValueList();
     }
-    internal void RecycleCalculatorValueList(List<DslExpression.CalculatorValue> list)
+    internal void RecycleCalculatorValueList(List<DslExpression.BoxedValue> list)
     {
         m_ScriptCalculator.RecycleCalculatorValueList(list);
     }
-    public DslExpression.CalculatorValue CallScript(DslExpression.DslCalculator calc, string name)
+    public DslExpression.BoxedValue CallScript(DslExpression.DslCalculator calc, string name)
     {
         var args = NewCalculatorValueList();
         var r = CallScript(calc, name, args);
         RecycleCalculatorValueList(args);
         return r;
     }
-    public DslExpression.CalculatorValue CallScript(DslExpression.DslCalculator calc, string name, DslExpression.CalculatorValue arg1)
+    public DslExpression.BoxedValue CallScript(DslExpression.DslCalculator calc, string name, DslExpression.BoxedValue arg1)
     {
         var args = NewCalculatorValueList();
         args.Add(arg1);
@@ -3306,7 +3306,7 @@ internal sealed class ResourceProcessor
         RecycleCalculatorValueList(args);
         return r;
     }
-    public DslExpression.CalculatorValue CallScript(DslExpression.DslCalculator calc, string name, DslExpression.CalculatorValue arg1, DslExpression.CalculatorValue arg2)
+    public DslExpression.BoxedValue CallScript(DslExpression.DslCalculator calc, string name, DslExpression.BoxedValue arg1, DslExpression.BoxedValue arg2)
     {
         var args = NewCalculatorValueList();
         args.Add(arg1);
@@ -3315,7 +3315,7 @@ internal sealed class ResourceProcessor
         RecycleCalculatorValueList(args);
         return r;
     }
-    public DslExpression.CalculatorValue CallScript(DslExpression.DslCalculator calc, string name, DslExpression.CalculatorValue arg1, DslExpression.CalculatorValue arg2, DslExpression.CalculatorValue arg3)
+    public DslExpression.BoxedValue CallScript(DslExpression.DslCalculator calc, string name, DslExpression.BoxedValue arg1, DslExpression.BoxedValue arg2, DslExpression.BoxedValue arg3)
     {
         var args = NewCalculatorValueList();
         args.Add(arg1);
@@ -3325,7 +3325,7 @@ internal sealed class ResourceProcessor
         RecycleCalculatorValueList(args);
         return r;
     }
-    internal DslExpression.CalculatorValue CallScript(DslExpression.DslCalculator calc, string name, List<DslExpression.CalculatorValue> args)
+    internal DslExpression.BoxedValue CallScript(DslExpression.DslCalculator calc, string name, List<DslExpression.BoxedValue> args)
     {
         if (null != m_ScriptCalculator) {
             if (null != calc) {
@@ -3334,7 +3334,7 @@ internal sealed class ResourceProcessor
                 }
             }
             else {
-                m_ScriptCalculator.SetGlobalVariable("params", DslExpression.CalculatorValue.FromObject(m_Params));
+                m_ScriptCalculator.SetGlobalVariable("params", DslExpression.BoxedValue.FromObject(m_Params));
                 foreach (var pair in m_Params) {
                     m_ScriptCalculator.SetGlobalVariable(pair.Key, pair.Value.Value);
                 }
@@ -3348,7 +3348,7 @@ internal sealed class ResourceProcessor
             return ret;
         }
         else {
-            return DslExpression.CalculatorValue.NullObject;
+            return DslExpression.BoxedValue.NullObject;
         }
     }
     internal void Collect()
@@ -3371,7 +3371,7 @@ internal sealed class ResourceProcessor
                 var ext = Path.GetExtension(file);
                 var table = new ResourceEditUtility.DataTable();
                 table.Load(file, Encoding.GetEncoding(paramInfo.Encoding), ext == ".csv" ? ',' : '\t');
-                paramInfo.Value = DslExpression.CalculatorValue.FromObject(table);
+                paramInfo.Value = DslExpression.BoxedValue.FromObject(table);
             }
             else if (paramInfo.Type == typeof(NPOI.SS.UserModel.IWorkbook) && paramInfo.Value.IsString) {
                 var file = paramInfo.Value.AsString;
@@ -3385,11 +3385,11 @@ internal sealed class ResourceProcessor
                         book = new NPOI.XSSF.UserModel.XSSFWorkbook(stream);
                     }
                 }
-                paramInfo.Value = DslExpression.CalculatorValue.FromObject(book);
+                paramInfo.Value = DslExpression.BoxedValue.FromObject(book);
             }
             else if (paramInfo.Type == typeof(object)) {
                 var funcName = paramInfo.StringValue;
-                paramInfo.Value = CallScript(null, funcName, DslExpression.CalculatorValue.FromObject(paramInfo));
+                paramInfo.Value = CallScript(null, funcName, DslExpression.BoxedValue.FromObject(paramInfo));
             }
         }
         if (m_SearchSource == "script") {
@@ -3531,9 +3531,9 @@ internal sealed class ResourceProcessor
     }
     internal void ReGroup(string itemCommand, string groupCommand)
     {
-        if (!string.IsNullOrEmpty(itemCommand) && ResourceEditUtility.LoadScript(itemCommand, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.CalculatorValue> { { "@context", DslExpression.CalculatorValue.FromObject(m_ItemList) } })) {
+        if (!string.IsNullOrEmpty(itemCommand) && ResourceEditUtility.LoadScript(itemCommand, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.BoxedValue> { { "@context", DslExpression.BoxedValue.FromObject(m_ItemList) } })) {
             foreach (var item in m_ItemList) {
-                ResourceEditUtility.EvalScript(item.ExtraObject, DslExpression.CalculatorValue.FromObject(item));
+                ResourceEditUtility.EvalScript(item.ExtraObject, DslExpression.BoxedValue.FromObject(item));
             }
         }
         CalcGroupValue(groupCommand);
@@ -3583,7 +3583,7 @@ internal sealed class ResourceProcessor
         }
         m_UnfilteredGroupCount = groups.Count;
         bool hasGroupCommand = false;
-        if (!string.IsNullOrEmpty(groupCommand) && ResourceEditUtility.LoadScript(groupCommand, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.CalculatorValue> { { "@context", DslExpression.CalculatorValue.FromObject(groups) } })) {
+        if (!string.IsNullOrEmpty(groupCommand) && ResourceEditUtility.LoadScript(groupCommand, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.BoxedValue> { { "@context", DslExpression.BoxedValue.FromObject(groups) } })) {
             hasGroupCommand = true;
         }
         m_GroupList.Clear();
@@ -3606,9 +3606,9 @@ internal sealed class ResourceProcessor
                     itemGroup.Order = item.Order;
                     itemGroup.Value = item.Value;
                     itemGroup.Selected = false;
-                    DslExpression.CalculatorValue ret;
+                    DslExpression.BoxedValue ret;
                     if (hasGroupCommand) {
-                        ret = ResourceEditUtility.EvalScript(item.ExtraObject, DslExpression.CalculatorValue.FromObject(itemGroup));
+                        ret = ResourceEditUtility.EvalScript(item.ExtraObject, DslExpression.BoxedValue.FromObject(itemGroup));
                     }
                     else {
                         ret = ResourceEditUtility.Group(itemGroup, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
@@ -3620,9 +3620,9 @@ internal sealed class ResourceProcessor
             }
             else {
                 group.PrepareShowInfo();
-                DslExpression.CalculatorValue ret;
+                DslExpression.BoxedValue ret;
                 if (hasGroupCommand) {
-                    ret = ResourceEditUtility.EvalScript(group.ExtraObject, DslExpression.CalculatorValue.FromObject(group));
+                    ret = ResourceEditUtility.EvalScript(group.ExtraObject, DslExpression.BoxedValue.FromObject(group));
                 }
                 else {
                     ret = ResourceEditUtility.Group(group, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
@@ -4099,7 +4099,7 @@ internal sealed class ResourceProcessor
                             assetObj = AssetDatabase.LoadMainAssetAtPath(assetPath);
                     }
                     var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = assetObj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
-                    var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "all_asset_bundle_info", DslExpression.CalculatorValue.FromObject(m_AssetBundleInfo) }, { "asset_bundle_info", DslExpression.CalculatorValue.FromObject(assetBundleInfo) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+                    var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.BoxedValue> { { "all_asset_bundle_info", DslExpression.BoxedValue.FromObject(m_AssetBundleInfo) }, { "asset_bundle_info", DslExpression.BoxedValue.FromObject(assetBundleInfo) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
                     if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                         m_ItemList.AddRange(m_Results);
                     }
@@ -4119,7 +4119,7 @@ internal sealed class ResourceProcessor
                     UnityEngine.Object assetObj = null;
                     AssetImporter importer = null;
                     var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = assetObj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
-                    var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "all_asset_bundle_info", DslExpression.CalculatorValue.FromObject(m_AssetBundleInfo) }, { "asset_bundle_info", DslExpression.CalculatorValue.FromObject(abInfo) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+                    var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.BoxedValue> { { "all_asset_bundle_info", DslExpression.BoxedValue.FromObject(m_AssetBundleInfo) }, { "asset_bundle_info", DslExpression.BoxedValue.FromObject(abInfo) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
                     if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                         m_ItemList.AddRange(m_Results);
                     }
@@ -4410,7 +4410,7 @@ internal sealed class ResourceProcessor
                         var row = sheet.GetRow(i);
                         if (null != row) {
                             var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
-                            var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "book", DslExpression.CalculatorValue.FromObject(book) }, { "sheet", DslExpression.CalculatorValue.FromObject(sheet) }, { "row", DslExpression.CalculatorValue.FromObject(row) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+                            var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.BoxedValue> { { "book", DslExpression.BoxedValue.FromObject(book) }, { "sheet", DslExpression.BoxedValue.FromObject(sheet) }, { "row", DslExpression.BoxedValue.FromObject(row) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
                             if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                                 m_ItemList.AddRange(m_Results);
                             }
@@ -4469,7 +4469,7 @@ internal sealed class ResourceProcessor
                     var row = table[i];
                     if (null != row) {
                         var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
-                        var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "sheet", DslExpression.CalculatorValue.FromObject(table) }, { "row", DslExpression.CalculatorValue.FromObject(row) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+                        var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.BoxedValue> { { "sheet", DslExpression.BoxedValue.FromObject(table) }, { "row", DslExpression.BoxedValue.FromObject(row) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
                         if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                             m_ItemList.AddRange(m_Results);
                         }
@@ -4490,7 +4490,7 @@ internal sealed class ResourceProcessor
         if (m_Params.TryGetValue("script", out info)) {
             var funcName = info.Value.AsString;
             if (!string.IsNullOrEmpty(funcName)) {
-                var list = CallScript(null, funcName, DslExpression.CalculatorValue.FromObject(info)).As<IList>();
+                var list = CallScript(null, funcName, DslExpression.BoxedValue.FromObject(info)).As<IList>();
                 if (null != list) {
                     foreach (var pathObj in list) {
                         var path = pathObj as string;
@@ -4709,7 +4709,7 @@ internal sealed class ResourceProcessor
                 assetObj = AssetDatabase.LoadMainAssetAtPath(assetPath);
         }
         var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = assetObj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
-        var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "memory", DslExpression.CalculatorValue.FromObject(memory) }, { "group_info", DslExpression.CalculatorValue.FromObject(groupInfo) }, { "all_groups", DslExpression.CalculatorValue.FromObject(infos) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+        var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.BoxedValue> { { "memory", DslExpression.BoxedValue.FromObject(memory) }, { "group_info", DslExpression.BoxedValue.FromObject(groupInfo) }, { "all_groups", DslExpression.BoxedValue.FromObject(infos) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
         if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
             m_ItemList.AddRange(m_Results);
         }
@@ -4729,7 +4729,7 @@ internal sealed class ResourceProcessor
                 assetObj = AssetDatabase.LoadMainAssetAtPath(assetPath);
         }
         var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Importer = importer, Object = assetObj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
-        var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "group_info", DslExpression.CalculatorValue.FromObject(groupInfo) }, { "all_groups", DslExpression.CalculatorValue.FromObject(infos) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+        var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.BoxedValue> { { "group_info", DslExpression.BoxedValue.FromObject(groupInfo) }, { "all_groups", DslExpression.BoxedValue.FromObject(infos) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
         if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
             m_ItemList.AddRange(m_Results);
         }
@@ -4744,7 +4744,7 @@ internal sealed class ResourceProcessor
             var info = pair.Value;
             ++m_CurSearchCount;
             var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
-            var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.CalculatorValue> { { "instrument", DslExpression.CalculatorValue.FromObject(info) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+            var ret = ResourceEditUtility.Filter(item, new Dictionary<string, DslExpression.BoxedValue> { { "instrument", DslExpression.BoxedValue.FromObject(info) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
             if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
                 m_ItemList.AddRange(m_Results);
             }
@@ -4795,7 +4795,7 @@ internal sealed class ResourceProcessor
         }
 
         var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
-        var addVars = new Dictionary<string, DslExpression.CalculatorValue> { { "instrument", DslExpression.CalculatorValue.FromObject(info) } };
+        var addVars = new Dictionary<string, DslExpression.BoxedValue> { { "instrument", DslExpression.BoxedValue.FromObject(info) } };
         var ret = ResourceEditUtility.Filter(item, addVars, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
         if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
             m_InstrumentInfos[index] = info;

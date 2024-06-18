@@ -590,14 +590,14 @@ public class BatchLoadWindow : EditorWindow
 
 public class ResourceCommandWindow : EditorWindow
 {
-    internal static void InitWindow(ResourceEditWindow resEdit, string content, DslExpression.CalculatorValue obj, DslExpression.CalculatorValue item)
+    internal static void InitWindow(ResourceEditWindow resEdit, string content, DslExpression.BoxedValue obj, DslExpression.BoxedValue item)
     {
         ResourceCommandWindow window = (ResourceCommandWindow)EditorWindow.GetWindow(typeof(ResourceCommandWindow));
         window.Init(resEdit, content, obj, item);
         window.Show();
     }
 
-    private void Init(ResourceEditWindow resEdit, string content, DslExpression.CalculatorValue obj, DslExpression.CalculatorValue item)
+    private void Init(ResourceEditWindow resEdit, string content, DslExpression.BoxedValue obj, DslExpression.BoxedValue item)
     {
         m_ResourceEditWindow = resEdit;
         m_Content = content;
@@ -645,7 +645,7 @@ public class ResourceCommandWindow : EditorWindow
         m_ScriptableInfo.ResourceEditWindowType = typeof(ResourceEditWindow);
         m_ScriptableInfo.ResourceProcessorType = typeof(ResourceProcessor);
         m_ScriptableInfo.ResourceEditUtilityType = typeof(ResourceEditUtility);
-        if(ResourceEditUtility.LoadScript(m_Command, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.CalculatorValue> { { "@context", DslExpression.CalculatorValue.FromObject(m_ScriptableInfo) } })) {
+        if(ResourceEditUtility.LoadScript(m_Command, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.BoxedValue> { { "@context", DslExpression.BoxedValue.FromObject(m_ScriptableInfo) } })) {
             var r = ResourceEditUtility.EvalScript(m_Object, m_Item);
             if (!r.IsNullObject) {
                 m_Results.Enqueue(string.Format("cmd:{0} result:{1}", m_Command, r.ToString()));
@@ -700,8 +700,8 @@ public class ResourceCommandWindow : EditorWindow
     private string m_Content = string.Empty;
     private Queue<string> m_Results = new Queue<string>();
     private string m_Command = string.Empty;
-    private DslExpression.CalculatorValue m_Object = DslExpression.CalculatorValue.NullObject;
-    private DslExpression.CalculatorValue m_Item = DslExpression.CalculatorValue.NullObject;
+    private DslExpression.BoxedValue m_Object = DslExpression.BoxedValue.NullObject;
+    private DslExpression.BoxedValue m_Item = DslExpression.BoxedValue.NullObject;
     private ResourceEditWindow m_ResourceEditWindow = null;
     private Vector2 m_Pos = Vector2.zero;
 }

@@ -37,11 +37,11 @@ internal static class ResourceEditUtility
     {
         internal string Name;
         internal Type Type;
-        internal CalculatorValue Value;
+        internal BoxedValue Value;
         internal string StringValue = string.Empty;
         internal string Encoding;
-        internal CalculatorValue MinValue;
-        internal CalculatorValue MaxValue;
+        internal BoxedValue MinValue;
+        internal BoxedValue MaxValue;
         internal List<string> OptionNames = new List<string>();
         internal Dictionary<string, string> Options = new Dictionary<string, string>();
         internal string OptionStyle = string.Empty;
@@ -64,8 +64,8 @@ internal static class ResourceEditUtility
         internal double Order;
         internal double Value;
         internal string Group;
-        internal IList<KeyValuePair<string, CalculatorValue>> ExtraList = null;
-        internal CalculatorValue ExtraObject = CalculatorValue.NullObject;
+        internal IList<KeyValuePair<string, BoxedValue>> ExtraList = null;
+        internal BoxedValue ExtraObject = BoxedValue.NullObject;
         internal string ExtraListBuildScript = string.Empty;
         internal string ExtraListClickScript = string.Empty;
         internal string RedirectDsl = string.Empty;
@@ -104,8 +104,8 @@ internal static class ResourceEditUtility
         internal string AssetPath;
         internal string ScenePath;
         internal string Info;
-        internal IList<KeyValuePair<string, CalculatorValue>> ExtraList = null;
-        internal CalculatorValue ExtraObject = CalculatorValue.NullObject;
+        internal IList<KeyValuePair<string, BoxedValue>> ExtraList = null;
+        internal BoxedValue ExtraObject = BoxedValue.NullObject;
         internal string ExtraListBuildScript = string.Empty;
         internal string ExtraListClickScript = string.Empty;
         internal string RedirectDsl = string.Empty;
@@ -546,33 +546,33 @@ internal static class ResourceEditUtility
         calc.Register("doublehashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.DoubleHashContainsExp>());
         calc.Register("stringhashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.StringHashContainsExp>());
     }
-    internal static CalculatorValue Filter(ItemInfo item, Dictionary<string, CalculatorValue> addVars, List<ItemInfo> results, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
+    internal static BoxedValue Filter(ItemInfo item, Dictionary<string, BoxedValue> addVars, List<ItemInfo> results, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
     {
         try {
             item.PrepareShowInfo();
             results.Clear();
-            var ret = CalculatorValue.NullObject;
+            var ret = BoxedValue.NullObject;
             if (null != calc) {
                 calc.SetGlobalVariable("assetpath", item.AssetPath);
                 calc.SetGlobalVariable("scenepath", item.ScenePath);
-                calc.SetGlobalVariable("importer", CalculatorValue.FromObject(item.Importer));
-                calc.SetGlobalVariable("object", CalculatorValue.FromObject(item.Object));
+                calc.SetGlobalVariable("importer", BoxedValue.FromObject(item.Importer));
+                calc.SetGlobalVariable("object", BoxedValue.FromObject(item.Object));
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
-                calc.SetGlobalVariable("results", CalculatorValue.FromObject(results));
-                calc.SetGlobalVariable("scenedeps", CalculatorValue.FromObject(sceneDeps));
-                calc.SetGlobalVariable("refdict", CalculatorValue.FromObject(refDict));
-                calc.SetGlobalVariable("refbydict", CalculatorValue.FromObject(refByDict));
+                calc.SetGlobalVariable("results", BoxedValue.FromObject(results));
+                calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
+                calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
+                calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
                 if (null != addVars) {
                     foreach (var pair in addVars) {
                         calc.SetGlobalVariable(pair.Key, pair.Value);
                     }
                 }
-                calc.SetGlobalVariable("params", CalculatorValue.FromObject(args));
+                calc.SetGlobalVariable("params", BoxedValue.FromObject(args));
                 foreach (var pair in args) {
                     var p = pair.Value;
-                    calc.SetGlobalVariable(p.Name, CalculatorValue.FromObject(p.Value));
+                    calc.SetGlobalVariable(p.Name, BoxedValue.FromObject(p.Value));
                 }
                 calc.RemoveGlobalVariable("group");
                 calc.RemoveGlobalVariable("extralist");
@@ -581,7 +581,7 @@ internal static class ResourceEditUtility
                     ret = calc.Calc(i.ToString());
                 }
 
-                CalculatorValue v;
+                BoxedValue v;
                 if (calc.TryGetGlobalVariable("assetpath", out v)) {
                     var path = v.AsString;
                     if (!string.IsNullOrEmpty(path))
@@ -627,9 +627,9 @@ internal static class ResourceEditUtility
                 if (calc.TryGetGlobalVariable("extralist", out v)) {
                     var list = v.As<IList>();
                     if (null != list) {
-                        var pairList = new List<KeyValuePair<string, CalculatorValue>>();
+                        var pairList = new List<KeyValuePair<string, BoxedValue>>();
                         foreach (var pair in list) {
-                            var keyObj = (KeyValuePair<string, CalculatorValue>)pair;
+                            var keyObj = (KeyValuePair<string, BoxedValue>)pair;
                             pairList.Add(keyObj);
                         }
                         item.ExtraList = pairList;
@@ -689,26 +689,26 @@ internal static class ResourceEditUtility
         }
         catch (Exception ex) {
             Debug.LogErrorFormat("filter {0} exception:{1}\n{2}", item.AssetPath, ex.Message, ex.StackTrace);
-            return CalculatorValue.NullObject;
+            return BoxedValue.NullObject;
         }
     }
-    internal static CalculatorValue Process(ItemInfo item, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
+    internal static BoxedValue Process(ItemInfo item, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
     {
         try {
             item.PrepareShowInfo();
-            var ret = CalculatorValue.NullObject;
+            var ret = BoxedValue.NullObject;
             if (null != calc) {
                 calc.SetGlobalVariable("assetpath", item.AssetPath);
                 calc.SetGlobalVariable("scenepath", item.ScenePath);
-                calc.SetGlobalVariable("importer", CalculatorValue.FromObject(item.Importer));
-                calc.SetGlobalVariable("object", CalculatorValue.FromObject(item.Object));
+                calc.SetGlobalVariable("importer", BoxedValue.FromObject(item.Importer));
+                calc.SetGlobalVariable("object", BoxedValue.FromObject(item.Object));
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
-                calc.SetGlobalVariable("scenedeps", CalculatorValue.FromObject(sceneDeps));
-                calc.SetGlobalVariable("refdict", CalculatorValue.FromObject(refDict));
-                calc.SetGlobalVariable("refbydict", CalculatorValue.FromObject(refByDict));
-                calc.SetGlobalVariable("params", CalculatorValue.FromObject(args));
+                calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
+                calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
+                calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
+                calc.SetGlobalVariable("params", BoxedValue.FromObject(args));
                 foreach (var pair in args) {
                     var p = pair.Value;
                     calc.SetGlobalVariable(p.Name, p.Value);
@@ -722,17 +722,17 @@ internal static class ResourceEditUtility
         }
         catch (Exception ex) {
             Debug.LogErrorFormat("process {0} exception:{1}\n{2}", item.AssetPath, ex.Message, ex.StackTrace);
-            return CalculatorValue.NullObject;
+            return BoxedValue.NullObject;
         }
     }
-    internal static CalculatorValue Group(GroupInfo item, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
+    internal static BoxedValue Group(GroupInfo item, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
     {
         try {
             item.PrepareShowInfo();
-            var ret = CalculatorValue.NullObject;
+            var ret = BoxedValue.NullObject;
             if (null != calc) {
                 calc.SetGlobalVariable("group", item.Group);
-                calc.SetGlobalVariable("items", CalculatorValue.FromObject(item.Items));
+                calc.SetGlobalVariable("items", BoxedValue.FromObject(item.Items));
                 calc.SetGlobalVariable("sum", item.Sum);
                 calc.SetGlobalVariable("max", item.Max);
                 calc.SetGlobalVariable("min", item.Min);
@@ -743,10 +743,10 @@ internal static class ResourceEditUtility
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
-                calc.SetGlobalVariable("scenedeps", CalculatorValue.FromObject(sceneDeps));
-                calc.SetGlobalVariable("refdict", CalculatorValue.FromObject(refDict));
-                calc.SetGlobalVariable("refbydict", CalculatorValue.FromObject(refByDict));
-                calc.SetGlobalVariable("params", CalculatorValue.FromObject(args));
+                calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
+                calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
+                calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
+                calc.SetGlobalVariable("params", BoxedValue.FromObject(args));
                 foreach (var pair in args) {
                     var p = pair.Value;
                     calc.SetGlobalVariable(p.Name, p.Value);
@@ -757,7 +757,7 @@ internal static class ResourceEditUtility
                     ret = calc.Calc(i.ToString());
                 }
 
-                CalculatorValue v;
+                BoxedValue v;
                 if (calc.TryGetGlobalVariable("assetpath", out v)) {
                     var path = v.AsString;
                     if (!string.IsNullOrEmpty(path))
@@ -787,9 +787,9 @@ internal static class ResourceEditUtility
                 if (calc.TryGetGlobalVariable("extralist", out v)) {
                     var list = v.As<IList>();
                     if (null != list) {
-                        var pairList = new List<KeyValuePair<string, CalculatorValue>>();
+                        var pairList = new List<KeyValuePair<string, BoxedValue>>();
                         foreach (var pair in list) {
-                            var keyObj = (KeyValuePair<string, CalculatorValue>)pair;
+                            var keyObj = (KeyValuePair<string, BoxedValue>)pair;
                             pairList.Add(keyObj);
                         }
                         item.ExtraList = pairList;
@@ -842,17 +842,17 @@ internal static class ResourceEditUtility
         }
         catch (Exception ex) {
             Debug.LogErrorFormat("group {0} exception:{1}\n{2}", item.AssetPath, ex.Message, ex.StackTrace);
-            return CalculatorValue.NullObject;
+            return BoxedValue.NullObject;
         }
     }
-    internal static CalculatorValue GroupProcess(GroupInfo item, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
+    internal static BoxedValue GroupProcess(GroupInfo item, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
     {
         try {
             item.PrepareShowInfo();
-            var ret = CalculatorValue.NullObject;
+            var ret = BoxedValue.NullObject;
             if (null != calc) {
                 calc.SetGlobalVariable("group", item.Group);
-                calc.SetGlobalVariable("items", CalculatorValue.FromObject(item.Items));
+                calc.SetGlobalVariable("items", BoxedValue.FromObject(item.Items));
                 calc.SetGlobalVariable("sum", item.Sum);
                 calc.SetGlobalVariable("max", item.Max);
                 calc.SetGlobalVariable("min", item.Min);
@@ -863,10 +863,10 @@ internal static class ResourceEditUtility
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
-                calc.SetGlobalVariable("scenedeps", CalculatorValue.FromObject(sceneDeps));
-                calc.SetGlobalVariable("refdict", CalculatorValue.FromObject(refDict));
-                calc.SetGlobalVariable("refbydict", CalculatorValue.FromObject(refByDict));
-                calc.SetGlobalVariable("params", CalculatorValue.FromObject(args));
+                calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
+                calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
+                calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
+                calc.SetGlobalVariable("params", BoxedValue.FromObject(args));
                 foreach (var pair in args) {
                     var p = pair.Value;
                     calc.SetGlobalVariable(p.Name, p.Value);
@@ -880,7 +880,7 @@ internal static class ResourceEditUtility
         }
         catch (Exception ex) {
             Debug.LogErrorFormat("group process {0} exception:{1}\n{2}", item.AssetPath, ex.Message, ex.StackTrace);
-            return CalculatorValue.NullObject;
+            return BoxedValue.NullObject;
         }
     }
     internal static void ResetResourceParamsCalculator()
@@ -892,7 +892,7 @@ internal static class ResourceEditUtility
         bool ret = false;
         var calc = GetResourceParamsCalculator();
         if (null != calc) {
-            var r = calc.Calc(proc, CalculatorValue.FromObject(resParams), CalculatorValue.FromObject(obj));
+            var r = calc.Calc(proc, BoxedValue.FromObject(resParams), BoxedValue.FromObject(obj));
             if (!r.IsNullObject) {
                 ret = r.GetBool();
             }
@@ -904,7 +904,7 @@ internal static class ResourceEditUtility
         bool ret = false;
         var calc = GetResourceParamsCalculator();
         if (null != calc) {
-            var r = calc.Calc(proc, CalculatorValue.FromObject(resParams), CalculatorValue.FromObject(obj));
+            var r = calc.Calc(proc, BoxedValue.FromObject(resParams), BoxedValue.FromObject(obj));
             if (!r.IsNullObject) {
                 ret = r.GetBool();
             }
@@ -915,7 +915,7 @@ internal static class ResourceEditUtility
     {
         s_CommandCalculator = null;
     }
-    internal static bool LoadScript(string code, Dictionary<string, ParamInfo> args, Dictionary<string, CalculatorValue> addVars)
+    internal static bool LoadScript(string code, Dictionary<string, ParamInfo> args, Dictionary<string, BoxedValue> addVars)
     {
         bool ret = false;
         string procCode = string.Format("script{{ {0}; }};", code);
@@ -929,7 +929,7 @@ internal static class ResourceEditUtility
             }
             if (null != func) {
                 var calc = GetCommandCalculator();
-                calc.SetGlobalVariable("params", CalculatorValue.FromObject(args));
+                calc.SetGlobalVariable("params", BoxedValue.FromObject(args));
                 foreach (var pair in args) {
                     var p = pair.Value;
                     calc.SetGlobalVariable(p.Name, p.Value);
@@ -945,7 +945,7 @@ internal static class ResourceEditUtility
         }
         return ret;
     }
-    internal static CalculatorValue EvalScript(CalculatorValue obj, CalculatorValue item)
+    internal static BoxedValue EvalScript(BoxedValue obj, BoxedValue item)
     {
         var calc = GetCommandCalculator();
         var r = calc.Calc("main", obj, item);
@@ -1515,7 +1515,7 @@ namespace ResourceEditApi
     }
     internal class SetParamsToModelExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -1578,7 +1578,7 @@ namespace ResourceEditApi
     }
     internal class GetParamsFromModelExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = true;
             if (operands.Count >= 2) {
@@ -1598,7 +1598,7 @@ namespace ResourceEditApi
     }
     internal class SetParamsToTextureExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -1729,7 +1729,7 @@ namespace ResourceEditApi
     }
     internal class GetParamsFromTextureExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = true;
             if (operands.Count >= 2) {
@@ -1766,7 +1766,7 @@ namespace ResourceEditApi
     }
     internal class SetParamsToPrefabExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -1790,7 +1790,7 @@ namespace ResourceEditApi
     }
     internal class GetParamsFromPrefabExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = true;
             if (operands.Count >= 2) {
@@ -1813,7 +1813,7 @@ namespace ResourceEditApi
     }
     internal class UpdateModelDbExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -1829,7 +1829,7 @@ namespace ResourceEditApi
     }
     internal class UpdateTextureDbExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -1845,7 +1845,7 @@ namespace ResourceEditApi
     }
     internal class UpdatePrefabDbExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -1861,9 +1861,9 @@ namespace ResourceEditApi
     }
     internal class CallScriptExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var proc = operands[0].AsString;
                 if (null != proc) {
@@ -1880,9 +1880,9 @@ namespace ResourceEditApi
     }
     internal class SetRedirectExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var dsl = operands[0].AsString;
                 if (!string.IsNullOrEmpty(dsl)) {
@@ -1894,8 +1894,8 @@ namespace ResourceEditApi
                             args.Add(key, val);
                         }
                     }
-                    Calculator.SetGlobalVariable("redirectdsl", CalculatorValue.FromObject(dsl));
-                    Calculator.SetGlobalVariable("redirectargs", CalculatorValue.FromObject(args));
+                    Calculator.SetGlobalVariable("redirectdsl", BoxedValue.FromObject(dsl));
+                    Calculator.SetGlobalVariable("redirectargs", BoxedValue.FromObject(args));
                 }
             }
             return r;
@@ -1903,16 +1903,16 @@ namespace ResourceEditApi
     }
     internal class NewItemExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var results = Calculator.GetVariable("results").As<List<ResourceEditUtility.ItemInfo>>();
                 if (null != results) {
                     var item = new ResourceEditUtility.ItemInfo();
                     item.PrepareShowInfo();
                     results.Add(item);
-                    r = CalculatorValue.FromObject(item);
+                    r = BoxedValue.FromObject(item);
                 }
             }
             return r;
@@ -1920,9 +1920,9 @@ namespace ResourceEditApi
     }
     internal class SetExtraObjectExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var item = operands[0].As<ResourceEditUtility.ItemInfo>();
                 r = operands[1];
@@ -1933,9 +1933,9 @@ namespace ResourceEditApi
     }
     internal class GetExtraObjectExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var item = operands[0].As<ResourceEditUtility.ItemInfo>();
                 r = item.ExtraObject;
@@ -1945,9 +1945,9 @@ namespace ResourceEditApi
     }
     internal class CalcExtraObjectFieldCountExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var items = operands[0].As<IList>();
                 var index = operands[1].GetInt();
@@ -1980,18 +1980,18 @@ namespace ResourceEditApi
     }
     internal class NewExtraListExp : AbstractExpression
     {
-        protected override CalculatorValue DoCalc()
+        protected override BoxedValue DoCalc()
         {
-            var r = CalculatorValue.NullObject;
-            var list = new List<KeyValuePair<string, CalculatorValue>>();
+            var r = BoxedValue.NullObject;
+            var list = new List<KeyValuePair<string, BoxedValue>>();
             for (int i = 0; i < m_Expressions.Count - 1; i += 2) {
                 var key = m_Expressions[i].Calc().AsString;
                 var val = m_Expressions[i + 1].Calc();
                 if (null != key) {
-                    list.Add(new KeyValuePair<string, CalculatorValue>(key, val));
+                    list.Add(new KeyValuePair<string, BoxedValue>(key, val));
                 }
             }
-            r = CalculatorValue.FromObject(list);
+            r = BoxedValue.FromObject(list);
             return r;
         }
         protected override bool Load(Dsl.FunctionData funcData)
@@ -2033,15 +2033,15 @@ namespace ResourceEditApi
     }
     internal class ExtraListAddExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 3) {
-                var list = operands[0].As<List<KeyValuePair<string, CalculatorValue>>>();
+                var list = operands[0].As<List<KeyValuePair<string, BoxedValue>>>();
                 string key = operands[1].AsString;
                 var val = operands[2];
                 if (null != list && null != key) {
-                    list.Add(new KeyValuePair<string, CalculatorValue>(key, val));
+                    list.Add(new KeyValuePair<string, BoxedValue>(key, val));
                 }
             }
             return r;
@@ -2049,11 +2049,11 @@ namespace ResourceEditApi
     }
     internal class ExtraListClearExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
-                var list = operands[0].As<List<KeyValuePair<string, CalculatorValue>>>();
+                var list = operands[0].As<List<KeyValuePair<string, BoxedValue>>>();
                 if (null != list) {
                     list.Clear();
                 }
@@ -2063,19 +2063,19 @@ namespace ResourceEditApi
     }
     internal class GetReferenceAssetsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var dict = Calculator.GetVariable("refdict").As<Dictionary<string, HashSet<string>>>();
                 var path = operands[0].AsString;
                 if (null != dict && !string.IsNullOrEmpty(path)) {
                     HashSet<string> refbyset;
                     if (dict.TryGetValue(path, out refbyset)) {
-                        r = CalculatorValue.FromObject(refbyset.ToArray());
+                        r = BoxedValue.FromObject(refbyset.ToArray());
                     }
                     else {
-                        r = CalculatorValue.FromObject(new List<string>());
+                        r = BoxedValue.FromObject(new List<string>());
                     }
                 }
             }
@@ -2084,19 +2084,19 @@ namespace ResourceEditApi
     }
     internal class GetReferenceByAssetsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var dict = Calculator.GetVariable("refbydict").As<Dictionary<string, HashSet<string>>>();
                 var path = operands[0].AsString;
                 if (null != dict && !string.IsNullOrEmpty(path)) {
                     HashSet<string> refbyset;
                     if (dict.TryGetValue(path, out refbyset)) {
-                        r = CalculatorValue.FromObject(refbyset.ToArray());
+                        r = BoxedValue.FromObject(refbyset.ToArray());
                     }
                     else {
-                        r = CalculatorValue.FromObject(new List<string>());
+                        r = BoxedValue.FromObject(new List<string>());
                     }
                 }
             }
@@ -2105,9 +2105,9 @@ namespace ResourceEditApi
     }
     internal class CalcRefCountExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var refDict = Calculator.GetVariable("refdict").As<Dictionary<string, HashSet<string>>>();
                 var file = operands[0].AsString;
@@ -2126,9 +2126,9 @@ namespace ResourceEditApi
     }
     internal class CalcRefByCountExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var refByDict = Calculator.GetVariable("refbydict").As<Dictionary<string, HashSet<string>>>();
                 var file = operands[0].AsString;
@@ -2147,9 +2147,9 @@ namespace ResourceEditApi
     }
     internal class FindAssetExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var sceneDeps = Calculator.GetVariable("scenedeps").As<ResourceEditUtility.SceneDepInfo>();
                 var asset = operands[0].AsString;
@@ -2208,26 +2208,26 @@ namespace ResourceEditApi
                         }
                     }
                 }
-                r = CalculatorValue.FromObject(new object[] { assetPath, scenePath, sceneObj });
+                r = BoxedValue.FromObject(new object[] { assetPath, scenePath, sceneObj });
             }
             return r;
         }
     }
     internal class FindShortestPathToRootExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
                 if (obj.IsObject && obj.GetObject() is ObjectData) {
                     var data = (ObjectData)obj.GetObject();
-                    r = CalculatorValue.FromObject(ResourceProcessor.Instance.FindShortestPathToRoot(data));
+                    r = BoxedValue.FromObject(ResourceProcessor.Instance.FindShortestPathToRoot(data));
                 }
                 else {
                     try {
                         ulong addr = obj.GetULong();
-                        r = CalculatorValue.FromObject(ResourceProcessor.Instance.FindShortestPathToRoot(addr));
+                        r = BoxedValue.FromObject(ResourceProcessor.Instance.FindShortestPathToRoot(addr));
                     }
                     catch {
                     }
@@ -2238,19 +2238,19 @@ namespace ResourceEditApi
     }
     internal class GetObjectDataRefByHashExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
                 if (obj.IsObject && obj.GetObject() is ObjectData) {
                     var data = (ObjectData)obj.GetObject();
-                    r = CalculatorValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByHash(data));
+                    r = BoxedValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByHash(data));
                 }
                 else {
                     try {
                         ulong addr = obj.GetULong();
-                        r = CalculatorValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByHash(addr));
+                        r = BoxedValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByHash(addr));
                     }
                     catch {
                     }
@@ -2261,19 +2261,19 @@ namespace ResourceEditApi
     }
     internal class GetObjectDataRefByListExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
                 if (obj.IsObject && obj.GetObject() is ObjectData) {
                     var data = (ObjectData)obj.GetObject();
-                    r = CalculatorValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByList(data));
+                    r = BoxedValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByList(data));
                 }
                 else {
                     try {
                         ulong addr = obj.GetULong();
-                        r = CalculatorValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByList(addr));
+                        r = BoxedValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByList(addr));
                     }
                     catch {
                     }
@@ -2284,9 +2284,9 @@ namespace ResourceEditApi
     }
     internal class OpenLinkExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
                 if (obj.IsObject && obj.GetObject() is ObjectData) {
@@ -2307,9 +2307,9 @@ namespace ResourceEditApi
     }
     internal class OpenReferenceLinkExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
                 if (obj.IsObject && obj.GetObject() is ObjectData) {
@@ -2330,9 +2330,9 @@ namespace ResourceEditApi
     }
     internal class OpenLinkInCurrentTableExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var index = operands[0].GetInt();
                 List<string> list = new List<string>();
@@ -2347,7 +2347,7 @@ namespace ResourceEditApi
     }
     internal class GetCurrentTableNamesExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             var sb = new StringBuilder();
             int ct = ResourceProcessor.Instance.GetCurrentTableCount();
@@ -2364,7 +2364,7 @@ namespace ResourceEditApi
     }
     internal class GetCurrentTableCountExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             int r = ResourceProcessor.Instance.GetCurrentTableCount();
             return r;
@@ -2372,9 +2372,9 @@ namespace ResourceEditApi
     }
     internal class GetCurrentTableNameExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var index = operands[0].GetInt();
                 r = ResourceProcessor.Instance.GetCurrentTableName(index);
@@ -2384,73 +2384,73 @@ namespace ResourceEditApi
     }
     internal class GetCurrentTableExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var index = operands[0].GetInt();
-                r = CalculatorValue.FromObject(ResourceProcessor.Instance.GetCurrentTable(index));
+                r = BoxedValue.FromObject(ResourceProcessor.Instance.GetCurrentTable(index));
             }
             return r;
         }
     }
     internal class ObjectDataFromAddressExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
                 ulong addr = obj.GetULong();
-                r = CalculatorValue.FromObject(ResourceProcessor.Instance.ObjectDataFromAddress(addr));
+                r = BoxedValue.FromObject(ResourceProcessor.Instance.ObjectDataFromAddress(addr));
             }
             return r;
         }
     }
     internal class ObjectDataFromUnifiedObjectIndexExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
                 int index = obj.GetInt();
-                r = CalculatorValue.FromObject(ResourceProcessor.Instance.ObjectDataFromUnifiedObjectIndex(index));
+                r = BoxedValue.FromObject(ResourceProcessor.Instance.ObjectDataFromUnifiedObjectIndex(index));
             }
             return r;
         }
     }
     internal class ObjectDataFromNativeObjectIndexExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
                 int index = obj.GetInt();
-                r = CalculatorValue.FromObject(ResourceProcessor.Instance.ObjectDataFromNativeObjectIndex(index));
+                r = BoxedValue.FromObject(ResourceProcessor.Instance.ObjectDataFromNativeObjectIndex(index));
             }
             return r;
         }
     }
     internal class ObjectDataFromManagedObjectIndexExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
                 int index = obj.GetInt();
-                r = CalculatorValue.FromObject(ResourceProcessor.Instance.ObjectDataFromManagedObjectIndex(index));
+                r = BoxedValue.FromObject(ResourceProcessor.Instance.ObjectDataFromManagedObjectIndex(index));
             }
             return r;
         }
     }
     internal class LoadIdaproSymbolsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 if (!string.IsNullOrEmpty(file)) {
@@ -2479,7 +2479,7 @@ namespace ResourceEditApi
                             }
                         }
                     }
-                    r = CalculatorValue.FromObject(symbols);
+                    r = BoxedValue.FromObject(symbols);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -2489,9 +2489,9 @@ namespace ResourceEditApi
     }
     internal class LoadXcodeSymbolsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 if (!string.IsNullOrEmpty(file)) {
@@ -2535,7 +2535,7 @@ namespace ResourceEditApi
                             }
                         }
                     }
-                    r = CalculatorValue.FromObject(symbols);
+                    r = BoxedValue.FromObject(symbols);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -2567,9 +2567,9 @@ namespace ResourceEditApi
     }
     internal class LoadBuglyAndroidSymbolsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 if (!string.IsNullOrEmpty(file)) {
@@ -2627,7 +2627,7 @@ namespace ResourceEditApi
                         }
                         fs.Close();
                     }
-                    r = CalculatorValue.FromObject(symbols);
+                    r = BoxedValue.FromObject(symbols);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -2639,9 +2639,9 @@ namespace ResourceEditApi
     }
     internal class LoadBuglyIosSymbolsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 if (!string.IsNullOrEmpty(file)) {
@@ -2668,7 +2668,7 @@ namespace ResourceEditApi
                             }
                         }
                     }
-                    r = CalculatorValue.FromObject(symbols);
+                    r = BoxedValue.FromObject(symbols);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -2678,9 +2678,9 @@ namespace ResourceEditApi
     }
     internal class ConvertToRelativeAddrsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 3) {
                 var lines = operands[0].As<IList<string>>();
                 var key = operands[1].AsString;
@@ -2709,7 +2709,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(lines);
+                    r = BoxedValue.FromObject(lines);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -2719,9 +2719,9 @@ namespace ResourceEditApi
     }
     internal class MapBuglyAndroidSymbolsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 3) {
                 var lines = operands[0].As<IList<string>>();
                 var symbols = operands[1].As<IList<ResourceEditUtility.SymbolInfo>>();
@@ -2783,7 +2783,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(lines);
+                    r = BoxedValue.FromObject(lines);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -2795,9 +2795,9 @@ namespace ResourceEditApi
     }
     internal class MapBuglyIosSymbolsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 3) {
                 var lines = operands[0].As<IList<string>>();
                 var symbols = operands[1].As<IList<ResourceEditUtility.SymbolInfo>>();
@@ -2848,7 +2848,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(lines);
+                    r = BoxedValue.FromObject(lines);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -2858,9 +2858,9 @@ namespace ResourceEditApi
     }
     internal class MapMyhookSymbolsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 4) {
                 var lines = operands[0].As<IList<string>>();
                 var section_start = operands[1].GetULong();
@@ -2928,7 +2928,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(lines);
+                    r = BoxedValue.FromObject(lines);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -2962,9 +2962,9 @@ namespace ResourceEditApi
     }
     internal class GrepExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var lines = operands[0].As<IList<string>>();
                 Regex regex = null;
@@ -2996,7 +2996,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(outLines);
+                    r = BoxedValue.FromObject(outLines);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -3005,9 +3005,9 @@ namespace ResourceEditApi
     }
     internal class SubstExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 3) {
                 var lines = operands[0].As<IList<string>>();
                 Regex regex = new Regex(operands[1].AsString, RegexOptions.Compiled);
@@ -3035,7 +3035,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(outLines);
+                    r = BoxedValue.FromObject(outLines);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -3044,9 +3044,9 @@ namespace ResourceEditApi
     }
     internal class SetClipboardExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var str = operands[0].AsString;
                 if (null != str) {
@@ -3059,7 +3059,7 @@ namespace ResourceEditApi
     }
     internal class GetClipboardExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             string r = GUIUtility.systemCopyBuffer;
             return r;
@@ -3067,7 +3067,7 @@ namespace ResourceEditApi
     }
     internal class SelectObjectExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 1) {
@@ -3082,7 +3082,7 @@ namespace ResourceEditApi
     }
     internal class SelectProjectObjectExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 1) {
@@ -3097,7 +3097,7 @@ namespace ResourceEditApi
     }
     internal class SelectSceneObjectExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 1) {
@@ -3112,9 +3112,9 @@ namespace ResourceEditApi
     }
     internal class SaveAndReimportExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var importer = Calculator.GetVariable("importer").As<AssetImporter>();
                 if (null != importer && ResourceEditUtility.EnableSaveAndReimport) {
@@ -3128,9 +3128,9 @@ namespace ResourceEditApi
     }
     internal class SetDirtyExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0].As<UnityEngine.Object>();
                 if (null != obj) {
@@ -3142,13 +3142,13 @@ namespace ResourceEditApi
     }
     internal class GetDefaultTextureSettingExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var importer = Calculator.GetVariable("importer").As<TextureImporter>();
                 if (null != importer) {
-                    r = CalculatorValue.FromObject(importer.GetDefaultPlatformTextureSettings());
+                    r = BoxedValue.FromObject(importer.GetDefaultPlatformTextureSettings());
                 }
             }
             return r;
@@ -3156,14 +3156,14 @@ namespace ResourceEditApi
     }
     internal class GetTextureSettingExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var importer = Calculator.GetVariable("importer").As<TextureImporter>();
                 var platform = operands[0].AsString;
                 if (null != importer) {
-                    r = CalculatorValue.FromObject(importer.GetPlatformTextureSettings(platform));
+                    r = BoxedValue.FromObject(importer.GetPlatformTextureSettings(platform));
                 }
             }
             return r;
@@ -3171,15 +3171,15 @@ namespace ResourceEditApi
     }
     internal class SetTextureSettingExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var importer = Calculator.GetVariable("importer").As<TextureImporter>();
                 var setting = operands[0].As<TextureImporterPlatformSettings>();
                 if (null != importer && null != setting) {
                     importer.SetPlatformTextureSettings(setting);
-                    r = CalculatorValue.FromObject(setting);
+                    r = BoxedValue.FromObject(setting);
                 }
             }
             return r;
@@ -3187,7 +3187,7 @@ namespace ResourceEditApi
     }
     internal class TextureIsNotAstcExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             int r = 0;
             if (operands.Count >= 1) {
@@ -3215,7 +3215,7 @@ namespace ResourceEditApi
     }
     internal class IsAstcTextureExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             int r = 0;
             if (operands.Count >= 1) {
@@ -3287,9 +3287,9 @@ namespace ResourceEditApi
     }
     internal class SetAstcTextureExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var importer = Calculator.GetVariable("importer").As<TextureImporter>();
                 var setting = operands[0].As<TextureImporterPlatformSettings>();
@@ -3364,7 +3364,7 @@ namespace ResourceEditApi
     }
     internal class IsSceneAstcTextureExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             int r = 0;
             if (operands.Count >= 1) {
@@ -3432,9 +3432,9 @@ namespace ResourceEditApi
     }
     internal class SetSceneAstcTextureExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var importer = Calculator.GetVariable("importer").As<TextureImporter>();
                 var setting = operands[0].As<TextureImporterPlatformSettings>();
@@ -3504,7 +3504,7 @@ namespace ResourceEditApi
     }
     internal class IsTextureNoAlphaSourceExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 0) {
@@ -3518,7 +3518,7 @@ namespace ResourceEditApi
     }
     internal class DoesTextureHaveAlphaExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 0) {
@@ -3532,7 +3532,7 @@ namespace ResourceEditApi
     }
     internal class CorrectNoneAlphaTextureExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 0) {
@@ -3547,7 +3547,7 @@ namespace ResourceEditApi
     }
     internal class SetNoneAlphaTextureExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 0) {
@@ -3562,9 +3562,9 @@ namespace ResourceEditApi
     }
     internal class GetTextureCompressionExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var setting = operands[0].As<TextureImporterPlatformSettings>();
                 if (null != setting) {
@@ -3589,9 +3589,9 @@ namespace ResourceEditApi
     }
     internal class SetTextureCompressionExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var setting = operands[0].As<TextureImporterPlatformSettings>();
                 var type = operands[1].AsString;
@@ -3612,9 +3612,9 @@ namespace ResourceEditApi
     }
     internal class GetMeshCompressionExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 if (null != importer) {
@@ -3639,9 +3639,9 @@ namespace ResourceEditApi
     }
     internal class SetMeshCompressionExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 var type = operands[0].AsString;
@@ -3662,9 +3662,9 @@ namespace ResourceEditApi
     }
     internal class SetMeshImportExternalMaterialsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 if (null != importer) {
@@ -3680,9 +3680,9 @@ namespace ResourceEditApi
     }
     internal class SetMeshImportInPrefabMaterialsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 if (null != importer) {
@@ -3696,9 +3696,9 @@ namespace ResourceEditApi
     }
     internal class CloseMeshAnimationIfNoAnimationExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 if (null != importer) {
@@ -3719,7 +3719,7 @@ namespace ResourceEditApi
             Particle = 2,
             All = 3,
         }
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             if (operands.Count >= 1) {
                 var obj0 = operands[0].As<GameObject>();
@@ -3776,17 +3776,17 @@ namespace ResourceEditApi
                             }
                         }
                     }
-                    return CalculatorValue.FromObject(results);
+                    return BoxedValue.FromObject(results);
                 }
             }
-            return CalculatorValue.FromObject(new List<Mesh>());
+            return BoxedValue.FromObject(new List<Mesh>());
         }
     }
     internal class CollectMeshInfoExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0].As<UnityEngine.GameObject>();
                 ModelImporter importer = null;
@@ -3872,7 +3872,7 @@ namespace ResourceEditApi
                             }
                         }
                     }
-                    r = CalculatorValue.FromObject(info);
+                    r = BoxedValue.FromObject(info);
                 }
             }
             return r;
@@ -3880,9 +3880,9 @@ namespace ResourceEditApi
     }
     internal class CollectAnimatorControllerInfoExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var ctrl = operands[0].As<RuntimeAnimatorController>();
                 if (null != ctrl) {
@@ -3915,7 +3915,7 @@ namespace ResourceEditApi
                             info.CollectClip(clip);
                         }
                     }
-                    r = CalculatorValue.FromObject(info);
+                    r = BoxedValue.FromObject(info);
                 }
             }
             return r;
@@ -3941,9 +3941,9 @@ namespace ResourceEditApi
     }
     internal class CollectPrefabInfoExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0].As<UnityEngine.GameObject>();
                 if (null != obj) {
@@ -4035,7 +4035,7 @@ namespace ResourceEditApi
                         }
                     }
                     info.clipCount = clipCount;
-                    r = CalculatorValue.FromObject(info);
+                    r = BoxedValue.FromObject(info);
                 }
             }
             return r;
@@ -4043,9 +4043,9 @@ namespace ResourceEditApi
     }
     internal class GetAnimationClipInfoExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 string assetPath = Calculator.GetVariable("assetpath").AsString;
                 if (!string.IsNullOrEmpty(assetPath)) {
@@ -4069,7 +4069,7 @@ namespace ResourceEditApi
                             }
                             clipInfo.maxKeyFrameCount = maxKfc;
                             clipInfo.maxKeyFrameCurveName = curveName;
-                            r = CalculatorValue.FromObject(clipInfo);
+                            r = BoxedValue.FromObject(clipInfo);
                         }
                         Resources.UnloadAsset(obj);
                     }
@@ -4080,9 +4080,9 @@ namespace ResourceEditApi
     }
     internal class GetAnimationCompressionExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 if (null != importer) {
@@ -4107,9 +4107,9 @@ namespace ResourceEditApi
     }
     internal class SetAnimationCompressionExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 var type = operands[0].AsString;
@@ -4130,9 +4130,9 @@ namespace ResourceEditApi
     }
     internal class GetAnimationTypeExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 if (null != importer) {
@@ -4157,9 +4157,9 @@ namespace ResourceEditApi
     }
     internal class SetAnimationTypeExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 var type = operands[0].AsString;
@@ -4180,9 +4180,9 @@ namespace ResourceEditApi
     }
     internal class SetExtraExposedTransformPathsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var importer = Calculator.GetVariable("importer").As<ModelImporter>();
                 var obj = operands[0].As<UnityEngine.GameObject>();
@@ -4230,9 +4230,9 @@ namespace ResourceEditApi
     }
     internal class ClearAnimationScaleCurveExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
                 var path = Calculator.GetVariable("assetpath").AsString;
                 if (null != path) {
@@ -4258,14 +4258,14 @@ namespace ResourceEditApi
     }
     internal class GetAudioSettingExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var importer = Calculator.GetVariable("importer").As<AudioImporter>();
                 var platform = operands[0].AsString;
                 if (null != importer) {
-                    r = CalculatorValue.FromObject(importer.GetOverrideSampleSettings(platform));
+                    r = BoxedValue.FromObject(importer.GetOverrideSampleSettings(platform));
                 }
             }
             return r;
@@ -4273,16 +4273,16 @@ namespace ResourceEditApi
     }
     internal class SetAudioSettingExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var importer = Calculator.GetVariable("importer").As<AudioImporter>();
                 var platform = operands[0].AsString;
                 var setting = (AudioImporterSampleSettings)operands[1].GetObject();
                 if (null != importer) {
                     importer.SetOverrideSampleSettings(platform, setting);
-                    r = CalculatorValue.FromObject(setting);
+                    r = BoxedValue.FromObject(setting);
                 }
             }
             return r;
@@ -4290,9 +4290,9 @@ namespace ResourceEditApi
     }
     internal class SplitAnimationReferenceExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
 #if QINSHI
             if (operands.Count >= 1) {
                 var path = Calculator.GetVariable("assetpath").AsString;
@@ -4369,7 +4369,7 @@ namespace ResourceEditApi
     }
     internal class CalcMeshVertexComponentCountExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             if (operands.Count >= 1) {
                 var obj0 = operands[0].As<GameObject>();
@@ -4408,10 +4408,10 @@ namespace ResourceEditApi
                             }
                         }
                     }
-                    return CalculatorValue.FromObject(pairList);
+                    return BoxedValue.FromObject(pairList);
                 }
             }
-            return CalculatorValue.NullObject;
+            return BoxedValue.NullObject;
         }
         private KeyValuePair<string, int> CalcOneMesh(string name, Mesh mesh)
         {
@@ -4462,7 +4462,7 @@ namespace ResourceEditApi
     }
     internal class CalcMeshTexRatioExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             object ret = new object[] { string.Empty, 0 };
             if (operands.Count >= 1) {
@@ -4551,14 +4551,14 @@ namespace ResourceEditApi
                     ret = new object[] { info, maxVal, firstRatio1, firstRatio2 };
                 }
             }
-            return CalculatorValue.FromObject(ret);
+            return BoxedValue.FromObject(ret);
         }
     }
     internal class CalcAssetMd5Exp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 if (null != file) {
@@ -4578,9 +4578,9 @@ namespace ResourceEditApi
     }
     internal class CalcAssetSizeExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 if (null != file) {
@@ -4594,9 +4594,9 @@ namespace ResourceEditApi
     }
     internal class DeleteAssetExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 if (null != file) {
@@ -4608,7 +4608,7 @@ namespace ResourceEditApi
     }
     internal class GetShaderUtilExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             var r = typeof(ShaderUtil);
             return r;
@@ -4616,9 +4616,9 @@ namespace ResourceEditApi
     }
     internal class GetShaderPropertyCountExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var shader = operands[0].As<Shader>();
                 if (null != shader) {
@@ -4644,9 +4644,9 @@ namespace ResourceEditApi
     }
     internal class GetShaderPropertyNamesExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var shader = operands[0].As<Shader>();
                 int type = (int)ShaderUtil.ShaderPropertyType.TexEnv;
@@ -4663,7 +4663,7 @@ namespace ResourceEditApi
                             list.Add(name);
                         }
                     }
-                    r = CalculatorValue.FromObject(list);
+                    r = BoxedValue.FromObject(list);
                 }
             }
             return r;
@@ -4671,9 +4671,9 @@ namespace ResourceEditApi
     }
     internal class GetShaderVariantsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var shader = operands[0].As<Shader>();
                 if (null != shader) {
@@ -4686,7 +4686,7 @@ namespace ResourceEditApi
                         t.InvokeMember("GetShaderVariantEntries", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, args);
                         var types = args[2] as int[];
                         var keywords = args[3] as string[];
-                        r = DslExpression.CalculatorValue.FromObject(new object[] { types, keywords });
+                        r = DslExpression.BoxedValue.FromObject(new object[] { types, keywords });
                     }
                 }
             }
@@ -4696,9 +4696,9 @@ namespace ResourceEditApi
     }
     internal class AddShaderToCollectionExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var shader = operands[0].As<Shader>();
                 ShaderVariantCollection coll = null;
@@ -4714,7 +4714,7 @@ namespace ResourceEditApi
                 if (null != shader && null != coll) {
                     var t = typeof(ShaderUtil);
                     var args = new object[] { shader, coll };
-                    r = CalculatorValue.FromObject(t.InvokeMember("AddNewShaderToCollection", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, args));
+                    r = BoxedValue.FromObject(t.InvokeMember("AddNewShaderToCollection", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, args));
                     EditorUtility.SetDirty(coll);
                 }
             }
@@ -4725,14 +4725,14 @@ namespace ResourceEditApi
     }
     internal class GetAllDslFilesExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             if (operands.Count > 0) {
                 int sceneId = operands[0].GetInt();
                 var hash = BuildHashSet(sceneId);
-                return CalculatorValue.FromObject(hash.ToList());
+                return BoxedValue.FromObject(hash.ToList());
             }
-            return CalculatorValue.NullObject;
+            return BoxedValue.NullObject;
         }
         internal static HashSet<string> BuildHashSet(int sceneId)
         {
@@ -4776,7 +4776,7 @@ namespace ResourceEditApi
     }
     internal class BuildAssetStringListExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             var list = new List<string>();
             for (int i = 0; i < operands.Count; ++i) {
@@ -4814,7 +4814,7 @@ namespace ResourceEditApi
                 ReadTableString(pair.Key, pair.Value, strSet);
             }
             EditorUtility.ClearProgressBar();
-            return CalculatorValue.FromObject(strSet.ToArray());
+            return BoxedValue.FromObject(strSet.ToArray());
         }
         private static void ReadDslString(HashSet<string> strSet)
         {
@@ -5090,7 +5090,7 @@ namespace ResourceEditApi
     }
     internal class CreateRefAssetExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             if (operands.Count > 1) {
                 var assetPath = operands[0].AsString;
@@ -5215,7 +5215,7 @@ namespace ResourceEditApi
     }
     internal class FindRowIndexExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             int r = -1;
             if (operands.Count >= 3) {
@@ -5272,7 +5272,7 @@ namespace ResourceEditApi
     }
     internal class FindRowIndexesExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             var list = new List<int>();
             if (operands.Count >= 3) {
@@ -5322,12 +5322,12 @@ namespace ResourceEditApi
                     }
                 }
             }
-            return CalculatorValue.FromObject(list);
+            return BoxedValue.FromObject(list);
         }
     }
     internal class FindCellIndexExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             int r = -1;
             if (operands.Count >= 2) {
@@ -5362,7 +5362,7 @@ namespace ResourceEditApi
     }
     internal class FindCellIndexesExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             IList<int> r = null;
             if (operands.Count >= 2) {
@@ -5444,7 +5444,7 @@ namespace ResourceEditApi
             if (null == r) {
                 r = new List<int>();
             }
-            return CalculatorValue.FromObject(r);
+            return BoxedValue.FromObject(r);
         }
         private static bool IsValidColumn(int ix, string markChars, IList<NPOI.SS.UserModel.IRow> markRows)
         {
@@ -5466,9 +5466,9 @@ namespace ResourceEditApi
     }
     internal class GetCellValueExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var row = operands[0].As<NPOI.SS.UserModel.IRow>();
                 var ix = CastTo<int>(operands[1]);
@@ -5498,7 +5498,7 @@ namespace ResourceEditApi
                                             r = cell.StringCellValue;
                                             break;
                                         default:
-                                            r = CalculatorValue.NullObject;
+                                            r = BoxedValue.NullObject;
                                             break;
                                     }
                                     break;
@@ -5506,7 +5506,7 @@ namespace ResourceEditApi
                                     r = string.Empty;
                                     break;
                                 default:
-                                    r = CalculatorValue.NullObject;
+                                    r = BoxedValue.NullObject;
                                     break;
                             }
                         }
@@ -5524,7 +5524,7 @@ namespace ResourceEditApi
     }
     internal class GetCellStringExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             string r = string.Empty;
             if (operands.Count >= 2) {
@@ -5548,7 +5548,7 @@ namespace ResourceEditApi
     }
     internal class GetCellNumericExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             double r = 0.0;
             if (operands.Count >= 2) {
@@ -5573,7 +5573,7 @@ namespace ResourceEditApi
     }
     internal class RowToLineExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             string r = string.Empty;
             if (operands.Count >= 1) {
@@ -5626,9 +5626,9 @@ namespace ResourceEditApi
     }
     internal class TableToHashtableExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 3) {
                 var sheet = operands[0].As<NPOI.SS.UserModel.ISheet>();
                 int skipRows = operands[1].GetInt();
@@ -5661,7 +5661,7 @@ namespace ResourceEditApi
                             }
                             temp.Add(i.ToString(), row);
                         }
-                        r = CalculatorValue.FromObject(dict);
+                        r = BoxedValue.FromObject(dict);
                     }
                     else {
                         var table = operands[0].As<ResourceEditUtility.DataTable>();
@@ -5685,7 +5685,7 @@ namespace ResourceEditApi
                                 }
                                 temp.Add(i.ToString(), row);
                             }
-                            r = CalculatorValue.FromObject(dict);
+                            r = BoxedValue.FromObject(dict);
                         }
                     }
                 }
@@ -5695,9 +5695,9 @@ namespace ResourceEditApi
     }
     internal class FindRowFromHashtableExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var hash = operands[0].As<Dictionary<string, object>>();
                 List<string> keys = new List<string>();
@@ -5722,12 +5722,12 @@ namespace ResourceEditApi
                     }
                     if (null != temp) {
                         foreach (var pair in temp) {
-                            r = CalculatorValue.FromObject(pair.Value);
+                            r = BoxedValue.FromObject(pair.Value);
                             break;
                         }
                     }
                     else {
-                        r = CalculatorValue.NullObject;
+                        r = BoxedValue.NullObject;
                     }
                 }
             }
@@ -5736,9 +5736,9 @@ namespace ResourceEditApi
     }
     internal class LoadManagedHeapsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 var list = new List<ResourceEditUtility.SectionInfo>();
@@ -5767,16 +5767,16 @@ namespace ResourceEditApi
                     else
                         return 0;
                 });
-                r = CalculatorValue.FromObject(list);
+                r = BoxedValue.FromObject(list);
             }
             return r;
         }
     }
     internal class FindManagedHeapsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.SectionInfo>>();
                 var addr = operands[1].GetULong();
@@ -5792,7 +5792,7 @@ namespace ResourceEditApi
                         else if (addr >= ve)
                             low = cur + 1;
                         else {
-                            r = CalculatorValue.FromObject(list[cur]);
+                            r = BoxedValue.FromObject(list[cur]);
                             break;
                         }
                     }
@@ -5803,9 +5803,9 @@ namespace ResourceEditApi
     }
     internal class MatchManagedHeapsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var list1 = operands[0].As<List<ResourceEditUtility.SectionInfo>>();
                 var list2 = operands[1].As<List<ResourceEditUtility.SectionInfo>>();
@@ -5862,7 +5862,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(list);
+                    r = BoxedValue.FromObject(list);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -5881,9 +5881,9 @@ namespace ResourceEditApi
     }
     internal class CalcMatchedManagedHeapsDiffExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.SectionInfo[]>>();
                 int index = operands[1].GetInt();
@@ -5920,7 +5920,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(results);
+                    r = BoxedValue.FromObject(results);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -5939,9 +5939,9 @@ namespace ResourceEditApi
     }
     internal class LoadMapsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 var list = new List<ResourceEditUtility.MapsInfo>();
@@ -5988,16 +5988,16 @@ namespace ResourceEditApi
                     else
                         return 0;
                 });
-                r = CalculatorValue.FromObject(list);
+                r = BoxedValue.FromObject(list);
             }
             return r;
         }
     }
     internal class FindMapsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.MapsInfo>>();
                 var addr = operands[1].GetULong();
@@ -6013,7 +6013,7 @@ namespace ResourceEditApi
                         else if (addr >= ve)
                             low = cur + 1;
                         else {
-                            r = CalculatorValue.FromObject(list[cur]);
+                            r = BoxedValue.FromObject(list[cur]);
                             break;
                         }
                     }
@@ -6024,9 +6024,9 @@ namespace ResourceEditApi
     }
     internal class MatchMapsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var list1 = operands[0].As<List<ResourceEditUtility.MapsInfo>>();
                 var list2 = operands[1].As<List<ResourceEditUtility.MapsInfo>>();
@@ -6083,7 +6083,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(list);
+                    r = BoxedValue.FromObject(list);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -6102,9 +6102,9 @@ namespace ResourceEditApi
     }
     internal class CalcMatchedMapsDiffExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.MapsInfo[]>>();
                 int index = operands[1].GetInt();
@@ -6141,7 +6141,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(results);
+                    r = BoxedValue.FromObject(results);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -6160,9 +6160,9 @@ namespace ResourceEditApi
     }
     internal class LoadSmapsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 var list = new List<ResourceEditUtility.SmapsInfo>();
@@ -6251,16 +6251,16 @@ namespace ResourceEditApi
                     else
                         return 0;
                 });
-                r = CalculatorValue.FromObject(list);
+                r = BoxedValue.FromObject(list);
             }
             return r;
         }
     }
     internal class FindSmapsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.SmapsInfo>>();
                 var addr = operands[1].GetULong();
@@ -6276,7 +6276,7 @@ namespace ResourceEditApi
                         else if (addr >= ve)
                             low = cur + 1;
                         else {
-                            r = CalculatorValue.FromObject(list[cur]);
+                            r = BoxedValue.FromObject(list[cur]);
                             break;
                         }
                     }
@@ -6287,9 +6287,9 @@ namespace ResourceEditApi
     }
     internal class MatchSmapsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var list1 = operands[0].As<List<ResourceEditUtility.SmapsInfo>>();
                 var list2 = operands[1].As<List<ResourceEditUtility.SmapsInfo>>();
@@ -6346,7 +6346,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(list);
+                    r = BoxedValue.FromObject(list);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -6365,9 +6365,9 @@ namespace ResourceEditApi
     }
     internal class CalcMatchedSmapsDiffExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
                 var list = operands[0].As<List<ResourceEditUtility.SmapsInfo[]>>();
                 int index = operands[1].GetInt();
@@ -6404,7 +6404,7 @@ namespace ResourceEditApi
                             break;
                         }
                     }
-                    r = CalculatorValue.FromObject(results);
+                    r = BoxedValue.FromObject(results);
                 }
             }
             EditorUtility.ClearProgressBar();
@@ -6423,9 +6423,9 @@ namespace ResourceEditApi
     }
     internal class LoadAddrsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var file = operands[0].AsString;
                 bool isHex = true;
@@ -6468,7 +6468,7 @@ namespace ResourceEditApi
                     }
                 }
                 list.Sort();
-                r = CalculatorValue.FromObject(list);
+                r = BoxedValue.FromObject(list);
             }
             EditorUtility.ClearProgressBar();
             return r;
@@ -6476,9 +6476,9 @@ namespace ResourceEditApi
     }
     internal class EscapeUrlExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var txt = operands[0].AsString;
                 var space = string.Empty;
@@ -6504,9 +6504,9 @@ namespace ResourceEditApi
     }
     internal class UnEscapeUrlExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var txt = operands[0].AsString;
                 var space = string.Empty;
@@ -6533,9 +6533,9 @@ namespace ResourceEditApi
     }
     internal class ParseUrlArgsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var txt = operands[0].AsString;
                 var space = string.Empty;
@@ -6591,10 +6591,10 @@ namespace ResourceEditApi
                             }
                         }
                     }
-                    r = CalculatorValue.FromObject(hash);
+                    r = BoxedValue.FromObject(hash);
                 }
                 else {
-                    r = CalculatorValue.FromObject(fields);
+                    r = BoxedValue.FromObject(fields);
                 }
             }
             return r;
@@ -6604,9 +6604,9 @@ namespace ResourceEditApi
     }
     internal class ParseBuglyInfoExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var r = CalculatorValue.NullObject;
+            var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var txt = operands[0].AsString;
                 var space = string.Empty;
@@ -6631,7 +6631,7 @@ namespace ResourceEditApi
                 if (!string.IsNullOrEmpty(space))
                     newTxt = newTxt.Replace(space, " ");
                 var fields = newTxt.Split(sep, StringSplitOptions.RemoveEmptyEntries);
-                r = CalculatorValue.FromObject(fields);
+                r = BoxedValue.FromObject(fields);
             }
             return r;
         }
@@ -6639,7 +6639,7 @@ namespace ResourceEditApi
     }
     internal class IntHashContainsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -6655,7 +6655,7 @@ namespace ResourceEditApi
     }
     internal class UintHashContainsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -6671,7 +6671,7 @@ namespace ResourceEditApi
     }
     internal class LongHashContainsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -6687,7 +6687,7 @@ namespace ResourceEditApi
     }
     internal class UlongHashContainsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -6703,7 +6703,7 @@ namespace ResourceEditApi
     }
     internal class FloatHashContainsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -6719,7 +6719,7 @@ namespace ResourceEditApi
     }
     internal class DoubleHashContainsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
@@ -6735,7 +6735,7 @@ namespace ResourceEditApi
     }
     internal class StringHashContainsExp : SimpleExpressionBase
     {
-        protected override CalculatorValue OnCalc(IList<CalculatorValue> operands)
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             bool r = false;
             if (operands.Count >= 2) {
