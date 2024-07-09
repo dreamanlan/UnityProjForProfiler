@@ -13,8 +13,6 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
-using StoryScript;
-using StoryScript.DslExpression;
 
 #region interpreter
 #pragma warning disable 8600,8601,8602,8603,8604,8618,8619,8620,8625
