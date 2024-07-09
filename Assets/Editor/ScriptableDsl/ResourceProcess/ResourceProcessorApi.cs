@@ -17,7 +17,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Linq;
-using DslExpression;
+using StoryScript;
+using StoryScript.DslExpression;
 
 internal enum ProfilerViewType
 {
@@ -4686,7 +4687,7 @@ namespace ResourceEditApi
                         t.InvokeMember("GetShaderVariantEntries", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, args);
                         var types = args[2] as int[];
                         var keywords = args[3] as string[];
-                        r = DslExpression.BoxedValue.FromObject(new object[] { types, keywords });
+                        r = BoxedValue.FromObject(new object[] { types, keywords });
                     }
                 }
             }

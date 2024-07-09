@@ -15,6 +15,7 @@ using Unity.MemoryProfilerForExtension.Editor.UI;
 using Unity.MemoryProfilerForExtension.Editor.EnumerationUtilities;
 using Unity.MemoryProfilerForExtension.Editor.Database;
 using Unity.Profiling;
+using StoryScript;
 
 public class BatchResourceProcessWindow : EditorWindow
 {
@@ -590,14 +591,14 @@ public class BatchLoadWindow : EditorWindow
 
 public class ResourceCommandWindow : EditorWindow
 {
-    internal static void InitWindow(ResourceEditWindow resEdit, string content, DslExpression.BoxedValue obj, DslExpression.BoxedValue item)
+    internal static void InitWindow(ResourceEditWindow resEdit, string content, BoxedValue obj, BoxedValue item)
     {
         ResourceCommandWindow window = (ResourceCommandWindow)EditorWindow.GetWindow(typeof(ResourceCommandWindow));
         window.Init(resEdit, content, obj, item);
         window.Show();
     }
 
-    private void Init(ResourceEditWindow resEdit, string content, DslExpression.BoxedValue obj, DslExpression.BoxedValue item)
+    private void Init(ResourceEditWindow resEdit, string content, BoxedValue obj, BoxedValue item)
     {
         m_ResourceEditWindow = resEdit;
         m_Content = content;
@@ -645,7 +646,7 @@ public class ResourceCommandWindow : EditorWindow
         m_ScriptableInfo.ResourceEditWindowType = typeof(ResourceEditWindow);
         m_ScriptableInfo.ResourceProcessorType = typeof(ResourceProcessor);
         m_ScriptableInfo.ResourceEditUtilityType = typeof(ResourceEditUtility);
-        if(ResourceEditUtility.LoadScript(m_Command, ResourceProcessor.Instance.Params, new Dictionary<string, DslExpression.BoxedValue> { { "@context", DslExpression.BoxedValue.FromObject(m_ScriptableInfo) } })) {
+        if(ResourceEditUtility.LoadScript(m_Command, ResourceProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(m_ScriptableInfo) } })) {
             var r = ResourceEditUtility.EvalScript(m_Object, m_Item);
             if (!r.IsNullObject) {
                 m_Results.Enqueue(string.Format("cmd:{0} result:{1}", m_Command, r.ToString()));
@@ -700,8 +701,8 @@ public class ResourceCommandWindow : EditorWindow
     private string m_Content = string.Empty;
     private Queue<string> m_Results = new Queue<string>();
     private string m_Command = string.Empty;
-    private DslExpression.BoxedValue m_Object = DslExpression.BoxedValue.NullObject;
-    private DslExpression.BoxedValue m_Item = DslExpression.BoxedValue.NullObject;
+    private BoxedValue m_Object = BoxedValue.NullObject;
+    private BoxedValue m_Item = BoxedValue.NullObject;
     private ResourceEditWindow m_ResourceEditWindow = null;
     private Vector2 m_Pos = Vector2.zero;
 }
