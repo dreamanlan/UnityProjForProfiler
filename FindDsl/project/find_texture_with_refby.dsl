@@ -17,28 +17,28 @@ input("*.tga","*.png","*.jpg","*.exr")
 filter
 {
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-    	var(0) = loadasset(assetpath);
-    	if(isnull(var(0))){
+    	$v0 = loadasset(assetpath);
+    	if(isnull($v0)){
     		0;
     	} else {
-    		var(1) = var(0).width;
-    		var(2) = var(0).height;
-    		var(3) = importer.isReadable;
-    		var(4) = importer.mipmapEnabled;
-    		var(5) = gettexturesetting("iPhone");
-        	var(6) = gettexturesetting("Android");
-			var(7) = calcrefbycount(assetpath);
-    		//unloadasset(var(0));
-    		//order = var(1) < var(2) ? var(2) : var(1);
-    		if((var(1) > maxSize || var(2) > maxSize) && (var(5).maxTextureSize > maxSize || var(6).maxTextureSize > maxSize) && (prop.Contains("1") && var(3) || !prop.Contains("1")) && (prop.Contains("2") && var(4) || !prop.Contains("2")) && var(7)<=maxRefBy){
-    		    var(8) = getreferencebyassets(assetpath);
-    		    looplist(var(8)){
+    		$v1 = $v0.width;
+    		$v2 = $v0.height;
+    		$v3 = importer.isReadable;
+    		$v4 = importer.mipmapEnabled;
+    		$v5 = gettexturesetting("iPhone");
+        	$v6 = gettexturesetting("Android");
+			$v7 = calcrefbycount(assetpath);
+    		//unloadasset($v0);
+    		//order = $v1 < $v2 ? $v2 : $v1;
+    		if(($v1 > maxSize || $v2 > maxSize) && ($v5.maxTextureSize > maxSize || $v6.maxTextureSize > maxSize) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2")) && $v7<=maxRefBy){
+    		    $v8 = getreferencebyassets(assetpath);
+    		    looplist($v8){
     		        $asset = $$;
-    		        var(9) = newitem();
-    		        var(9).AssetPath = assetpath;
-    		        var(9).ScenePath = "";
-    		        var(9).Info = format("size:{0},{1} readable:{2} mipmap:{3} refby_count:{4} refby_asset:{5}", var(1), var(2), var(3), var(4), var(7), $asset);
-    		        var(9).Order = var(7);
+    		        $v9 = newitem();
+    		        $v9.AssetPath = assetpath;
+    		        $v9.ScenePath = "";
+    		        $v9.Info = format("size:{0},{1} readable:{2} mipmap:{3} refby_count:{4} refby_asset:{5}", $v1, $v2, $v3, $v4, $v7, $asset);
+    		        $v9.Order = $v7;
     		    };
     		};
     	};

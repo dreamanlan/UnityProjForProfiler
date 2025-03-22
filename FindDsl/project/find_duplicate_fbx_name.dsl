@@ -12,11 +12,11 @@ input("*.fbx")
 }
 filter
 {
-	var(0) = loadasset(assetpath);
-	if(isnull(var(0))){
+	$v0 = loadasset(assetpath);
+	if(isnull($v0)){
 		0;
 	} else {
-		//unloadasset(var(0));
+		//unloadasset($v0);
 		if(stringcontains(assetpath,filter) && stringnotcontains(assetpath,notfilter)){
 			info = format("{0} guid:{1}", assetpath, assetpath2guid(assetpath));
 			order = value;
@@ -35,6 +35,6 @@ group
 		info = format("{0} count:{1} ref by count:{2}", group, count, calcrefbycount(assetpath));
 		1;
 	}else{
-		0;	
+		0;
 	};
 };

@@ -1,5 +1,5 @@
 input
-{	
+{
     string("table", "group.csv")
     {
         file("csv");
@@ -21,9 +21,9 @@ filter
 {
     String = gettype("System.String");
 	order = row.RowIndex;
-	var(0) = getcellstring(row, 0);
-	var(1) = getcellnumeric(row, 1);
-	if(var(0).Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !var(0).Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !var(0).Contains(notcontains2)) && (String.IsNullOrEmpty(startswith) || var(0).StartsWith(startswith)) && (String.IsNullOrEmpty(endswith) || var(0).EndsWith(endswith)) && var(1)>=mincount){
+	$v0 = getcellstring(row, 0);
+	$v1 = getcellnumeric(row, 1);
+	if($v0.Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !$v0.Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !$v0.Contains(notcontains2)) && (String.IsNullOrEmpty(startswith) || $v0.StartsWith(startswith)) && (String.IsNullOrEmpty(endswith) || $v0.EndsWith(endswith)) && $v1>=mincount){
 		info = format("type:{0} count:{1} size:{2}",
         getcellvalue(row, 0),
         getcellvalue(row, 1),

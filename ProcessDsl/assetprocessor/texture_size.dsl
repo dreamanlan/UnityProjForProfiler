@@ -10,14 +10,14 @@ input("*.tga","*.png","*.jpg")
 filter
 {
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-    	var(0) = loadasset(assetpath);
-    	var(1) = var(0).width;
-    	var(2) = var(0).height;
-		var(3) = gettexturesetting("iPhone");
-    	var(4) = gettexturesetting("Android");
-    	//unloadasset(var(0));
-    	if((var(1) > maxSize || var(2) > maxSize) && (var(3).maxTextureSize > maxSize || var(4).maxTextureSize > maxSize)){
-    		info = "size:" + var(1) + "," + var(2);
+    	$v0 = loadasset(assetpath);
+    	$v1 = $v0.width;
+    	$v2 = $v0.height;
+		$v3 = gettexturesetting("iPhone");
+    	$v4 = gettexturesetting("Android");
+    	//unloadasset($v0);
+    	if(($v1 > maxSize || $v2 > maxSize) && ($v3.maxTextureSize > maxSize || $v4.maxTextureSize > maxSize)){
+    		info = "size:" + $v1 + "," + $v2;
     		1;
     	} else {
     		0;

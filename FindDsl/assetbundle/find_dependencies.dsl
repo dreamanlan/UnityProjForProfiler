@@ -18,30 +18,30 @@ filter
 {
 	str = gettype("System.String");
 	if(assetpath.Contains(assetfilter)){
-		var(0) = getdependencies(assetpath);
+		$v0 = getdependencies(assetpath);
 		if(!findab){
-			looplist(var(0)){		
+			looplist($v0){
 				if($$.Contains(dependencefilter)){
-					var(1) = newitem();
-					var(1).AssetPath = assetpath;
-					var(1).Info = $$;
-					var(1).Order = 0;
-					var(1).Value = 0;
+					$v1 = newitem();
+					$v1.AssetPath = assetpath;
+					$v1.Info = $$;
+					$v1.Order = 0;
+					$v1.Value = 0;
 				};
 			};
 		}else{
-			var(10) = all_asset_bundle_info.GetAssetBuildInfoByAssetBundleName(dependenceab);
-			looplist(var(0)){		
-				var(11) = getfilenamewithoutextension($$);
-				looplist(var(10).assetNames){
-					var(12) = getfilenamewithoutextension($$);
-					if(str.Compare(var(11),var(12),true)==0){
-						debuglog("{0} {1}", var(11), var(12));
-						var(1) = newitem();
-						var(1).AssetPath = assetpath;
-						var(1).Info = $$;
-						var(1).Order = 0;
-						var(1).Value = 0;
+			$v10 = all_asset_bundle_info.GetAssetBuildInfoByAssetBundleName(dependenceab);
+			looplist($v0){
+				$v11 = getfilenamewithoutextension($$);
+				looplist($v10.assetNames){
+					$v12 = getfilenamewithoutextension($$);
+					if(str.Compare($v11,$v12,true)==0){
+						debuglog("{0} {1}", $v11, $v12);
+						$v1 = newitem();
+						$v1.AssetPath = assetpath;
+						$v1.Info = $$;
+						$v1.Order = 0;
+						$v1.Value = 0;
 					};
 				};
 			};

@@ -9,12 +9,12 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-	var(0) = loadasset(assetpath);
-	var(1) = var(0).width;
-	var(2) = var(0).height;
-	//unloadasset(var(0));
-	if((var(1) > maxSize || var(2) > maxSize) && assetpath.Contains(filter) && (notfilter=="" || !assetpath.Contains(notfilter))){
-		info = "size:" + var(1) + "," + var(2);
+	$v0 = loadasset(assetpath);
+	$v1 = $v0.width;
+	$v2 = $v0.height;
+	//unloadasset($v0);
+	if(($v1 > maxSize || $v2 > maxSize) && assetpath.Contains(filter) && (notfilter=="" || !assetpath.Contains(notfilter))){
+		info = "size:" + $v1 + "," + $v2;
 		1;
 	} else {
 		0;
@@ -23,25 +23,25 @@ filter
 process
 {
 	/*
-	var(0) = getdefaulttexturesetting();
-	var(0).maxTextureSize = changetype(maxSize, "int");
-	settexturesetting(var(0));
-	
-	var(1) = gettexturesetting("Standalone");
-	var(1).maxTextureSize = changetype(maxSize, "int");
-	settexturesetting(var(1));
+	$v0 = getdefaulttexturesetting();
+	$v0.maxTextureSize = changetype(maxSize, "int");
+	settexturesetting($v0);
+
+	$v1 = gettexturesetting("Standalone");
+	$v1.maxTextureSize = changetype(maxSize, "int");
+	settexturesetting($v1);
 	*/
-	var(2) = gettexturesetting("iPhone");
-	var(2).overridden=true;
-	var(2).maxTextureSize = changetype(maxSize, "int");
-	setsceneastctexture(var(2));
-	settexturesetting(var(2));
-	
-	var(3) = gettexturesetting("Android");
-	var(3).overridden=true;
-	var(3).maxTextureSize = changetype(maxSize, "int");
-	setsceneastctexture(var(3));
-	settexturesetting(var(3));
-	
+	$v2 = gettexturesetting("iPhone");
+	$v2.overridden=true;
+	$v2.maxTextureSize = changetype(maxSize, "int");
+	setsceneastctexture($v2);
+	settexturesetting($v2);
+
+	$v3 = gettexturesetting("Android");
+	$v3.overridden=true;
+	$v3.maxTextureSize = changetype(maxSize, "int");
+	setsceneastctexture($v3);
+	settexturesetting($v3);
+
     saveandreimport();
 };

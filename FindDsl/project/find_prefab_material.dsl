@@ -9,21 +9,21 @@ input("*.prefab")
 }
 filter
 {
-	var(10) = 0;
-  var(0) = loadasset(assetpath);
-  var(1) = getcomponentsinchildren(var(0), "Renderer");
-  looplist(var(1)){
-  	var(2) = $$.sharedMaterials;
-  	looplist(var(2)){
+	$v10 = 0;
+  $v0 = loadasset(assetpath);
+  $v1 = getcomponentsinchildren($v0, "Renderer");
+  looplist($v1){
+  	$v2 = $$.sharedMaterials;
+  	looplist($v2){
 			if(isnull($$))
 				continue;
-  		var(3) = $$.name;
-  		var(4) = $$.shader.name;
-  		if(var(3).Contains(matName) && var(4).Contains(shaderName)){
-		  	info = "mat:" + var(3) + " shader:" + var(4);
-		  	var(10) = 1;  		
+  		$v3 = $$.name;
+  		$v4 = $$.shader.name;
+  		if($v3.Contains(matName) && $v4.Contains(shaderName)){
+		  	info = "mat:" + $v3 + " shader:" + $v4;
+		  	$v10 = 1;
 		  };
   	};
   };
-  var(10);
+  $v10;
 };

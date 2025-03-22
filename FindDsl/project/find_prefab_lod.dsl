@@ -17,44 +17,44 @@ input("*.prefab")
 filter
 {
     if(stringnotcontains(assetpath, "_Lod") && stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        var(0) = getdirectoryname(assetpath);
-        var(1) = getfilenamewithoutextension(assetpath);
-        var(2) = var(0)+"/"+var(1)+"_Lod.prefab";
-        if(fileexist(var(2))){
+        $v0 = getdirectoryname(assetpath);
+        $v1 = getfilenamewithoutextension(assetpath);
+        $v2 = $v0+"/"+$v1+"_Lod.prefab";
+        if(fileexist($v2)){
             if(lodtype==0 || lodtype==2){
-                var(3) = loadasset(var(2));  
-                var(4) = collectmeshes(var(3), true);
-                //unloadasset(var(0));
-                looplist(var(4)){
+                $v3 = loadasset($v2);
+                $v4 = collectmeshes($v3, true);
+                //unloadasset($v0);
+                looplist($v4){
                     $mesh = $$;
                     $name = $mesh.name;
                     $vertexCount = $mesh.vertexCount;
                     $triangleCount = $mesh.triangles.Length/3;
                     if(stringcontains($name, meshfilter) && stringnotcontains($name, meshnotfilter) && $triangleCount>=lodTriangleCount){
-                        var(5) = newitem();
-                        var(5).AssetPath = assetpath;
-                        var(5).Info = format("lod, mesh:{0} vertex:{1} triangle:{2}",$name,$vertexCount,$triangleCount);
-                        var(5).Order = $triangleCount;
-                        var(5).Value = $triangleCount;
+                        $v5 = newitem();
+                        $v5.AssetPath = assetpath;
+                        $v5.Info = format("lod, mesh:{0} vertex:{1} triangle:{2}",$name,$vertexCount,$triangleCount);
+                        $v5.Order = $triangleCount;
+                        $v5.Value = $triangleCount;
                     };
                 };
             };
         }else{
             if(lodtype==0 || lodtype==1){
-                var(3) = loadasset(assetpath);  
-                var(4) = collectmeshes(var(3), true);
-                //unloadasset(var(0));
-                looplist(var(4)){
+                $v3 = loadasset(assetpath);
+                $v4 = collectmeshes($v3, true);
+                //unloadasset($v0);
+                looplist($v4){
                     $mesh = $$;
                     $name = $mesh.name;
                     $vertexCount = $mesh.vertexCount;
                     $triangleCount = $mesh.triangles.Length/3;
                     if(stringcontains($name, meshfilter) && stringnotcontains($name, meshnotfilter) && $triangleCount>=triangleCount){
-                        var(5) = newitem();
-                        var(5).AssetPath = assetpath;
-                        var(5).Info = format("no lod, mesh:{0} vertex:{1} triangle:{2}",$name,$vertexCount,$triangleCount);
-                        var(5).Order = $triangleCount;
-                        var(5).Value = $triangleCount;
+                        $v5 = newitem();
+                        $v5.AssetPath = assetpath;
+                        $v5.Info = format("no lod, mesh:{0} vertex:{1} triangle:{2}",$name,$vertexCount,$triangleCount);
+                        $v5.Order = $triangleCount;
+                        $v5.Value = $triangleCount;
                     };
                 };
             };

@@ -13,26 +13,26 @@ input("*.prefab")
 filter
 {
     object = loadasset(assetpath);
-    var(0) = getcomponentsinchildren(object,"ParticleSystem");
-    var(1) = var(0).Length;
+    $v0 = getcomponentsinchildren(object,"ParticleSystem");
+    $v1 = $v0.Length;
     $name = getfilenamewithoutextension(assetpath);
-    if(var(1)>maxSize && stringcontainsany(assetpath, anyfilter) && stringhashcontains(hashkeys, $name)){	    
+    if($v1>maxSize && stringcontainsany(assetpath, anyfilter) && stringhashcontains(hashkeys, $name)){
         $ret = 0;
         $key = "";
-        looplist(var(0)){
-            var(2) = $$.name;
-            if(stringcontainsany(var(2), psanyfilter) && stringhashcontains(pshashkeys, var(2))){
+        looplist($v0){
+            $v2 = $$.name;
+            if(stringcontainsany($v2, psanyfilter) && stringhashcontains(pshashkeys, $v2)){
                 $ret = 1;
-                $key = var(2);
+                $key = $v2;
                 break;
             };
         };
-        if($ret){            
-            var(3) = collectprefabinfo(object);
-            $totalTriangleCount = var(3).triangleCount;
+        if($ret){
+            $v3 = collectprefabinfo(object);
+            $totalTriangleCount = $v3.triangleCount;
             scenepath = getfilenamewithoutextension(assetpath);
-            info = format("key:{0} particle_count:{1} total_prefab_triangle:{2}",$key,var(1),$totalTriangleCount);    
-            order = $totalTriangleCount;            
+            info = format("key:{0} particle_count:{1} total_prefab_triangle:{2}",$key,$v1,$totalTriangleCount);
+            order = $totalTriangleCount;
             value = $totalTriangleCount;
         };
         $ret;

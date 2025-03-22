@@ -11,11 +11,11 @@ input("*.anim")
 filter
 {
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        var(0) = getanimationclipinfo();
-        order = var(0).maxKeyFrameCount;
-        if(var(0).maxKeyFrameCount>=maxKeyFrameCount){
+        $v0 = getanimationclipinfo();
+        order = $v0.maxKeyFrameCount;
+        if($v0.maxKeyFrameCount>=maxKeyFrameCount){
             info = format("clip_name:{0},max_keyframe_count:{1},curve:{2}",
-                var(0).clipName, var(0).maxKeyFrameCount, var(0).maxKeyFrameCurveName
+                $v0.clipName, $v0.maxKeyFrameCount, $v0.maxKeyFrameCurveName
                 );
             1;
         };

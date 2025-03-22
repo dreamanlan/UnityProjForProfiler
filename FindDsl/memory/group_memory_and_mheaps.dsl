@@ -25,7 +25,7 @@ input
 filter
 {
     if(isnull(@hash)){
-        @hash = hashtable();  
+        @hash = hashtable();
     };
     if(memory.size >= maxSize && stringcontains(memory.className, classfilter) && stringcontains(memory.name, filter) && stringnotcontains(memory.className, classnotfilter) && stringnotcontains(memory.name, notfilter)){
         if(findasset){
@@ -36,18 +36,18 @@ filter
         if(isnullorempty(assetpath)){
             assetpath = memory.name;
         };
-        var(0) = findmanagedheaps(mheaps, memory.address);
-        if(isnull(var(0))){
-            var(1) = 0;
-            var(2) = 0;
+        $v0 = findmanagedheaps(mheaps, memory.address);
+        if(isnull($v0)){
+            $v1 = 0;
+            $v2 = 0;
         }else{
-            var(1) = var(0).size;
-            var(2) = var(0).vm_start;
+            $v1 = $v0.size;
+            $v2 = $v0.vm_start;
         };
-        if(heapAddr==0 || heapAddr==var(2)){
-        		info = format("mheap:{0:X}", var(2));
+        if(heapAddr==0 || heapAddr==$v2){
+        		info = format("mheap:{0:X}", $v2);
         		scenepath = info;
-            order = var(2);
+            order = $v2;
             value = memory.size;
             group = assetpath;
             $key = assetpath+"-"+info;
@@ -56,7 +56,7 @@ filter
                 hashtableadd(@hash, $key, 1);
                 1;
             }else{
-                0;  
+                0;
             };
         }else{
             0;

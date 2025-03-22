@@ -7,12 +7,12 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-	var(0) = loadasset(assetpath);
-	var(1) = var(0).width;
-	var(2) = var(0).height;
-	//unloadasset(var(0));
+	$v0 = loadasset(assetpath);
+	$v1 = $v0.width;
+	$v2 = $v0.height;
+	//unloadasset($v0);
 	if(!istexturenoalphasource() && assetpath.Contains(filter)){
-		info = "size:" + var(1) + "," + var(2);
+		info = "size:" + $v1 + "," + $v2;
 		1;
 	} else {
 		0;

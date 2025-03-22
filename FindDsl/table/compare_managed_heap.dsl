@@ -1,5 +1,5 @@
 input
-{   
+{
     string("table", ""){
         file("csv");
     };
@@ -24,25 +24,25 @@ filter
     $header = sheet.GetRow(0);
     $ix = 1;
     $ix2 = 2;
-    
+
     $size = getcellnumeric(row, $ix);
     $addr = getcellstring(row, $ix2);
     $vaddr = str2ulong($addr);
-    
-    var(99) = 0;
+
+    $v99 = 0;
     $row = findrowfromhashtable(dict2, [$addr]);
     if(!isnull($row)){
         if(resultopt!=2){
             $size2 = getcellnumeric($row, $ix);
             info=format("{0:X}, size {1}=>{2}",$vaddr,$size,$size2);
-            var(99)=1;
+            $v99=1;
         };
     }elseif(resultopt!=3){
         info=format("{0:X}, size {1}=>",$vaddr,$size);
-        var(99)=1;
+        $v99=1;
     };
     order = $vaddr;
-    var(99);
+    $v99;
 };
 
 script(buildHashtable)args($paramInfo)

@@ -5,15 +5,14 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.UI;
+//using UnityEditor.UI;
 using UnityEditor.Animations;
 using UnityEditor.SceneManagement;
 using UnityEditorInternal;
 using UnityEditor.Profiling.Memory.Experimental;
-using Unity.MemoryProfilerForExtension.Editor;
-using Unity.MemoryProfilerForExtension.Editor.UI;
-using Unity.MemoryProfilerForExtension.Editor.EnumerationUtilities;
-using Unity.MemoryProfilerForExtension.Editor.Database;
+using Unity.MemoryProfilerExtension.Editor;
+using Unity.MemoryProfilerExtension.Editor.UI;
+using Unity.MemoryProfilerExtension.Editor.EnumerationUtilities;
 using Unity.Profiling;
 using StoryScript;
 
@@ -356,33 +355,12 @@ public class BatchLoadWindow : EditorWindow
                 if (File.Exists(filePath)) {
                     try {
                         Debug.LogFormat("Loading \"{0}\"", filePath);
-                        var rawSnapshot = Unity.MemoryProfilerForExtension.Editor.Format.QueriedMemorySnapshot.Load(filePath);
-                        //var rawSnapshot = UnityEditor.Profiling.Memory.Experimental.PackedMemorySnapshot.Load(filePath);
-                        if (null == rawSnapshot) {
-                            Debug.LogErrorFormat("MemoryProfiler: Unrecognized memory snapshot format '{0}'.", filePath);
-                        }
+                        var reader = new Unity.MemoryProfilerExtension.Editor.Format.QueriedSnapshot.FileReader();
+                        reader.Open(filePath);
+
+                        var cachedSnapshot = SnapshotDataService.LoadSnapshot(reader);
+
                         Debug.LogFormat("Completed loading \"{0}\"", filePath);
-
-                        Debug.LogFormat("Crawling \"{0}\"", filePath);
-                        ProgressBarDisplay.ShowBar(string.Format("Opening snapshot: {0}", System.IO.Path.GetFileNameWithoutExtension(filePath)));
-
-                        var cachedSnapshot = new CachedSnapshot(rawSnapshot);
-                        using (s_CrawlManagedData.Auto()) {
-                            var crawling = Crawler.Crawl(cachedSnapshot);
-                            crawling.MoveNext(); //start execution
-
-                            var status = crawling.Current as EnumerationStatus;
-                            float progressPerStep = 1.0f / status.StepCount;
-                            while (crawling.MoveNext()) {
-                                ProgressBarDisplay.UpdateProgress(status.CurrentStep * progressPerStep, status.StepStatus);
-                            }
-                        }
-                        ProgressBarDisplay.ClearBar();
-                        var rawSchema = new RawSchema();
-                        rawSchema.SetupSchema(cachedSnapshot, new ObjectDataFormatter());
-                        var managedObjcts = rawSchema.GetTableByName("AllManagedObjects") as ObjectListTable;
-                        var nativeObjects = rawSchema.GetTableByName("AllNativeObjects") as ObjectListTable;
-                        Debug.LogFormat("Completed crawling \"{0}\"", filePath);
                         
                         Debug.LogFormat("Saving \"{0}\"", filePath);
                         var path = Path.GetDirectoryName(filePath);
@@ -392,10 +370,10 @@ public class BatchLoadWindow : EditorWindow
                         if (!String.IsNullOrEmpty(exportPath1)) {
                             System.IO.StreamWriter sw = new System.IO.StreamWriter(exportPath1);
                             sw.WriteLine("Managed_Objects,Size,Address");
-                            int ct = cachedSnapshot.SortedManagedHeapEntries.Count;
+                            long ct = cachedSnapshot.ManagedHeapSections.Count;
                             for (int i = 0; i < ct; i++) {
-                                var size = cachedSnapshot.SortedManagedHeapEntries.Size(i);
-                                var addr = cachedSnapshot.SortedManagedHeapEntries.Address(i);
+                                var size = cachedSnapshot.ManagedHeapSections.SectionSize[i];
+                                var addr = cachedSnapshot.ManagedHeapSections.StartAddress[i];
                                 sw.WriteLine("Managed," + size + "," + addr);
                                 ResourceProcessor.Instance.DisplayProgressBar("write managed heap ...", i, ct);
                             }
@@ -409,20 +387,20 @@ public class BatchLoadWindow : EditorWindow
                             System.IO.StreamWriter sw = new System.IO.StreamWriter(exportPath2);
                             sw.WriteLine("Index,Type,RefCount,Size,Address");
 
-                            int ct = cachedSnapshot.SortedManagedObjects.Count;
+                            long ct = cachedSnapshot.SortedManagedObjects.Count;
                             for (int i = 0; i < ct; i++) {
                                 var size = cachedSnapshot.SortedManagedObjects.Size(i);
                                 var addr = cachedSnapshot.SortedManagedObjects.Address(i);
                                 ManagedObjectInfo objInfo;
-                                int index = -1;
+                                long index = -1;
                                 int refCount = 0;
                                 string typeName = string.Empty;
                                 if (cachedSnapshot.CrawledData.MangedObjectIndexByAddress.TryGetValue(addr, out index)) {
                                     objInfo = cachedSnapshot.CrawledData.ManagedObjects[index];
                                     index = objInfo.ManagedObjectIndex;
                                     refCount = objInfo.RefCount;
-                                    if (objInfo.ITypeDescription >= 0 && objInfo.ITypeDescription < cachedSnapshot.typeDescriptions.Count) {
-                                        typeName = cachedSnapshot.typeDescriptions.typeDescriptionName[objInfo.ITypeDescription];
+                                    if (objInfo.ITypeDescription >= 0 && objInfo.ITypeDescription < cachedSnapshot.TypeDescriptions.Count) {
+                                        typeName = cachedSnapshot.TypeDescriptions.TypeDescriptionName[objInfo.ITypeDescription];
                                     }
                                 }
                                 sw.WriteLine("" + index + ",\"" + typeName + "\"," + refCount + "," + size + "," + addr);
@@ -494,21 +472,21 @@ public class BatchLoadWindow : EditorWindow
                             m_NativeGroups.Clear();
                             System.IO.StreamWriter sw = new System.IO.StreamWriter(exportPath);
                             sw.WriteLine("Index,Name,Type,RefCount,InstanceID,Size,Address");
-                            int ct = cachedSnapshot.SortedNativeObjects.Count;
+                            long ct = cachedSnapshot.SortedNativeObjects.Count;
                             for (int i = 0; i < ct; i++) {
                                 var size = cachedSnapshot.SortedNativeObjects.Size(i);
                                 var addr = cachedSnapshot.SortedNativeObjects.Address(i);
                                 var name = cachedSnapshot.SortedNativeObjects.Name(i);
                                 var refCount = cachedSnapshot.SortedNativeObjects.Refcount(i);
                                 var instanceId = cachedSnapshot.SortedNativeObjects.InstanceId(i);
-                                int index;
-                                if(!cachedSnapshot.nativeObjects.instanceId2Index.TryGetValue(instanceId, out index)) {
+                                long index;
+                                if(!cachedSnapshot.NativeObjects.InstanceId2Index.TryGetValue(instanceId, out index)) {
                                     index = -1;
                                 }
                                 var nativeTypeIndex = cachedSnapshot.SortedNativeObjects.NativeTypeArrayIndex(i);
                                 string typeName = string.Empty;
-                                if (nativeTypeIndex >= 0 && nativeTypeIndex < cachedSnapshot.nativeTypes.Count) {
-                                    typeName = cachedSnapshot.nativeTypes.typeName[nativeTypeIndex];
+                                if (nativeTypeIndex >= 0 && nativeTypeIndex < cachedSnapshot.NativeTypes.Count) {
+                                    typeName = cachedSnapshot.NativeTypes.TypeName[nativeTypeIndex];
                                 }
 
                                 sw.WriteLine("" + index + ",\"" + name + "\",\"" + typeName + "\"," + refCount + "," + instanceId + "," + size + "," + addr);

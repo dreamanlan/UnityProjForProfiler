@@ -8,11 +8,11 @@ input("*.asset")
 filter
 {
 	object = loadasset(assetpath);
-	var(0) = gettypename(object);
-	var(1) = gettypefullname(object);
-	var(2) = gettypeassemblyname(object);
-	if(!isnull(object) && var(0)=="AnimationReference" && assetpath.Contains(filter) && !assetpath.EndsWith("_split.asset")){
-		info = var(1)+","+var(2);
+	$v0 = gettypename(object);
+	$v1 = gettypefullname(object);
+	$v2 = gettypeassemblyname(object);
+	if(!isnull(object) && $v0=="AnimationReference" && assetpath.Contains(filter) && !assetpath.EndsWith("_split.asset")){
+		info = $v1+","+$v2;
 		1;
 	}else{
 		0;

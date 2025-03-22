@@ -1,5 +1,5 @@
 input
-{   
+{
     string("table", "blocks.txt")
     {
         file("txt");
@@ -23,14 +23,14 @@ filter
 {
     order = row.RowIndex;
     if(!isnullorempty(fields)){
-        var(1) = stringsplit(fields,[","]);
-        var(2) = findcellindexes(sheet.GetRow(0), var(1));
-        var(0) = rowtoline(row, 0, var(2));
-        if(listsize(var(2))>=3 && var(0).Contains(contains) && (isnullorempty(notcontains1) || !var(0).Contains(notcontains1)) && (isnullorempty(notcontains2) || !var(0).Contains(notcontains2))){
-            assetpath = getcellstring(row, var(2)[0]);        
-            scenepath = "";    
-            info = var(0);
-            value = getcellnumeric(row, var(2)[2]);    
+        $v1 = stringsplit(fields,[","]);
+        $v2 = findcellindexes(sheet.GetRow(0), $v1);
+        $v0 = rowtoline(row, 0, $v2);
+        if(listsize($v2)>=3 && $v0.Contains(contains) && (isnullorempty(notcontains1) || !$v0.Contains(notcontains1)) && (isnullorempty(notcontains2) || !$v0.Contains(notcontains2))){
+            assetpath = getcellstring(row, $v2[0]);
+            scenepath = "";
+            info = $v0;
+            value = getcellnumeric(row, $v2[2]);
             group = assetpath;
             1;
         }else{

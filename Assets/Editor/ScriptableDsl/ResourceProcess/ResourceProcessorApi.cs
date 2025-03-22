@@ -1,13 +1,13 @@
 using UnityEngine;
-using UnityEngine.UI;
+//using UnityEngine.UI;
 using UnityEditor;
-using UnityEditor.UI;
+//using UnityEditor.UI;
 using UnityEditor.Animations;
 using UnityEditor.SceneManagement;
 using UnityEditor.MemoryProfiler;
 using UnityEditorInternal;
 using UnityEditor.Profiling.Memory.Experimental;
-using Unity.MemoryProfilerForExtension.Editor;
+using Unity.MemoryProfilerExtension.Editor;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -435,16 +435,10 @@ internal static class ResourceEditUtility
         calc.Register("calcrefcount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcRefCountExp>());
         calc.Register("calcrefbycount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcRefByCountExp>());
         calc.Register("findasset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindAssetExp>());
+        calc.Register("setmaxrefbynumperobj", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxRefByNumPerObjExp>());
         calc.Register("findshortestpathtoroot", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindShortestPathToRootExp>());
         calc.Register("getobjdatarefbyhash", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetObjectDataRefByHashExp>());
         calc.Register("getobjdatarefbylist", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetObjectDataRefByListExp>());
-        calc.Register("openlink", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.OpenLinkExp>());
-        calc.Register("openreferencelink", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.OpenReferenceLinkExp>());
-        calc.Register("openlinkincurrenttable", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.OpenLinkInCurrentTableExp>());
-        calc.Register("getcurrenttablenames", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCurrentTableNamesExp>());
-        calc.Register("getcurrenttablecount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCurrentTableCountExp>());
-        calc.Register("getcurrenttablename", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCurrentTableNameExp>());
-        calc.Register("getcurrenttable", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCurrentTableExp>());
         calc.Register("objdatafromaddress", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromAddressExp>());
         calc.Register("objdatafromunifiedindex", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromUnifiedObjectIndexExp>());
         calc.Register("objdatafromnativeindex", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromNativeObjectIndexExp>());
@@ -2214,6 +2208,19 @@ namespace ResourceEditApi
             return r;
         }
     }
+    internal class SetMaxRefByNumPerObjExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            var r = ShortestPathToRootObjectFinder.s_MaxRefByNumPerObj;
+            if (operands.Count >= 1) {
+                int num = operands[0].GetInt();
+                ShortestPathToRootObjectFinder.s_MaxRefByNumPerObj = num;
+                r = num;
+            }
+            return r;
+        }
+    }
     internal class FindShortestPathToRootExp : SimpleExpressionBase
     {
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
@@ -2283,118 +2290,6 @@ namespace ResourceEditApi
             return r;
         }
     }
-    internal class OpenLinkExp : SimpleExpressionBase
-    {
-        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
-        {
-            var r = BoxedValue.NullObject;
-            if (operands.Count >= 1) {
-                var obj = operands[0];
-                if (obj.IsObject && obj.GetObject() is ObjectData) {
-                    var data = (ObjectData)obj.GetObject();
-                    ResourceProcessor.Instance.OpenLink(data);
-                }
-                else {
-                    try {
-                        ulong addr = obj.GetULong();
-                        ResourceProcessor.Instance.OpenLink(addr);
-                    }
-                    catch {
-                    }
-                }
-            }
-            return r;
-        }
-    }
-    internal class OpenReferenceLinkExp : SimpleExpressionBase
-    {
-        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
-        {
-            var r = BoxedValue.NullObject;
-            if (operands.Count >= 1) {
-                var obj = operands[0];
-                if (obj.IsObject && obj.GetObject() is ObjectData) {
-                    var data = (ObjectData)obj.GetObject();
-                    ResourceProcessor.Instance.OpenReferenceLink(data);
-                }
-                else {
-                    try {
-                        ulong addr = obj.GetULong();
-                        ResourceProcessor.Instance.OpenReferenceLink(addr);
-                    }
-                    catch {
-                    }
-                }
-            }
-            return r;
-        }
-    }
-    internal class OpenLinkInCurrentTableExp : SimpleExpressionBase
-    {
-        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
-        {
-            var r = BoxedValue.NullObject;
-            if (operands.Count >= 1) {
-                var index = operands[0].GetInt();
-                List<string> list = new List<string>();
-                for (int i = 1; i < operands.Count; ++i) {
-                    string str = operands[i].AsString;
-                    list.Add(str);
-                }
-                ResourceProcessor.Instance.OpenLinkInCurrentTable(index, list);
-            }
-            return r;
-        }
-    }
-    internal class GetCurrentTableNamesExp : SimpleExpressionBase
-    {
-        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
-        {
-            var sb = new StringBuilder();
-            int ct = ResourceProcessor.Instance.GetCurrentTableCount();
-            for (int i = 0; i < ct; ++i) {
-                sb.Append(i);
-                sb.Append(':');
-                var name = ResourceProcessor.Instance.GetCurrentTableName(i);
-                sb.Append(name);
-                if (i < ct - 1)
-                    sb.Append(',');
-            }
-            return sb.ToString();
-        }
-    }
-    internal class GetCurrentTableCountExp : SimpleExpressionBase
-    {
-        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
-        {
-            int r = ResourceProcessor.Instance.GetCurrentTableCount();
-            return r;
-        }
-    }
-    internal class GetCurrentTableNameExp : SimpleExpressionBase
-    {
-        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
-        {
-            var r = BoxedValue.NullObject;
-            if (operands.Count >= 1) {
-                var index = operands[0].GetInt();
-                r = ResourceProcessor.Instance.GetCurrentTableName(index);
-            }
-            return r;
-        }
-    }
-    internal class GetCurrentTableExp : SimpleExpressionBase
-    {
-        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
-        {
-            var r = BoxedValue.NullObject;
-            if (operands.Count >= 1) {
-                var index = operands[0].GetInt();
-                r = BoxedValue.FromObject(ResourceProcessor.Instance.GetCurrentTable(index));
-            }
-            return r;
-        }
-    }
     internal class ObjectDataFromAddressExp : SimpleExpressionBase
     {
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
@@ -2415,7 +2310,7 @@ namespace ResourceEditApi
             var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
-                int index = obj.GetInt();
+                long index = obj.GetLong();
                 r = BoxedValue.FromObject(ResourceProcessor.Instance.ObjectDataFromUnifiedObjectIndex(index));
             }
             return r;
@@ -2428,7 +2323,7 @@ namespace ResourceEditApi
             var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
-                int index = obj.GetInt();
+                long index = obj.GetLong();
                 r = BoxedValue.FromObject(ResourceProcessor.Instance.ObjectDataFromNativeObjectIndex(index));
             }
             return r;
@@ -2441,7 +2336,7 @@ namespace ResourceEditApi
             var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
                 var obj = operands[0];
-                int index = obj.GetInt();
+                long index = obj.GetLong();
                 r = BoxedValue.FromObject(ResourceProcessor.Instance.ObjectDataFromManagedObjectIndex(index));
             }
             return r;
@@ -6959,61 +6854,32 @@ internal static class MeshAreaHelper
 #region MemoryProfiler
 class ShortestPathToRootObjectFinder
 {
-    private readonly CachedSnapshot _snapshot;
-    private Dictionary<int, HashSet<ObjectData>> _refbydict;
-
     public ShortestPathToRootObjectFinder(CachedSnapshot snapshot)
     {
         _snapshot = snapshot;
-        _refbydict = new Dictionary<int, HashSet<ObjectData>>();
+        _refbydict = new Dictionary<long, HashSet<ObjectData>>((int)(snapshot.SortedManagedObjects.Count + snapshot.SortedNativeObjects.Count));
 
-        int ct = (int)snapshot.CrawledData.Connections.Count;
-        for (int i = 0; i < ct; ++i) {
+        long ct = snapshot.CrawledData.Connections.Count;
+        for (long i = 0; i < ct; ++i) {
             var c = snapshot.CrawledData.Connections[i];
-            int objIndex = c.GetUnifiedIndexTo(snapshot);
-            ObjectData objData = ObjectData.invalid;
-            switch (c.connectionType) {
-                case ManagedConnection.ConnectionType.Global_To_ManagedObject:
-                    objData = ObjectData.global;
-                    break;
-                case ManagedConnection.ConnectionType.ManagedObject_To_ManagedObject:
-                    var objParent = ObjectData.FromManagedObjectIndex(snapshot, c.fromManagedObjectIndex);
-                    if (c.fieldFrom >= 0) {
-                        if (objParent.dataType == ObjectDataType.Array || objParent.dataType == ObjectDataType.ReferenceArray) {
-                            objData = objParent;
-                        }
-                        else {
-                            objData = objParent.GetInstanceFieldBySnapshotFieldIndex(snapshot, c.fieldFrom, false);
-                        }
-                    }
-                    else if (c.arrayIndexFrom >= 0) {
-                        objData = objParent.GetArrayElement(snapshot, c.arrayIndexFrom, false);
-                    }
-                    else {
-                        objData = objParent;
-                    }
-                    break;
-                case ManagedConnection.ConnectionType.ManagedType_To_ManagedObject:
-                    var objType = ObjectData.FromManagedType(snapshot, c.fromManagedType);
-                    if (c.fieldFrom >= 0) {
-                        objData = objType.GetInstanceFieldBySnapshotFieldIndex(snapshot, c.fieldFrom, false);
-                    }
-                    else if (c.arrayIndexFrom >= 0) {
-                        objData = objType.GetArrayElement(snapshot, c.arrayIndexFrom, false);
-                    }
-                    else {
-                        objData = objType;
-                    }
-                    break;
-                case ManagedConnection.ConnectionType.UnityEngineObject:
-                    objData = ObjectData.FromNativeObjectIndex(snapshot, c.UnityEngineNativeObjectIndex);
-                    break;
+            var to = c.IndexTo;
+            var from = c.IndexFrom;
+            ObjectData objData = ObjectConnection.GetManagedReferenceSource(snapshot, c);
+            if (to.Id == CachedSnapshot.SourceIndex.SourceId.ManagedObject) {
+                if (from.Id == CachedSnapshot.SourceIndex.SourceId.ManagedObject
+                    || from.Id == CachedSnapshot.SourceIndex.SourceId.ManagedType
+                    || from.Id == CachedSnapshot.SourceIndex.SourceId.ManagedHeapSection
+                    || from.Id == CachedSnapshot.SourceIndex.SourceId.NativeObject
+                    || from.Id == CachedSnapshot.SourceIndex.SourceId.NativeType
+                    || from.Id == CachedSnapshot.SourceIndex.SourceId.NativeRootReference
+                    || from.Id == CachedSnapshot.SourceIndex.SourceId.GfxResource) {
+                    long objIndex = snapshot.ManagedObjectIndexToUnifiedObjectIndex(to.Index);
+                    TryAddRefBy(objIndex, ref objData);
+                }
             }
-            TryAddRefBy(objIndex, ref objData);
-            //考虑managed->native情形
-            if (c.connectionType == ManagedConnection.ConnectionType.UnityEngineObject) {
-                objIndex = _snapshot.NativeObjectIndexToUnifiedObjectIndex(c.UnityEngineNativeObjectIndex);
-                objData = ObjectData.FromManagedObjectIndex(snapshot, c.UnityEngineManagedObjectIndex);
+            else if (to.Id == CachedSnapshot.SourceIndex.SourceId.NativeObject && from.Id == CachedSnapshot.SourceIndex.SourceId.ManagedObject) {
+                //考虑managed->native情形
+                long objIndex = snapshot.NativeObjectIndexToUnifiedObjectIndex(to.Index);
                 TryAddRefBy(objIndex, ref objData);
             }
             if (i % 1000 == 0 && ResourceProcessor.Instance.DisplayCancelableProgressBar("build reference by dictionary", i, ct)) {
@@ -7021,15 +6887,24 @@ class ShortestPathToRootObjectFinder
             }
         }
         //从cache里检索一遍
-        ct = (int)snapshot.connections.Count;
-        for (int i = 0; i < ct; ++i) {
-            int objIndex = snapshot.connections.to[i];
-            var objData = ObjectData.FromUnifiedObjectIndex(snapshot, snapshot.connections.from[i]);
-            TryAddRefBy(objIndex, ref objData);
-            if (i % 1000 == 0 && ResourceProcessor.Instance.DisplayCancelableProgressBar("build reference by dictionary", i, ct)) {
-                break;
+        ct = snapshot.Connections.Count;
+        int ix = 0;
+        foreach(var pair in snapshot.Connections.ReferencedBy) {
+            var to = pair.Key;
+            foreach(var from in pair.Value) {
+                var od = ObjectData.FromSourceLink(snapshot, to);
+                long objIndex = od.GetUnifiedObjectIndex(snapshot);
+                var objData = ObjectData.FromSourceLink(snapshot, from);
+                if (od.isManaged || objData.isManaged) {
+                    TryAddRefBy(objIndex, ref objData);
+                }
+                if (ix % 1000 == 0 && ResourceProcessor.Instance.DisplayCancelableProgressBar("build reference by dictionary", ix, ct)) {
+                    goto L_Exit;
+                }
+                ++ix;
             }
         }
+    L_Exit:
         EditorUtility.ClearProgressBar();
     }
 
@@ -7051,7 +6926,6 @@ class ShortestPathToRootObjectFinder
                 break;
             }
 
-            //var refBys = ObjectConnection.GetAllObjectConnectingTo(_snapshot, subObj);
             HashSet<ObjectData> refBys;
             if (_refbydict.TryGetValue(subObj.GetUnifiedObjectIndex(_snapshot), out refBys)) {
                 foreach (var next in refBys) {
@@ -7073,13 +6947,15 @@ class ShortestPathToRootObjectFinder
     public HashSet<ObjectData> GetReferenceByHash(ObjectData data)
     {
         HashSet<ObjectData> hash;
-        int index = data.GetUnifiedObjectIndex(_snapshot);
+        long index = data.GetUnifiedObjectIndex(_snapshot);
         _refbydict.TryGetValue(index, out hash);
         return hash;
     }
     public ObjectData[] GetReferenceByList(ObjectData data)
     {
-        return ObjectConnection.GetAllObjectConnectingTo(_snapshot, data);
+        List<ObjectData> objs = new List<ObjectData>();
+        ObjectConnection.GetAllReferencedObjects(_snapshot, data.GetSourceLink(_snapshot), ref objs);
+        return objs.ToArray();
     }
     public bool IsRoot(ObjectData data, out string reason)
     {
@@ -7087,20 +6963,20 @@ class ShortestPathToRootObjectFinder
         if (data.IsValid) {
             bool isStatic = false;
             if (data.IsField()) {
-                if (data.fieldIndex >= 0 && data.fieldIndex < _snapshot.fieldDescriptions.Count) {
-                    isStatic = _snapshot.fieldDescriptions.isStatic[data.fieldIndex];
+                if (data.fieldIndex >= 0 && data.fieldIndex < _snapshot.FieldDescriptions.Count) {
+                    isStatic = _snapshot.FieldDescriptions.IsStatic[data.fieldIndex] != 0;
                 }
             }
-            if (isStatic || data.dataType == ObjectDataType.Global || data.dataType == ObjectDataType.Type) {
+            if (isStatic || data.dataType == ObjectDataType.Unknown || data.dataType == ObjectDataType.Type) {
                 reason = "Static fields are global variables. Anything they reference will not be unloaded.";
                 return true;
             }
             if (data.isManaged)
                 return false;
 
-            var classID = _snapshot.nativeObjects.nativeTypeArrayIndex[data.nativeObjectIndex];
-            var flags = (int)_snapshot.nativeObjects.flags[data.nativeObjectIndex];
-            var hideFlags = _snapshot.nativeObjects.hideFlags[data.nativeObjectIndex];
+            var classID = _snapshot.NativeObjects.NativeTypeArrayIndex[data.nativeObjectIndex];
+            var flags = (int)_snapshot.NativeObjects.Flags[data.nativeObjectIndex];
+            var hideFlags = _snapshot.NativeObjects.HideFlags[data.nativeObjectIndex];
 
             if ((flags & (int)ObjectFlags.IsPersistent) != 0)
                 return false;
@@ -7137,18 +7013,18 @@ class ShortestPathToRootObjectFinder
 
     private bool IsGameObject(int classID)
     {
-        return _snapshot.nativeTypes.typeName[classID] == "GameObject";
+        return _snapshot.NativeTypes.TypeName[classID] == "GameObject";
     }
 
     private bool IsAssetBundle(int classID)
     {
-        return _snapshot.nativeTypes.typeName[classID] == "AssetBundle";
+        return _snapshot.NativeTypes.TypeName[classID] == "AssetBundle";
     }
 
     private bool IsComponent(int classID)
     {
-        var typeName = _snapshot.nativeTypes.typeName[classID];
-        var nativeBaseTypeArrayIndex = _snapshot.nativeTypes.nativeBaseTypeArrayIndex[classID];
+        var typeName = _snapshot.NativeTypes.TypeName[classID];
+        var nativeBaseTypeArrayIndex = _snapshot.NativeTypes.NativeBaseTypeArrayIndex[classID];
 
         if (typeName == "Component")
             return true;
@@ -7158,18 +7034,23 @@ class ShortestPathToRootObjectFinder
         return baseClassID != -1 && IsComponent(baseClassID);
     }
 
-    private void TryAddRefBy(int objIndex, ref ObjectData objData)
+    private void TryAddRefBy(long objIndex, ref ObjectData objData)
     {
         if (objIndex >= 0) {
             HashSet<ObjectData> hash;
             if (!_refbydict.TryGetValue(objIndex, out hash)) {
-                hash = new HashSet<ObjectData>();
+                hash = new HashSet<ObjectData>(s_MaxRefByNumPerObj);
                 _refbydict.Add(objIndex, hash);
             }
-            if (!hash.Contains(objData)) {
+            if (hash.Count < s_MaxRefByNumPerObj) {
                 hash.Add(objData);
             }
         }
     }
+
+    private readonly CachedSnapshot _snapshot;
+    private Dictionary<long, HashSet<ObjectData>> _refbydict;
+
+    internal static int s_MaxRefByNumPerObj = 256;
 }
 #endregion

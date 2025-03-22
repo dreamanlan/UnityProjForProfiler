@@ -13,15 +13,15 @@ input("*.*")
 filter
 {
 	if(assetpath.Contains(assetfilter)){
-		var(0) = getdependencies(assetpath);
-		looplist(var(0)){		
+		$v0 = getdependencies(assetpath);
+		looplist($v0){
 			if($$.Contains(dependencefilter)){
-				var(1) = newitem();
-				var(1).AssetPath = $$;
-				var(1).Info = assetpath;
-				var(1).Order = 0;
-				var(1).Value = 0;
-				var(1).Group = $$;
+				$v1 = newitem();
+				$v1.AssetPath = $$;
+				$v1.Info = assetpath;
+				$v1.Order = 0;
+				$v1.Value = 0;
+				$v1.Group = $$;
 			};
 		};
 	};

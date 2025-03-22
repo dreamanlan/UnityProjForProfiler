@@ -1,0 +1,20 @@
+{
+    "name": "Unity.MemoryProfilerExtension",
+    "rootNamespace": "Unity.MemoryProfilerExtension",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "Unity",
+            "expression": "2022.2.0a13",
+            "define": "MEMORY_PROFILER_API_PUBLIC"
+        }
+    ],
+    "noEngineReferences": false
+}

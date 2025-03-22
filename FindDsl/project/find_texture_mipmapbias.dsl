@@ -13,24 +13,24 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-    var(99)=0;
+    $v99=0;
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        var(0) = loadasset(assetpath);
-        var(1) = var(0).width;
-        var(2) = var(0).height;
-        var(3) = var(0).mipMapBias;
-        var(4) = gettexturesetting("iPhone");
-        var(5) = gettexturesetting("Android");
-        //unloadasset(var(0));
-        if(eq && var(3)==bias || !eq && var(3)<bias){
-            if(sizeLE && (var(1) <= maxSize || var(2) <= maxSize) && (var(4).maxTextureSize <= maxSize || var(5).maxTextureSize <= maxSize) || 
-                !sizeLE && (var(1) > maxSize || var(2) > maxSize) && (var(4).maxTextureSizesizeq > maxSize || var(5).maxTextureSize > maxSize)){
-                info = "size:" + var(1) + "," + var(2) + " bias:" + var(3) + " ios_size:"+var(4).maxTextureSize+" android_size:"+var(5).maxTextureSize;
-                order = var(1)<var(2) ? var(2) : var(1);
-                value = var(3);
-                var(99)=1;
+        $v0 = loadasset(assetpath);
+        $v1 = $v0.width;
+        $v2 = $v0.height;
+        $v3 = $v0.mipMapBias;
+        $v4 = gettexturesetting("iPhone");
+        $v5 = gettexturesetting("Android");
+        //unloadasset($v0);
+        if(eq && $v3==bias || !eq && $v3<bias){
+            if(sizeLE && ($v1 <= maxSize || $v2 <= maxSize) && ($v4.maxTextureSize <= maxSize || $v5.maxTextureSize <= maxSize) ||
+                !sizeLE && ($v1 > maxSize || $v2 > maxSize) && ($v4.maxTextureSizesizeq > maxSize || $v5.maxTextureSize > maxSize)){
+                info = "size:" + $v1 + "," + $v2 + " bias:" + $v3 + " ios_size:"+$v4.maxTextureSize+" android_size:"+$v5.maxTextureSize;
+                order = $v1<$v2 ? $v2 : $v1;
+                value = $v3;
+                $v99=1;
             };
         };
     };
-    var(99);
+    $v99;
 };

@@ -16,9 +16,9 @@ filter
 {
     String = gettype("System.String");
 	order = group_info.size;
-	var(0) = group_info.group;
-	var(1) = group_info.count;
-	if(group_info.size >= maxSize && stringcontainsany(var(0),containsany) && stringnotcontains(var(0),notcontains) && (String.IsNullOrEmpty(startswith) || var(0).StartsWith(startswith)) && (String.IsNullOrEmpty(endswith) || var(0).EndsWith(endswith)) && var(1)>=mincount){
+	$v0 = group_info.group;
+	$v1 = group_info.count;
+	if(group_info.size >= maxSize && stringcontainsany($v0,containsany) && stringnotcontains($v0,notcontains) && (String.IsNullOrEmpty(startswith) || $v0.StartsWith(startswith)) && (String.IsNullOrEmpty(endswith) || $v0.EndsWith(endswith)) && $v1>=mincount){
 		info = format("group:{0} count:{1} size:{2}",
 	        group_info.group, group_info.count, group_info.size
 	        );

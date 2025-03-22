@@ -8,9 +8,9 @@ input("t:shader")
 filter
 {
   if(assetpath.Contains(filter)){
-  	var(0) = loadasset(assetpath);
-  	order = getshaderpropertycount(var(0));
-  	info = format("{0} property count:{1} texture count:{2}", getfilename(assetpath), order, getshaderpropertycount(var(0), 4));
+  	$v0 = loadasset(assetpath);
+  	order = getshaderpropertycount($v0);
+  	info = format("{0} property count:{1} texture count:{2}", getfilename(assetpath), order, getshaderpropertycount($v0, 4));
     1;
   }else{
     0;
@@ -18,6 +18,6 @@ filter
 }
 process
 {
-  var(0) = loadasset(assetpath);
-	addshadertocollection(var(0));
+  $v0 = loadasset(assetpath);
+	addshadertocollection($v0);
 };

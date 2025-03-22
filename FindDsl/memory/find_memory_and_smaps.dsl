@@ -34,36 +34,36 @@ filter
 		if(isnullorempty(assetpath)){
 			assetpath = memory.name;
 		};
-		var(0) = findsmaps(maps, memory.address);
-		var(1) = findmanagedheaps(mheaps, memory.address);
-		if(isnull(var(0))){
-		    var(2) = "unknown";
-		    var(3) = 0;  
-		    var(4) = 0;
-		    var(5) = 0;
-		    var(6) = 0;
+		$v0 = findsmaps(maps, memory.address);
+		$v1 = findmanagedheaps(mheaps, memory.address);
+		if(isnull($v0)){
+		    $v2 = "unknown";
+		    $v3 = 0;
+		    $v4 = 0;
+		    $v5 = 0;
+		    $v6 = 0;
 		}else{
-		    var(2) = var(0).module;
-		    var(3) = var(0).size;
-		    var(4) = var(0).vm_start;
-		    var(5) = var(0).rss;
-		    var(6) = var(0).pss;
+		    $v2 = $v0.module;
+		    $v3 = $v0.size;
+		    $v4 = $v0.vm_start;
+		    $v5 = $v0.rss;
+		    $v6 = $v0.pss;
 		};
-		if(isnull(var(1))){
-		    var(7) = 0;
-		    var(8) = 0;
+		if(isnull($v1)){
+		    $v7 = 0;
+		    $v8 = 0;
 		}else{
-		    var(7) = var(1).size;
-		    var(8) = var(1).vm_start;
+		    $v7 = $v1.size;
+		    $v8 = $v1.vm_start;
 		};
-		if(sectionAddr==0 || sectionAddr==var(4)){
+		if(sectionAddr==0 || sectionAddr==$v4){
     		scenepath = format("name:{0} class:{1} size:{2} addr:{3:X}",
     	        memory.name, memory.className, memory.size, memory.address
     	        );
     		info = format("module:{0} section_size:{1} section_start:{2:X} rss:{3} pss:{4} mheap_size:{5} mheap:{6:X}",
-    	        var(2), var(3), var(4), var(5), var(6), var(7), var(8)
+    	        $v2, $v3, $v4, $v5, $v6, $v7, $v8
     	        );
-    	    order = var(4);
+    	    order = $v4;
     	    value = memory.size;
         	extraobject = memory.objectData;
         	extralistbuild = "BuildExtraList";

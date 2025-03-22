@@ -11,14 +11,14 @@ input("*.exr","*.hdr","*.tga","*.png")
 }
 filter
 {
-	var(0) = loadasset(assetpath);
-	var(1) = var(0).width;
-	var(2) = var(0).height;
-	var(3) = importer.textureShape == parseenum("TextureImporterShape", "TextureCube");
-	var(4) = importer.mipmapEnabled;
-	//unloadasset(var(0));
-	if((var(1) > maxSize || var(2) > maxSize) && stringcontains(assetpath, filter) && stringnotcontains(assetpath, "SplatAlpha") && (prop.Contains("1") && var(3) || !prop.Contains("1")) && (prop.Contains("2") && var(4) || !prop.Contains("2"))){
-		info = "size:" + var(1) + "," + var(2);
+	$v0 = loadasset(assetpath);
+	$v1 = $v0.width;
+	$v2 = $v0.height;
+	$v3 = importer.textureShape == parseenum("TextureImporterShape", "TextureCube");
+	$v4 = importer.mipmapEnabled;
+	//unloadasset($v0);
+	if(($v1 > maxSize || $v2 > maxSize) && stringcontains(assetpath, filter) && stringnotcontains(assetpath, "SplatAlpha") && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
+		info = "size:" + $v1 + "," + $v2;
 		1;
 	} else {
 		0;

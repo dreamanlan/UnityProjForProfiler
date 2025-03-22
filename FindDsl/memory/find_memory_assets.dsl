@@ -16,9 +16,9 @@ filter
     String = gettype("System.String");
 	order = memory.size;
 	if(memory.size >= maxSize && memory.className == class && stringcontainsany(memory.name,anyfilter)){
-		var(0) = findasset(memory.name, memory.className);
-		assetpath = var(0)[0];
-		scenepath = var(0)[1];
+		$v0 = findasset(memory.name, memory.className);
+		assetpath = $v0[0];
+		scenepath = $v0[1];
 		if(isnullorempty(assetpath)){
 			assetpath = memory.name;
 		};

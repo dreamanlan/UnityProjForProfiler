@@ -10,14 +10,14 @@ input("*.*")
 filter
 {
 	if(assetpath.Contains(assetfilter)){
-		var(0) = getdependencies(assetpath);
-		looplist(var(0)){		
+		$v0 = getdependencies(assetpath);
+		looplist($v0){
 			if($$.Contains(dependencefilter)){
-				var(1) = newitem();
-				var(1).AssetPath = assetpath;
-				var(1).Info = $$;
-				var(1).Order = 0;
-				var(1).Value = 0;
+				$v1 = newitem();
+				$v1.AssetPath = assetpath;
+				$v1.Info = $$;
+				$v1.Order = 0;
+				$v1.Value = 0;
 			};
 		};
 	};

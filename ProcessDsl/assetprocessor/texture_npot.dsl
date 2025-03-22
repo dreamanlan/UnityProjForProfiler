@@ -8,14 +8,14 @@ input("*.tga","*.png","*.jpg")
 }
 filter
 {
-	var(0) = loadasset(assetpath);
-	var(1) = var(0).width;
-	var(2) = var(0).height;
-	var(3) = importer.npotScale;
-	var(4) = ispoweroftwo(var(1)) && ispoweroftwo(var(2));
-	//unloadasset(var(0));
-	if((var(1) > maxSize || var(2) > maxSize) && assetpath.Contains(filter) && !var(4)){
-		info = "size:" + var(1) + "," + var(2) + " npot scale:" + var(3);
+	$v0 = loadasset(assetpath);
+	$v1 = $v0.width;
+	$v2 = $v0.height;
+	$v3 = importer.npotScale;
+	$v4 = ispoweroftwo($v1) && ispoweroftwo($v2);
+	//unloadasset($v0);
+	if(($v1 > maxSize || $v2 > maxSize) && assetpath.Contains(filter) && !$v4){
+		info = "size:" + $v1 + "," + $v2 + " npot scale:" + $v3;
 		1;
 	} else {
 		0;

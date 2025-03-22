@@ -9,18 +9,18 @@ input("Renderer")
 }
 filter
 {
-	var(0) = 0;
-	var(1) = getcomponent(object, "Renderer");
-	var(2) = var(1).sharedMaterials;
-	looplist(var(2)){
+	$v0 = 0;
+	$v1 = getcomponent(object, "Renderer");
+	$v2 = $v1.sharedMaterials;
+	looplist($v2){
 		if(isnull($$))
 			continue;
-		var(3) = $$.name;
-		var(4) = $$.shader.name;
-		if(var(3).Contains(matName) && var(4).Contains(shaderName)){
-	  	info = "mat:" + var(3) + " shader:" + var(4);
-	  	var(0) = 1;  		
+		$v3 = $$.name;
+		$v4 = $$.shader.name;
+		if($v3.Contains(matName) && $v4.Contains(shaderName)){
+	  	info = "mat:" + $v3 + " shader:" + $v4;
+	  	$v0 = 1;
 	  };
 	};
-	var(0);
+	$v0;
 };

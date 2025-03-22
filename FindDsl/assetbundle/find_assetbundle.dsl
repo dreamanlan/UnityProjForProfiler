@@ -11,27 +11,27 @@ input
 filter
 {
 	if(stringcontains(assetpath, abfilter)){
-	    var(0) = asset_bundle_info.assetNames;
-	    var(1) = asset_bundle_info.dependencies;
-	    looplist(var(0)){
-	        var(2) = $$;
-	        if(stringcontains(var(2), assetfilter)){
-	            var(10) = newitem();
-	            var(10).AssetPath = assetpath;
-				var(10).Info = "asset:"+var(2);
-				var(10).Order = 0;
-				var(10).Value = 0;
+	    $v0 = asset_bundle_info.assetNames;
+	    $v1 = asset_bundle_info.dependencies;
+	    looplist($v0){
+	        $v2 = $$;
+	        if(stringcontains($v2, assetfilter)){
+	            $v10 = newitem();
+	            $v10.AssetPath = assetpath;
+				$v10.Info = "asset:"+$v2;
+				$v10.Order = 0;
+				$v10.Value = 0;
 	        };
 	    };
-	    looplist(var(1)){
-	        var(2) = $$;
-	        if(stringcontains(var(2), assetfilter)){
-	            var(10) = newitem();
-	            var(10).AssetPath = assetpath;
-				var(10).Info = "dep:"+var(2);
-				var(10).Order = 0;
-				var(10).Value = 0;
-	        };	        
+	    looplist($v1){
+	        $v2 = $$;
+	        if(stringcontains($v2, assetfilter)){
+	            $v10 = newitem();
+	            $v10.AssetPath = assetpath;
+				$v10.Info = "dep:"+$v2;
+				$v10.Order = 0;
+				$v10.Value = 0;
+	        };
 	    };
 	};
 	0;

@@ -1,5 +1,5 @@
 input
-{   
+{
     string("table", "Mission/Main/mission.txt"){
         file("txt");
     };
@@ -27,13 +27,13 @@ filter
     String = gettype("System.String");
     $header = mission_event.GetRow(2);
     $ix = findcellindex($header, "SubType");
-    $ix2 = findcellindex($header, "Target");        
+    $ix2 = findcellindex($header, "Target");
     $ix3 = findcellindex($header, "ScriptFunc");
     $ix4 = findcellindex($header, "Params");
-    
-    $mid = getcellstring(row, 0);  
+
+    $mid = getcellstring(row, 0);
     $erow = mission_event.GetRow(findrowindex(mission_event, 0, $mid));
-        
+
     $sid = 0;
     $sname="";
     $sbeginmsg="";
@@ -50,17 +50,17 @@ filter
             $scpfunc = getcellstring($erow, $ix3);
             $scparg = getcellstring($erow, $ix4);
     };
-        
+
     order = row.RowIndex;
     if(isnullorempty(fields)){
-            var(0) = row.GetLine();
+            $v0 = row.GetLine();
     }else{
-            var(1) = stringsplit(fields,[","]);
-            var(2) = findcellindexes(sheet.GetRow(2), var(1));
-            var(0) = rowtoline(row, 0, var(2));
+            $v1 = stringsplit(fields,[","]);
+            $v2 = findcellindexes(sheet.GetRow(2), $v1);
+            $v0 = rowtoline(row, 0, $v2);
     };
-    if((sid=="" || $sid==sid) && (sname=="" || $sname.Contains(sname)) && var(0).Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !var(0).Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !var(0).Contains(notcontains2))){
-            info = $sid+"\t"+$sname+"\t"+$sbeginmsg+"\t"+$sendmsg+"\t"+$scpfunc+"\t"+$scparg+"\t"+var(0);
+    if((sid=="" || $sid==sid) && (sname=="" || $sname.Contains(sname)) && $v0.Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !$v0.Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !$v0.Contains(notcontains2))){
+            info = $sid+"\t"+$sname+"\t"+$sbeginmsg+"\t"+$sendmsg+"\t"+$scpfunc+"\t"+$scparg+"\t"+$v0;
         value = 0;
         1;
     }else{

@@ -1,5 +1,5 @@
 input
-{	
+{
   string("excel", "Scene.xls"){
   	file("xls", "../../Product/Excel");
   };
@@ -24,28 +24,28 @@ filter
 	order = row.RowNum;
 	if(isGameTable){
 		if(isnullorempty(fields)){
-			var(1) = [];
-			var(2) = findcellindexes(sheet.GetRow(fieldrow), var(1), "*+", sheet.GetRow(0), sheet.GetRow(1));
-			var(0) = rowtoline(row, skipcols, var(2));
+			$v1 = [];
+			$v2 = findcellindexes(sheet.GetRow(fieldrow), $v1, "*+", sheet.GetRow(0), sheet.GetRow(1));
+			$v0 = rowtoline(row, skipcols, $v2);
 		}else{
-			var(1) = stringsplit(fields,[","]);
-			var(2) = findcellindexes(sheet.GetRow(fieldrow), var(1), "*+", sheet.GetRow(0), sheet.GetRow(1));
-			var(0) = rowtoline(row, skipcols, var(2));
+			$v1 = stringsplit(fields,[","]);
+			$v2 = findcellindexes(sheet.GetRow(fieldrow), $v1, "*+", sheet.GetRow(0), sheet.GetRow(1));
+			$v0 = rowtoline(row, skipcols, $v2);
 		};
 	}else{
 		if(isnullorempty(fields)){
-			var(1) = [];
-			var(2) = findcellindexes(sheet.GetRow(fieldcol), var(1));
-			var(0) = rowtoline(row, skipcols, var(2));
+			$v1 = [];
+			$v2 = findcellindexes(sheet.GetRow(fieldcol), $v1);
+			$v0 = rowtoline(row, skipcols, $v2);
 		}else{
-			var(1) = stringsplit(fields,[","]);
-			var(2) = findcellindexes(sheet.GetRow(fieldcol), var(1));
-			var(0) = rowtoline(row, skipcols, var(2));
+			$v1 = stringsplit(fields,[","]);
+			$v2 = findcellindexes(sheet.GetRow(fieldcol), $v1);
+			$v0 = rowtoline(row, skipcols, $v2);
 		};
 	};
 	if(isGameTable && (getcellstring(row,0)=='*' || getcellstring(row,1)=='+') || !isGameTable){
-		if(var(0).Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !var(0).Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !var(0).Contains(notcontains2))){
-			info = var(0);
+		if($v0.Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !$v0.Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !$v0.Contains(notcontains2))){
+			info = $v0;
 		  value = 0;
 		  1;
 		}else{

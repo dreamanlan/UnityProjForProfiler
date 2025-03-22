@@ -7,16 +7,16 @@ input("Transform")
 	feature("description", "just so so");
 }
 filter
-{   
+{
 	if(scenepath.Contains(filter)){
-	  var(0) = getcomponents(object, "Component");
-	  var(1) = 0;
-	  looplist(var(0)){
+	  $v0 = getcomponents(object, "Component");
+	  $v1 = 0;
+	  looplist($v0){
 	    if(isnull($$)){
-	      var(1)=1;
+	      $v1=1;
 	    };
 	  };
-	  var(1);
+	  $v1;
 	}else{
 	  0;
 	};

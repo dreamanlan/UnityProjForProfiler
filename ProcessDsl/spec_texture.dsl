@@ -9,37 +9,37 @@ filter
 {
 	$lines=callscript("GetLines",0);
 	looplist($lines){
-		var(0) = $$;
-		looplist(listallfiles(var(0), "*body_d.*")){
+		$v0 = $$;
+		looplist(listallfiles($v0, "*body_d.*")){
 			callscript("NewItem", $$, 0);
 		};
-		looplist(listallfiles(var(0), "*body_n.*")){
+		looplist(listallfiles($v0, "*body_n.*")){
 			callscript("NewItem", $$, 0);
 		};
-		looplist(listallfiles(var(0), "*face_d.*")){
+		looplist(listallfiles($v0, "*face_d.*")){
 			callscript("NewItem", $$, 1);
 		};
-		looplist(listallfiles(var(0), "*face_n.*")){
+		looplist(listallfiles($v0, "*face_n.*")){
 			callscript("NewItem", $$, 1);
 		};
 	};
 	$lines=callscript("GetLines",1);
 	looplist($lines){
-		var(0) = $$;
-		looplist(listallfiles(var(0), "*body*_d.*")){
+		$v0 = $$;
+		looplist(listallfiles($v0, "*body*_d.*")){
 			callscript("NewItem", $$, 0);
 		};
-		looplist(listallfiles(var(0), "*body*_n.*")){
+		looplist(listallfiles($v0, "*body*_n.*")){
 			callscript("NewItem", $$, 0);
 		};
 	};
 	$lines=callscript("GetLines",2);
 	looplist($lines){
-		var(0) = $$;
-		looplist(listallfiles(var(0), "*face*_d.*")){
+		$v0 = $$;
+		looplist(listallfiles($v0, "*face*_d.*")){
 			callscript("NewItem", $$, 1);
 		};
-		looplist(listallfiles(var(0), "*face*_n.*")){
+		looplist(listallfiles($v0, "*face*_n.*")){
 			callscript("NewItem", $$, 1);
 		};
 	};
@@ -49,7 +49,7 @@ process
 	if(order==0){
 		callscript("SetTexture", 1024);
 	}else{
-		callscript("SetTexture", 512);		
+		callscript("SetTexture", 512);
 	};
 };
 
@@ -59,9 +59,9 @@ script(GetLines)args($type)
 	if($type==0){
 		$lines = readalllines("texture_s_npc.txt");
 	}elseif($type==1){
-		$lines = readalllines("texture_player_body.txt");		
+		$lines = readalllines("texture_player_body.txt");
 	}elseif($type==2){
-		$lines = readalllines("texture_player_face.txt");		
+		$lines = readalllines("texture_player_face.txt");
 	};
 	return($lines);
 };
@@ -69,42 +69,42 @@ script(GetLines)args($type)
 script(NewItem)args($file, $type)
 {
 	if(!$file.EndsWith(".meta") && $file.Contains(filter)){
-		var(0) = $file.Replace("\\","/");
-		var(10) = loadasset(var(0));
-		var(11) = var(10).width;
-		var(12) = var(10).height;
-		var(1) = newitem();
-		var(1).AssetPath = var(0);
-		var(1).Importer = getassetimporter(var(0));
-		var(1).Info = "w*h:"+var(11)+","+var(12);
-		var(1).Order = $type;
-		var(1).Value = 0;
+		$v0 = $file.Replace("\\","/");
+		$v10 = loadasset($v0);
+		$v11 = $v10.width;
+		$v12 = $v10.height;
+		$v1 = newitem();
+		$v1.AssetPath = $v0;
+		$v1.Importer = getassetimporter($v0);
+		$v1.Info = "w*h:"+$v11+","+$v12;
+		$v1.Order = $type;
+		$v1.Value = 0;
 	};
 };
 
 script(SetTexture)args($maxSize)
 {
 	/*
-	var(0) = getdefaulttexturesetting();
-	var(0).maxTextureSize = changetype(maxSize, "int");
-	settexturesetting(var(0));
-	
-	var(1) = gettexturesetting("Standalone");
-	var(1).maxTextureSize = changetype(maxSize, "int");
-	settexturesetting(var(1));
+	$v0 = getdefaulttexturesetting();
+	$v0.maxTextureSize = changetype(maxSize, "int");
+	settexturesetting($v0);
+
+	$v1 = gettexturesetting("Standalone");
+	$v1.maxTextureSize = changetype(maxSize, "int");
+	settexturesetting($v1);
 	*/
-	
-	var(2) = gettexturesetting("iPhone");
-	var(2).overridden=true;
-	var(2).maxTextureSize = $maxSize;
-	setastctexture(var(2), 8);
-	settexturesetting(var(2));
-	
-	var(3) = gettexturesetting("Android");
-	var(3).overridden=true;
-	var(3).maxTextureSize = $maxSize;
-	setastctexture(var(3), 8);
-	settexturesetting(var(3));
-	
+
+	$v2 = gettexturesetting("iPhone");
+	$v2.overridden=true;
+	$v2.maxTextureSize = $maxSize;
+	setastctexture($v2, 8);
+	settexturesetting($v2);
+
+	$v3 = gettexturesetting("Android");
+	$v3.overridden=true;
+	$v3.maxTextureSize = $maxSize;
+	setastctexture($v3, 8);
+	settexturesetting($v3);
+
 	updatetexturedb(assetpath, importer);
 };

@@ -8,12 +8,12 @@ input("Transform")
 }
 filter
 {
-    var(0) = getcomponentinchildren(object, "MeshFilter");
-    var(1) = 0;
-    if(!isnull(var(0))){
-        if(isnull(var(0).sharedMesh)){
-        	var(1)=1;
+    $v0 = getcomponentinchildren(object, "MeshFilter");
+    $v1 = 0;
+    if(!isnull($v0)){
+        if(isnull($v0.sharedMesh)){
+        	$v1=1;
         };
     };
-    var(1);
+    $v1;
 };

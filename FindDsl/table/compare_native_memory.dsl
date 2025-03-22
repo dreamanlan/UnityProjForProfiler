@@ -1,5 +1,5 @@
 input
-{   
+{
     string("table", ""){
         file("csv");
     };
@@ -27,30 +27,30 @@ filter
     String = gettype("System.String");
     $header = sheet.GetRow(0);
     $ix = 2;
-    $ix2 = 1;        
+    $ix2 = 1;
     $ix3 = 5;
     $ix4 = 6;
-    
+
     $class = getcellstring(row, $ix);
     $name = getcellstring(row, $ix2);
     $size = getcellnumeric(row, $ix3);
     $addr = getcellnumeric(row, $ix4);
-    
-    var(99) = 0;
+
+    $v99 = 0;
     if(stringcontainsany($class, classcontainsany) && stringcontainsany($name, namecontainsany) && stringnotcontains($class, classnotcontains) && stringnotcontains($name, namenotcontains)){
         $row = findrowfromhashtable(dict2, [$class, $name]);
         if(!isnull($row)){
             if(resultopt!=2){
                 $size2 = getcellnumeric($row, $ix3);
                 info=format("{0}, {1}, size {2}=>{3}",$class,$name,$size,$size2);
-                var(99)=1;
+                $v99=1;
             };
         }elseif(resultopt!=3){
             info=format("{0}, {1}, size {2}=>",$class,$name,$size);
-            var(99)=1;
+            $v99=1;
         };
     };
-    if(var(99)==1){
+    if($v99==1){
         assetpath = format("{0}({1})",$name,$addr);
         scenepath = $class;
         order = $size;
@@ -58,7 +58,7 @@ filter
     	extraobject = $addr;
     	extralistbuild = "BuildExtraList";
     };
-    var(99);
+    $v99;
 };
 
 script(buildHashtable)args($paramInfo)

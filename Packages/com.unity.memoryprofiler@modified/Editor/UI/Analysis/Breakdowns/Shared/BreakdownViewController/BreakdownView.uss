@@ -1,0 +1,125 @@
+.breakdown-view__dark:root
+{
+  --breakdown-view__table-size-bar__background-color: #5A5A5A;
+  --breakdown-view__table-size-bar__fill-background-color: #C4C4C4;
+  --breakdown-view__table-size-bar__remainer-color: #232323;
+}
+
+.breakdown-view__light:root
+{
+  --breakdown-view__table-size-bar__background-color: #CBCBCB;
+  --breakdown-view__table-size-bar__fill-background-color: white;
+  --breakdown-view__table-size-bar__remainer-color: #AAAAAA;
+}
+
+#breakdown-view
+{
+    flex-grow: 1;
+    margin: 16px;
+}
+
+#breakdown-view__search-field-container
+{
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#breakdown-view__description-label
+{
+    flex-shrink: 1;
+    margin-right: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#breakdown-view__mode-dropdown
+{
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    max-width: 620px;
+}
+
+#breakdown-view__mode-dropdown > Label
+{
+    white-space: normal;
+}
+
+#breakdown-view__mode-dropdown PopupTextElement
+{
+    text-overflow: ellipsis;
+}
+
+#breakdown-view__search-field
+{
+    flex-shrink: 1;
+    height: 14px;
+    margin: 0px;
+    padding: 4px;
+    width: 40%;
+}
+
+#breakdown-view__search-field TextField
+{
+    padding-left: 4px;
+}
+
+#breakdown-view__search-field TextElement
+{
+    font-size: 12px;
+}
+
+#breakdown-view__table-size-bar
+{
+    flex-shrink: 0;
+    margin: 20px 0px 0px;
+}
+
+#breakdown-view__table-size-bar .detailed-size-bar__bar-container
+{
+    flex-direction: row;
+    flex-grow: 1;
+    height: 14px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+#breakdown-view__table-size-bar .detailed-size-bar__bar
+{
+    flex-grow: 0;
+    height: 14px;
+    margin: 0px;
+}
+
+#breakdown-view__table-size-bar .detailed-size-bar__bar-remainder
+{
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin-left: 2px;
+    background-color: var(--breakdown-view__table-size-bar__remainer-color);
+    height: 14px;
+}
+
+#breakdown-view__table-size-bar .detailed-size-bar__size-label
+{
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#breakdown-view__table-size-bar .detailed-size-bar__total-label
+{
+    margin-left: 16px;
+}
+
+#breakdown-view__table-size-bar .detailed-size-bar__footer
+{
+    margin: 8px 0px;
+}
+
+#breakdown-view__table-container
+{
+    flex-grow: 1;
+}

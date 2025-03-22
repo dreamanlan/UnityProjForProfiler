@@ -6,8 +6,8 @@ input("Transform")
 }
 filter
 {
-	var(0) = getcomponentinchildren(object, "MeshCollider");
-	if(isnull(var(0))){
+	$v0 = getcomponentinchildren(object, "MeshCollider");
+	if(isnull($v0)){
 		0;
 	}else{
 		1;
@@ -15,6 +15,6 @@ filter
 }
 process
 {
-	var(0) = getcomponentinchildren(object, "MeshCollider");
-	destroyobject(var(0));
+	$v0 = getcomponentinchildren(object, "MeshCollider");
+	destroyobject($v0);
 };

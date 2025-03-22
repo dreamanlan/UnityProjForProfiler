@@ -21,23 +21,23 @@ input("*.tga","*.png","*.jpg")
 }
 filter
 {
-	var(0) = loadasset(assetpath);
-	if(isnull(var(0))){
+	$v0 = loadasset(assetpath);
+	if(isnull($v0)){
 		0;
 	} else {;
-		var(1) = var(0).width;
-		var(2) = var(0).height;
-		var(3) = importer.isReadable;
-		var(4) = importer.mipmapEnabled;
-		//unloadasset(var(0));
-		order = var(1) < var(2) ? var(2) : var(1);
-		if((var(1) > maxSize || var(2) > maxSize) && assetpath.Contains(filter) && (isnullorempty(notfilter) || !assetpath.Contains(notfilter)) && (prop.Contains("1") && var(3) || !prop.Contains("1")) && (prop.Contains("2") && var(4) || !prop.Contains("2"))){
-			info = format("{0} size:{1},{2} guid:{3}", assetpath, var(1), var(2), assetpath2guid(assetpath));
+		$v1 = $v0.width;
+		$v2 = $v0.height;
+		$v3 = importer.isReadable;
+		$v4 = importer.mipmapEnabled;
+		//unloadasset($v0);
+		order = $v1 < $v2 ? $v2 : $v1;
+		if(($v1 > maxSize || $v2 > maxSize) && assetpath.Contains(filter) && (isnullorempty(notfilter) || !assetpath.Contains(notfilter)) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
+			info = format("{0} size:{1},{2} guid:{3}", assetpath, $v1, $v2, assetpath2guid(assetpath));
 			value = calcassetsize(assetpath);
 			if(duptype==1){
-				group = format("{0}|{1}", value, calcassetmd5(assetpath));				
+				group = format("{0}|{1}", value, calcassetmd5(assetpath));
 			}else{
-				group = format("{0}", assetpath2guid(assetpath));		
+				group = format("{0}", assetpath2guid(assetpath));
 			};
 			1;
 		} else {
@@ -51,6 +51,6 @@ group
 		info = format("{0} count:{1} ref by count:{2}", group, count, calcrefbycount(assetpath));
 		1;
 	}else{
-		0;	
+		0;
 	};
 };

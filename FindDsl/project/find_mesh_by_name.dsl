@@ -13,20 +13,20 @@ input("*.fbx")
 filter
 {
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        var(0) = loadasset(assetpath);  
-        var(1) = collectmeshes(var(0), true);
-        //unloadasset(var(0));
-        looplist(var(1)){
+        $v0 = loadasset(assetpath);
+        $v1 = collectmeshes($v0, true);
+        //unloadasset($v0);
+        looplist($v1){
             $mesh = $$;
             $name = $mesh.name;
             $vertexCount = $mesh.vertexCount;
             $triangleCount = $mesh.triangles.Length/3;
             if(stringcontains($name, meshfilter) && stringnotcontains($name, meshnotfilter) && $triangleCount>=triangleCount){
-                var(2) = newitem();
-                var(2).AssetPath = assetpath;
-                var(2).Info = format("mesh:{0} vertex:{1} triangle:{2}",$name,$vertexCount,$triangleCount);
-                var(2).Order = $triangleCount;
-                var(2).Value = $triangleCount;
+                $v2 = newitem();
+                $v2.AssetPath = assetpath;
+                $v2.Info = format("mesh:{0} vertex:{1} triangle:{2}",$name,$vertexCount,$triangleCount);
+                $v2.Order = $triangleCount;
+                $v2.Value = $triangleCount;
             };
         };
     };

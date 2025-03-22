@@ -30,18 +30,18 @@ filter
         if(isnullorempty(assetpath)){
             assetpath = memory.name;
         };
-        var(0) = findmanagedheaps(mheaps, memory.address);
-        if(isnull(var(0))){
-            var(1) = 0;
-            var(2) = 0;
+        $v0 = findmanagedheaps(mheaps, memory.address);
+        if(isnull($v0)){
+            $v1 = 0;
+            $v2 = 0;
         }else{
-            var(1) = var(0).size;
-            var(2) = var(0).vm_start;
+            $v1 = $v0.size;
+            $v2 = $v0.vm_start;
         };
-        if(heapAddr==0 || heapAddr==var(2)){
+        if(heapAddr==0 || heapAddr==$v2){
         		scenepath = format("addr:{0:X}", memory.address);
-        		info = format("mheap:{0:X}", var(2));
-            order = var(2);
+        		info = format("mheap:{0:X}", $v2);
+            order = $v2;
             value = memory.size;
             extraobject = memory.objectData;
             extralistbuild = "BuildExtraList";

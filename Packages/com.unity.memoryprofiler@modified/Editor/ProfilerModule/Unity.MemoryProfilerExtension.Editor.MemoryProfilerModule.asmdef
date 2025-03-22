@@ -1,0 +1,25 @@
+{
+    "name": "Unity.MemoryProfilerExtension.Editor.MemoryProfilerModule",
+    "rootNamespace": "Unity.MemoryProfilerExtension.MemoryProfilerModule.Editor.",
+    "references": [
+        "GUID:cffef5ef02bd3e04489c29e110974d50",
+        "Unity.MemoryProfilerExtension.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "Unity",
+            "expression": "2022.2.0a12",
+            "define": "MEMORY_PROFILER_MODULE_WILL_BIND_BRIDGE_AUTOMATICALLY"
+        }
+    ],
+    "noEngineReferences": false
+}

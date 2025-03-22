@@ -11,20 +11,20 @@ input("*.controller")
 filter
 {
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        var(0) = loadasset(assetpath);  
-        var(1) = collectanimatorcontrollerinfo(var(0));
-        //unloadasset(var(0));
-        order = var(1).maxKeyFrameCount;
-        if(var(1).maxKeyFrameCount >= maxKeyFrameCount){
-            var(2) = var(1).clips.orderbydesc($$.maxKeyFrameCount).top(4);
-            var(3) = newstringbuilder();
-            appendlineformat(var(3), "clip name:{0}, total max keyframe count:{1}, layer count:{2}, state count:{3}, sub state machine count:{4}",
-                var(1).maxKeyFrameClipName, var(1).maxKeyFrameCount, var(1).layerCount, var(1).stateCount, var(1).subStateMachineCount
+        $v0 = loadasset(assetpath);
+        $v1 = collectanimatorcontrollerinfo($v0);
+        //unloadasset($v0);
+        order = $v1.maxKeyFrameCount;
+        if($v1.maxKeyFrameCount >= maxKeyFrameCount){
+            $v2 = $v1.clips.orderbydesc($$.maxKeyFrameCount).top(4);
+            $v3 = newstringbuilder();
+            appendlineformat($v3, "clip name:{0}, total max keyframe count:{1}, layer count:{2}, state count:{3}, sub state machine count:{4}",
+                $v1.maxKeyFrameClipName, $v1.maxKeyFrameCount, $v1.layerCount, $v1.stateCount, $v1.subStateMachineCount
                 );
-            looplist(var(2)){
-                appendlineformat(var(3), "clip name:{0}, max keyframe count:{1}", $$.clipName, $$.maxKeyFrameCount);
+            looplist($v2){
+                appendlineformat($v3, "clip name:{0}, max keyframe count:{1}", $$.clipName, $$.maxKeyFrameCount);
             };
-            info = stringbuildertostring(var(3));
+            info = stringbuildertostring($v3);
             1;
         }else{
             0;

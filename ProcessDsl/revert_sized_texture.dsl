@@ -18,53 +18,53 @@ input("*.tga","*.png","*.jpg","*.exr")
 filter
 {
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter) && stringcontainsany(assetpath, anyfilter) && stringnotcontainsany(assetpath, anynotfilter)){
-    	var(0) = loadasset(assetpath);
-    	if(isnull(var(0))){
+    	$v0 = loadasset(assetpath);
+    	if(isnull($v0)){
     		0;
     	} else {
-    		var(1) = var(0).width;
-    		var(2) = var(0).height;
-    		var(3) = importer.isReadable;
-    		var(4) = importer.mipmapEnabled;
-    		
-    		var(5) = gettexturesetting("iPhone");
-        	var(6) = gettexturesetting("Android");
-	
-    		//unloadasset(var(0));
-    		order = var(1) < var(2) ? var(2) : var(1);
-    		if((var(1) > maxSize || var(2) > maxSize) && (var(5).maxTextureSize<var(1) && var(5).maxTextureSize<var(2) || var(6).maxTextureSize<var(1) && var(6).maxTextureSize<var(2)) && (prop.Contains("1") && var(3) || !prop.Contains("1")) && (prop.Contains("2") && var(4) || !prop.Contains("2"))){
-    			info = format("size:{0},{1} readable:{2} mipmap:{3}", var(1), var(2), var(3), var(4));
+    		$v1 = $v0.width;
+    		$v2 = $v0.height;
+    		$v3 = importer.isReadable;
+    		$v4 = importer.mipmapEnabled;
+
+    		$v5 = gettexturesetting("iPhone");
+        	$v6 = gettexturesetting("Android");
+
+    		//unloadasset($v0);
+    		order = $v1 < $v2 ? $v2 : $v1;
+    		if(($v1 > maxSize || $v2 > maxSize) && ($v5.maxTextureSize<$v1 && $v5.maxTextureSize<$v2 || $v6.maxTextureSize<$v1 && $v6.maxTextureSize<$v2) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
+    			info = format("size:{0},{1} readable:{2} mipmap:{3}", $v1, $v2, $v3, $v4);
     			1;
     		} else {
     		    0;
     		};
     	};
     }else{
-        0;  
+        0;
     };
 }
 process
 {
 	/*
-	var(0) = getdefaulttexturesetting();
-	var(0).maxTextureSize = changetype(maxSize, "int");
-	settexturesetting(var(0));
-	
-	var(1) = gettexturesetting("Standalone");
-	var(1).maxTextureSize = changetype(maxSize, "int");
-	settexturesetting(var(1));
+	$v0 = getdefaulttexturesetting();
+	$v0.maxTextureSize = changetype(maxSize, "int");
+	settexturesetting($v0);
+
+	$v1 = gettexturesetting("Standalone");
+	$v1.maxTextureSize = changetype(maxSize, "int");
+	settexturesetting($v1);
 	*/
-	var(2) = gettexturesetting("iPhone");
-	var(2).overridden=true;
-	var(2).maxTextureSize = 2048;
-	setastctexture(var(2));
-	settexturesetting(var(2));
-	
-	var(3) = gettexturesetting("Android");
-	var(3).overridden=true;
-	var(3).maxTextureSize = 2048;
-	setastctexture(var(3));
-	settexturesetting(var(3));
-	
+	$v2 = gettexturesetting("iPhone");
+	$v2.overridden=true;
+	$v2.maxTextureSize = 2048;
+	setastctexture($v2);
+	settexturesetting($v2);
+
+	$v3 = gettexturesetting("Android");
+	$v3.overridden=true;
+	$v3.maxTextureSize = 2048;
+	setastctexture($v3);
+	settexturesetting($v3);
+
   saveandreimport();
 };

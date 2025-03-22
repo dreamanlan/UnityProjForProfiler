@@ -8,12 +8,12 @@ input("*.mat")
 }
 filter
 {
-	var(0) = loadasset(assetpath);
-	var(1) = var(0).name;
-	var(2) = var(0).shader.name;
-	unloadasset(var(0));
-	if(stringcontains(var(2),shaderNames)){
-        info = "mat:" + var(1) + " shader:" + var(2);
+	$v0 = loadasset(assetpath);
+	$v1 = $v0.name;
+	$v2 = $v0.shader.name;
+	unloadasset($v0);
+	if(stringcontains($v2,shaderNames)){
+        info = "mat:" + $v1 + " shader:" + $v2;
         1;
     }else{
         0;

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xmlns:Unity.MemoryProfilerExtension.Editor.UI="Unity.MemoryProfilerExtension.Editor.UI"
+    xsi:noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd">
+
+    <engine:VisualElement name="breakdown-view">
+        <Style src="BreakdownView.uss"/>
+        <engine:VisualElement name="breakdown-view__search-field-container">
+            <engine:DropdownField name="breakdown-view__mode-dropdown"/>
+            <editor:ToolbarSearchField name="breakdown-view__search-field"/>
+        </engine:VisualElement>
+        <Unity.MemoryProfilerExtension.Editor.UI:DetailedSizeBar name="breakdown-view__table-size-bar"/>
+        <engine:VisualElement name="breakdown-view__table-container"/>
+    </engine:VisualElement>
+
+</engine:UXML>

@@ -16,18 +16,18 @@ input("*.tga","*.png","*.jpg")
 }
 filter
 {
-	var(0) = loadasset(assetpath);
-	if(isnull(var(0))){
+	$v0 = loadasset(assetpath);
+	if(isnull($v0)){
 		0;
 	} else {;
-		var(1) = var(0).width;
-		var(2) = var(0).height;
-		var(3) = importer.isReadable;
-		var(4) = importer.mipmapEnabled;
-		//unloadasset(var(0));
-		order = var(1) < var(2) ? var(2) : var(1);
-		if((var(1) > maxSize || var(2) > maxSize) && assetpath.Contains(filter) && (prop.Contains("1") && var(3) || !prop.Contains("1")) && (prop.Contains("2") && var(4) || !prop.Contains("2"))){
-			info = format("{0} size:{1},{2}", assetpath, var(1), var(2));
+		$v1 = $v0.width;
+		$v2 = $v0.height;
+		$v3 = importer.isReadable;
+		$v4 = importer.mipmapEnabled;
+		//unloadasset($v0);
+		order = $v1 < $v2 ? $v2 : $v1;
+		if(($v1 > maxSize || $v2 > maxSize) && assetpath.Contains(filter) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
+			info = format("{0} size:{1},{2}", assetpath, $v1, $v2);
 			value = calcassetsize(assetpath);
 			group = format("{0}|{1}", value, calcassetmd5(assetpath));
 			1;
@@ -38,12 +38,12 @@ filter
 }
 group
 {
-	var(0) = calcrefbycount(assetpath);
-	if(count>1 && var(0)<=0){
+	$v0 = calcrefbycount(assetpath);
+	if(count>1 && $v0<=0){
 		info = format("{0} count:{1}", group, count);
 		1;
 	}else{
-		0;	
+		0;
 	};
 }
 process

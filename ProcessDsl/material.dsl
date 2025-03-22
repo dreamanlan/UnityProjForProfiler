@@ -13,12 +13,12 @@ input("*.mat")
 }
 filter
 {
-	var(0) = loadasset(assetpath);
-	var(1) = var(0).name;
-	var(2) = var(0).shader.name;
-	unloadasset(var(0));
-	if(var(2)==shaderName || allMaterial){
-  	info = "mat:" + var(1) + " shader:" + var(2);
+	$v0 = loadasset(assetpath);
+	$v1 = $v0.name;
+	$v2 = $v0.shader.name;
+	unloadasset($v0);
+	if($v2==shaderName || allMaterial){
+  	info = "mat:" + $v1 + " shader:" + $v2;
   	1;
   }else{
     0;
@@ -26,8 +26,8 @@ filter
 }
 process
 {
-  var(0) = loadasset(assetpath);
-  var(0).shader = gettype("Shader").Find(replaceWithShaderName);
-	//unloadasset(var(0));
+  $v0 = loadasset(assetpath);
+  $v0.shader = gettype("Shader").Find(replaceWithShaderName);
+	//unloadasset($v0);
   saveandreimport();
 };
