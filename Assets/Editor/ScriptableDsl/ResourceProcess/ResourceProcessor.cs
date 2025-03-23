@@ -2137,15 +2137,15 @@ internal sealed class ResourceProcessor
             float[] triangles = new float[lastIndex - firstIndex + 1];
             var labels = ProfilerDriver.GetGraphStatisticsPropertiesForArea(ProfilerArea.Rendering);
             foreach (string l in labels) {
-                var id = ProfilerDriver.GetStatisticsIdentifierForArea(ProfilerArea.Rendering, l);
+                //var id = ProfilerDriver.GetStatisticsIdentifierForArea(ProfilerArea.Rendering, l);
                 var lowerLabel = l.ToLower();
                 if (lowerLabel == "batches") {
                     float maxVal;
-                    ProfilerDriver.GetStatisticsValues(id, firstIndex, 1.0f, batches, out maxVal);
+                    ProfilerDriver.GetCounterValuesBatch(ProfilerArea.Rendering, l, firstIndex, 1.0f, batches, out maxVal);
                 }
                 else if (lowerLabel == "triangles") {
                     float maxVal;
-                    ProfilerDriver.GetStatisticsValues(id, firstIndex, 1.0f, triangles, out maxVal);
+                    ProfilerDriver.GetCounterValuesBatch(ProfilerArea.Rendering, l, firstIndex, 1.0f, triangles, out maxVal);
                 }
             }
 
@@ -4642,6 +4642,17 @@ internal sealed class ResourceProcessor
         if (!prop.frameDataReady)
             return false;
 
+        var rawView = ProfilerDriver.GetRawFrameDataView(frame, 0);
+        /*
+        var hierView = ProfilerDriver.GetHierarchyFrameDataView(frame, 0, HierarchyFrameDataView.ViewModes.Default, sortColumn, true);
+        float cpu0 = hierView.frameTimeMS;
+        float gpu0 = hierView.frameGpuTimeMS;
+        var fiter = new ProfilerFrameDataIterator();
+        fiter.SetRoot(frame, 0);
+        float cpu = fiter.frameTimeMS;
+        float gpu = fiter.frameGpuTimeMS;
+        */
+
         var info = new ResourceEditUtility.InstrumentInfo();
         info.index = index;
         info.frame = frame + 1;
@@ -4649,11 +4660,11 @@ internal sealed class ResourceProcessor
         info.viewType = (int)viewType;
         info.triangle = triangle;
         info.batch = batch;
-        info.totalCpuTime = InstrumentString2Float(prop.frameTime);
-        info.totalGpuTime = InstrumentString2Float(prop.frameGpuTime);
+        info.totalCpuTime = rawView.frameTimeMs;
+        info.totalGpuTime = rawView.frameGpuTimeMs;
         info.fps = InstrumentString2Float(prop.frameFPS);
         info.totalCalls = 0;
-        info.totalGcMemory = 0;
+        info.totalGcMemory = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnGcMemory));
 
         while (prop.Next(true)) {
             var data = new ResourceEditUtility.InstrumentRecord();
@@ -4669,7 +4680,6 @@ internal sealed class ResourceProcessor
             data.selfPercent = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnSelfPercent));
 
             info.totalCalls += data.calls;
-            info.totalGcMemory += data.gcMemory;
             info.records.Add(data);
         }
 
@@ -4687,6 +4697,9 @@ internal sealed class ResourceProcessor
         try {
             if (string.IsNullOrWhiteSpace(val) || val == "N/A") {
                 return 0;
+            }
+            else if (val == "inf") {
+                return float.MaxValue;
             }
             int ix = val.IndexOf('%');
             if (ix > 0) {

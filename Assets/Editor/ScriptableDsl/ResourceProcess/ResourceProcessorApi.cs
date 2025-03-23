@@ -435,6 +435,7 @@ internal static class ResourceEditUtility
         calc.Register("calcrefcount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcRefCountExp>());
         calc.Register("calcrefbycount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcRefByCountExp>());
         calc.Register("findasset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindAssetExp>());
+        calc.Register("selectframe", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectFrameExp>());
         calc.Register("setmaxrefbynumperobj", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxRefByNumPerObjExp>());
         calc.Register("findshortestpathtoroot", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindShortestPathToRootExp>());
         calc.Register("getobjdatarefbyhash", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetObjectDataRefByHashExp>());
@@ -569,8 +570,8 @@ internal static class ResourceEditUtility
                     var p = pair.Value;
                     calc.SetGlobalVariable(p.Name, BoxedValue.FromObject(p.Value));
                 }
-                calc.RemoveGlobalVariable("group");
-                calc.RemoveGlobalVariable("extralist");
+                calc.SetGlobalVariable("group", BoxedValue.NullObject);
+                calc.SetGlobalVariable("extralist", BoxedValue.NullObject);
 
                 for (int i = 0; i < indexCount; ++i) {
                     ret = calc.Calc(i.ToString());
@@ -615,9 +616,6 @@ internal static class ResourceEditUtility
                 }
                 if (calc.TryGetGlobalVariable("group", out v)) {
                     item.Group = v.AsString;
-                    if (null == item.Group) {
-                        item.Group = string.Empty;
-                    }
                 }
                 if (calc.TryGetGlobalVariable("extralist", out v)) {
                     var list = v.As<IList>();
@@ -746,7 +744,7 @@ internal static class ResourceEditUtility
                     var p = pair.Value;
                     calc.SetGlobalVariable(p.Name, p.Value);
                 }
-                calc.RemoveGlobalVariable("extralist");
+                calc.SetGlobalVariable("extralist", BoxedValue.NullObject);
 
                 for (int i = 0; i < indexCount; ++i) {
                     ret = calc.Calc(i.ToString());
@@ -2204,6 +2202,22 @@ namespace ResourceEditApi
                     }
                 }
                 r = BoxedValue.FromObject(new object[] { assetPath, scenePath, sceneObj });
+            }
+            return r;
+        }
+    }
+    internal class SelectFrameExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            bool r = false;
+            if (operands.Count >= 1) {
+                var frame = operands[0].GetInt();
+                var w = EditorWindow.GetWindow<ProfilerWindow>();
+                w.Show(true);
+                w.Focus();
+                w.selectedFrameIndex = frame - 1;
+                r = true;
             }
             return r;
         }
