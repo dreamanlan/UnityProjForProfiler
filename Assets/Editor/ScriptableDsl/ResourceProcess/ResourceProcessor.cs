@@ -2139,11 +2139,11 @@ internal sealed class ResourceProcessor
             foreach (string l in labels) {
                 //var id = ProfilerDriver.GetStatisticsIdentifierForArea(ProfilerArea.Rendering, l);
                 var lowerLabel = l.ToLower();
-                if (lowerLabel == "batches") {
+                if (lowerLabel.StartsWith("batches")) {
                     float maxVal;
                     ProfilerDriver.GetCounterValuesBatch(ProfilerArea.Rendering, l, firstIndex, 1.0f, batches, out maxVal);
                 }
-                else if (lowerLabel == "triangles") {
+                else if (lowerLabel.StartsWith("triangles")) {
                     float maxVal;
                     ProfilerDriver.GetCounterValuesBatch(ProfilerArea.Rendering, l, firstIndex, 1.0f, triangles, out maxVal);
                 }
@@ -2162,16 +2162,14 @@ internal sealed class ResourceProcessor
                 if (ix >= 0 && ix < batches.Length) {
                     batch = batches[ix];
                 }
-                if (RecordInstrumentFrame(m_RecordIndex, index, HierarchyFrameDataView.columnName, (int)ProfilerViewType.Hierarchy, triangle, batch, ref cpuInfo, ref gpuInfo)) {
+                if (RecordInstrumentFrame(m_RecordIndex, index, HierarchyFrameDataView.columnTotalTime, (int)ProfilerViewType.Hierarchy, triangle, batch, ref cpuInfo, ref gpuInfo)) {
                     ++m_RecordIndex;
                 }
             }
             m_LastFrame = lastIndex;
 
-            if (lastIndex >= 0) {
-                ProfilerProperty prop = new ProfilerProperty();
-                prop.SetRoot(lastIndex, HierarchyFrameDataView.columnName, (int)ProfilerViewType.Hierarchy);
-                prop.onlyShowGPUSamples = false;
+            if (lastIndex >= 1) {
+                --lastIndex;
 
                 int ix = lastIndex - firstIndex;
                 float triangle = 0;
@@ -2183,6 +2181,11 @@ internal sealed class ResourceProcessor
                     batch = batches[ix];
                 }
 
+                /*
+                ProfilerProperty prop = new ProfilerProperty();
+                prop.SetRoot(lastIndex, HierarchyFrameDataView.columnName, (int)ProfilerViewType.Hierarchy);
+                prop.onlyShowGPUSamples = false;
+
                 StringBuilder sb = new StringBuilder();
                 sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \triangles:{4} \tbatches:{5}", prop.depth, prop.frameFPS, prop.frameTime, prop.frameGpuTime, triangle, batch);
                 sb.AppendLine();
@@ -2190,6 +2193,45 @@ internal sealed class ResourceProcessor
                     sb.AppendFormat("{0}:{1}->{2}\t{3}\t{4}\t{5}\t{6}", prop.depth, prop.propertyName, prop.propertyPath, prop.GetColumn(HierarchyFrameDataView.columnCalls), prop.GetColumn(HierarchyFrameDataView.columnGcMemory), prop.GetColumn(HierarchyFrameDataView.columnSelfPercent), prop.GetColumn(HierarchyFrameDataView.columnSelfTime));
                     sb.AppendLine();
                 }
+                m_Text = sb.ToString();
+                */
+
+                //0--cpu 1--rendering
+                StringBuilder sb = new StringBuilder();
+
+                //var rawView = ProfilerDriver.GetRawFrameDataView(frame, 0);
+                var hierView = ProfilerDriver.GetHierarchyFrameDataView(lastIndex, 0, HierarchyFrameDataView.ViewModes.Default, HierarchyFrameDataView.columnTotalTime, true);
+                var fiter = new ProfilerFrameDataIterator();
+                fiter.SetRoot(lastIndex, 0);
+
+                //var rawView2 = ProfilerDriver.GetRawFrameDataView(frame, 1);
+                var hierView2 = ProfilerDriver.GetHierarchyFrameDataView(lastIndex, 1, HierarchyFrameDataView.ViewModes.Default, HierarchyFrameDataView.columnTotalTime, true);
+                var fiter2 = new ProfilerFrameDataIterator();
+                fiter2.SetRoot(lastIndex, 1);
+
+                sb.AppendFormat("cpu module:{0} thead index:{1} id:{2} name:{3} group:{4}", ProfilerWindow.cpuModuleIdentifier, hierView.threadIndex, hierView.threadId, hierView.threadName, hierView.threadGroupName);
+                sb.AppendLine();
+                sb.AppendFormat("gpu module:{0} thead index:{1} id:{2} name:{3} group:{4}", ProfilerWindow.gpuModuleIdentifier, hierView2.threadIndex, hierView2.threadId, hierView2.threadName, hierView2.threadGroupName);
+                sb.AppendLine();
+
+                sb.AppendLine();
+
+                sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \triangles:{4} \tbatches:{5}", fiter.depth, hierView.frameFps, hierView.frameTimeMs, hierView.frameGpuTimeMs, triangle, batch);
+                sb.AppendLine();
+                while (fiter.Next(true)) {
+                    sb.AppendFormat("{0}:{1}->{2}\t{3}\t{4}\t{5}\t{6}", fiter.depth, fiter.name, fiter.path, hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnCalls), hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnGcMemory) / 1024.0f, hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnSelfPercent), hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnSelfTime));
+                    sb.AppendLine();
+                }
+
+                sb.AppendLine();
+
+                sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \triangles:{4} \tbatches:{5}", fiter2.depth, hierView2.frameFps, hierView2.frameTimeMs, hierView2.frameGpuTimeMs, triangle, batch);
+                sb.AppendLine();
+                while (fiter2.Next(true)) {
+                    sb.AppendFormat("{0}:{1}->{2}\t{3}\t{4}\t{5}\t{6}", fiter2.depth, fiter2.name, fiter2.path, hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnCalls), hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnGcMemory) / 1024.0f, hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnSelfPercent), hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnSelfTime));
+                    sb.AppendLine();
+                }
+
                 m_Text = sb.ToString();
             }
         }
@@ -4713,7 +4755,7 @@ internal sealed class ResourceProcessor
         info.totalGpuTime = gpu;
         info.fps = hierView.frameFps;
         info.totalCalls = 0;
-        info.totalGcMemory = hierView.GetItemColumnDataAsFloat(fiter.instanceId, HierarchyFrameDataView.columnGcMemory);
+        info.totalGcMemory = hierView.GetItemColumnDataAsFloat(fiter.instanceId, HierarchyFrameDataView.columnGcMemory) / 1024.0f;
 
         if (null == cpuInfo) {
             cpuInfo = new ResourceEditUtility.InstrumentModuleInfo();
@@ -4729,7 +4771,7 @@ internal sealed class ResourceProcessor
             data.depth = fiter.depth;
             data.sampleIndex = fiter.sampleId;
             data.calls = (int)hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnCalls);
-            data.gcMemory = hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnGcMemory);
+            data.gcMemory = hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnGcMemory) / 1024.0f;
             data.name = fiter.name;
             data.layerPath = fiter.path;
             data.totalTime = hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnTotalTime);
@@ -4764,7 +4806,7 @@ internal sealed class ResourceProcessor
             data.depth = fiter2.depth;
             data.sampleIndex = fiter2.sampleId;
             data.calls = (int)hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnCalls);
-            data.gcMemory = hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnGcMemory);
+            data.gcMemory = hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnGcMemory) / 1024.0f;
             data.name = fiter2.name;
             data.layerPath = fiter2.path;
             data.totalTime = hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnTotalTime);

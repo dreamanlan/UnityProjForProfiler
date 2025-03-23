@@ -448,10 +448,10 @@ internal static class ResourceEditUtility
         calc.Register("findasset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindAssetExp>());
         calc.Register("selectframe", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectFrameExp>());
         calc.Register("filtercpusample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FilterCpuSampleExp>());
-        calc.Register("filtergpusampled", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FilterGpuSampleExp>());
+        calc.Register("filtergpusample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FilterGpuSampleExp>());
         calc.Register("selectsample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectSampleExp>());
         calc.Register("selectpropertypath", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectPropertyPathExp>());
-        calc.Register("setmakerfilter", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMarkerFilterExp>());
+        calc.Register("setmarkerfilter", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMarkerFilterExp>());
         calc.Register("setmaxrefbynumperobj", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxRefByNumPerObjExp>());
         calc.Register("findshortestpathtoroot", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindShortestPathToRootExp>());
         calc.Register("getobjdatarefbyhash", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetObjectDataRefByHashExp>());
@@ -2249,6 +2249,7 @@ namespace ResourceEditApi
                 w.Show(true);
                 w.Focus();
                 var sel = w.GetFrameTimeViewSampleSelectionController(ProfilerWindow.cpuModuleIdentifier);
+                sel.focusedThreadIndex = 0;
                 sel.sampleNameSearchFilter = filter;
                 r = true;
             }
@@ -2266,6 +2267,7 @@ namespace ResourceEditApi
                 w.Show(true);
                 w.Focus();
                 var sel = w.GetFrameTimeViewSampleSelectionController(ProfilerWindow.gpuModuleIdentifier);
+                sel.focusedThreadIndex = 1;
                 sel.sampleNameSearchFilter = filter;
                 r = true;
             }
