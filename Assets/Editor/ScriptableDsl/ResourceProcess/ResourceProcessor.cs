@@ -2149,6 +2149,9 @@ internal sealed class ResourceProcessor
                 }
             }
 
+            ResourceEditUtility.InstrumentModuleInfo cpuInfo = null;
+            ResourceEditUtility.InstrumentModuleInfo gpuInfo = null;
+
             for (int index = firstIndex > m_LastFrame ? firstIndex : m_LastFrame + 1; index <= lastIndex; ++index) {
                 int ix = index - firstIndex;
                 float triangle = 0;
@@ -2159,7 +2162,7 @@ internal sealed class ResourceProcessor
                 if (ix >= 0 && ix < batches.Length) {
                     batch = batches[ix];
                 }
-                if (RecordInstrumentFrame(m_RecordIndex, index, HierarchyFrameDataView.columnName, (int)ProfilerViewType.Hierarchy, triangle, batch)) {
+                if (RecordInstrumentFrame(m_RecordIndex, index, HierarchyFrameDataView.columnName, (int)ProfilerViewType.Hierarchy, triangle, batch, ref cpuInfo, ref gpuInfo)) {
                     ++m_RecordIndex;
                 }
             }
@@ -2207,13 +2210,23 @@ internal sealed class ResourceProcessor
                 }
                 using (StreamWriter sw = new StreamWriter(path)) {
                     sw.WriteLine("index\tframe\tdepth\tname\tpath\tfps\tcalls\tgc\ttotal_time\ttotal_percent\tself_time\tself_percent");
+                    bool first = true;
                     int curCount = 0;
                     int totalCount = 0;
                     foreach (var pair in m_InstrumentInfos) {
-                        totalCount += pair.Value.records.Count;
+                        totalCount += pair.Value.cpuRecords.Count;
+                        totalCount += pair.Value.gpuRecords.Count;
                     }
                     foreach (var pair in m_InstrumentInfos) {
                         var info = pair.Value;
+                        if (first) {
+                            sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
+                                info.index, info.frame, 0, "cpu_module_info", "cpu_module_info",
+                                info.fps, info.cpuModule.moduleId, info.cpuModule.theadIndex, info.cpuModule.threadId, info.cpuModule.threadName, info.cpuModule.threadGroup, 0);
+                            sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
+                                info.index, info.frame, 0, "gpu_module_info", "gpu_module_info",
+                                info.fps, info.gpuModule.moduleId, info.gpuModule.theadIndex, info.gpuModule.threadId, info.gpuModule.threadName, info.gpuModule.threadGroup, 0);
+                        }
                         sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
                             info.index, info.frame, 0, info.sortType.ToString(), info.viewType.ToString(),
                             info.fps, info.totalCalls, info.totalGcMemory,
@@ -2223,7 +2236,23 @@ internal sealed class ResourceProcessor
                         if (DisplayCancelableProgressBar("保存进度", curCount, totalCount)) {
                             goto L_EndSaveIns;
                         }
-                        foreach (var record in info.records) {
+                        sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
+                                info.index, info.frame, 0, "cpu_module", "cpu_module",
+                                info.fps, 0, 0, 0, 0, 0, 0);
+                        foreach (var record in info.cpuRecords) {
+                            sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
+                                info.index, info.frame, record.depth, record.name, record.layerPath,
+                                info.fps, record.calls, record.gcMemory,
+                                record.totalTime, record.totalPercent, record.selfTime, record.selfPercent);
+                            ++curCount;
+                            if (DisplayCancelableProgressBar("保存进度", curCount, totalCount)) {
+                                goto L_EndSaveIns;
+                            }
+                        }
+                        sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
+                                info.index, info.frame, 0, "gpu_module", "gpu_module",
+                                info.fps, 0, 0, 0, 0, 0, 0);
+                        foreach (var record in info.gpuRecords) {
                             sw.WriteLine("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}",
                                 info.index, info.frame, record.depth, record.name, record.layerPath,
                                 info.fps, record.calls, record.gcMemory,
@@ -2255,19 +2284,35 @@ internal sealed class ResourceProcessor
             try {
                 var txt = File.ReadAllText(path);
                 var lines = txt.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                ResourceEditUtility.InstrumentModuleInfo cpuInfo = null;
+                ResourceEditUtility.InstrumentModuleInfo gpuInfo = null;
                 m_InstrumentInfos.Clear();
                 m_RecordIndex = 0;
                 m_LastFrame = -1;
                 int curCount = 1;
                 int totalCount = lines.Length;
+                bool cpu = true;
                 for (i = 1; i < lines.Length; ++i) {
                     var fields = lines[i].Split('\t');
+                    if (i == 1 || i == 2) {
+                        var m = new ResourceEditUtility.InstrumentModuleInfo();
+                        m.moduleId = fields[6];
+                        m.theadIndex = int.Parse(fields[7]);
+                        m.threadId = ulong.Parse(fields[8]);
+                        m.threadName = fields[9];
+                        m.threadGroup = fields[10];
+                        if (i == 1)
+                            cpuInfo = m;
+                        else
+                            gpuInfo = m;
+                        continue;
+                    }
                     var index = int.Parse(fields[0]);
                     var frame = int.Parse(fields[1]);
                     var depth = int.Parse(fields[2]);
                     var name = fields[3];
                     var layerPath = fields[4];
-                    var fps = float.Parse(fields[5]);
+                    var fpsOrIndex = fields[5];
                     var calls = int.Parse(fields[6]);
                     var gc = float.Parse(fields[7]);
                     var totalTime = float.Parse(fields[8]);
@@ -2279,7 +2324,7 @@ internal sealed class ResourceProcessor
                         var info = new ResourceEditUtility.InstrumentInfo();
                         info.index = index;
                         info.frame = frame;
-                        info.fps = fps;
+                        info.fps = float.Parse(fpsOrIndex);
                         info.totalCalls = calls;
                         info.totalGcMemory = gc;
                         info.totalCpuTime = totalTime;
@@ -2289,25 +2334,39 @@ internal sealed class ResourceProcessor
                         info.triangle = totalPercent;
                         info.batch = selfPercent;
 
+                        info.cpuModule = cpuInfo;
+                        info.gpuModule = gpuInfo;
+
                         m_InstrumentInfos[index] = info;
                         m_LastFrame = frame;
                         m_RecordIndex = index + 1;
                     }
                     else {
+                        if (fields[3] == "cpu_module") {
+                            cpu = true;
+                            continue;
+                        }
+                        else if (fields[3] == "gpu_module") {
+                            cpu = false;
+                            continue;
+                        }
                         ResourceEditUtility.InstrumentInfo info;
                         if (m_InstrumentInfos.TryGetValue(index, out info)) {
                             var record = new ResourceEditUtility.InstrumentRecord();
                             record.depth = depth;
                             record.name = name;
                             record.layerPath = layerPath;
-                            record.fps = fps;
+                            record.sampleIndex = int.Parse(fpsOrIndex);
                             record.calls = calls;
                             record.gcMemory = gc;
                             record.totalTime = totalTime;
                             record.totalPercent = totalPercent;
                             record.selfTime = selfTime;
                             record.selfPercent = selfPercent;
-                            info.records.Add(record);
+                            if(cpu)
+                                info.cpuRecords.Add(record);
+                            else
+                                info.gpuRecords.Add(record);
                         }
                     }
 
@@ -4633,25 +4692,15 @@ internal sealed class ResourceProcessor
         }
     }
 
-    private bool RecordInstrumentFrame(int index, int frame, int sortColumn, int viewType, float triangle, float batch)
+    private bool RecordInstrumentFrame(int index, int frame, int sortColumn, int viewType, float triangle, float batch, ref ResourceEditUtility.InstrumentModuleInfo cpuInfo, ref ResourceEditUtility.InstrumentModuleInfo gpuInfo)
     {
-        ProfilerProperty prop = new ProfilerProperty();
-        prop.SetRoot(frame, sortColumn, viewType);
-        prop.onlyShowGPUSamples = false;
-
-        if (!prop.frameDataReady)
-            return false;
-
-        var rawView = ProfilerDriver.GetRawFrameDataView(frame, 0);
-        /*
+        //0--cpu 1--rendering
+        //var rawView = ProfilerDriver.GetRawFrameDataView(frame, 0);
         var hierView = ProfilerDriver.GetHierarchyFrameDataView(frame, 0, HierarchyFrameDataView.ViewModes.Default, sortColumn, true);
-        float cpu0 = hierView.frameTimeMS;
-        float gpu0 = hierView.frameGpuTimeMS;
         var fiter = new ProfilerFrameDataIterator();
         fiter.SetRoot(frame, 0);
         float cpu = fiter.frameTimeMS;
         float gpu = fiter.frameGpuTimeMS;
-        */
 
         var info = new ResourceEditUtility.InstrumentInfo();
         info.index = index;
@@ -4660,28 +4709,75 @@ internal sealed class ResourceProcessor
         info.viewType = (int)viewType;
         info.triangle = triangle;
         info.batch = batch;
-        info.totalCpuTime = rawView.frameTimeMs;
-        info.totalGpuTime = rawView.frameGpuTimeMs;
-        info.fps = InstrumentString2Float(prop.frameFPS);
+        info.totalCpuTime = cpu;
+        info.totalGpuTime = gpu;
+        info.fps = hierView.frameFps;
         info.totalCalls = 0;
-        info.totalGcMemory = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnGcMemory));
+        info.totalGcMemory = hierView.GetItemColumnDataAsFloat(fiter.instanceId, HierarchyFrameDataView.columnGcMemory);
 
-        while (prop.Next(true)) {
+        if (null == cpuInfo) {
+            cpuInfo = new ResourceEditUtility.InstrumentModuleInfo();
+            cpuInfo.moduleId = ProfilerWindow.cpuModuleIdentifier;
+            cpuInfo.theadIndex = hierView.threadIndex;
+            cpuInfo.threadId = hierView.threadId;
+            cpuInfo.threadName = hierView.threadName;
+            cpuInfo.threadGroup = hierView.threadGroupName;
+        }
+
+        while (fiter.Next(true)) {
             var data = new ResourceEditUtility.InstrumentRecord();
-            data.depth = prop.depth;
-            data.fps = info.fps;
-            data.calls = int.Parse(prop.GetColumn(HierarchyFrameDataView.columnCalls));
-            data.gcMemory = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnGcMemory));
-            data.name = prop.propertyName;
-            data.layerPath = prop.propertyPath;
-            data.totalTime = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnTotalTime));
-            data.totalPercent = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnTotalPercent));
-            data.selfTime = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnSelfTime));
-            data.selfPercent = InstrumentString2Float(prop.GetColumn(HierarchyFrameDataView.columnSelfPercent));
+            data.depth = fiter.depth;
+            data.sampleIndex = fiter.sampleId;
+            data.calls = (int)hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnCalls);
+            data.gcMemory = hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnGcMemory);
+            data.name = fiter.name;
+            data.layerPath = fiter.path;
+            data.totalTime = hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnTotalTime);
+            data.totalPercent = hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnTotalPercent);
+            data.selfTime = hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnSelfTime);
+            data.selfPercent = hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnSelfPercent);
 
             info.totalCalls += data.calls;
-            info.records.Add(data);
+            info.cpuRecords.Add(data);
         }
+
+        //var rawView2 = ProfilerDriver.GetRawFrameDataView(frame, 1);
+        var hierView2 = ProfilerDriver.GetHierarchyFrameDataView(frame, 1, HierarchyFrameDataView.ViewModes.Default, sortColumn, true);
+        var fiter2 = new ProfilerFrameDataIterator();
+        fiter2.SetRoot(frame, 1);
+        float cpu2 = fiter.frameTimeMS;
+        float gpu2 = fiter.frameGpuTimeMS;
+
+        info.totalGpuTime = gpu2;
+
+        if (null == gpuInfo) {
+            gpuInfo = new ResourceEditUtility.InstrumentModuleInfo();
+            gpuInfo.moduleId = ProfilerWindow.gpuModuleIdentifier;
+            gpuInfo.theadIndex = hierView2.threadIndex;
+            gpuInfo.threadId = hierView2.threadId;
+            gpuInfo.threadName = hierView2.threadName;
+            gpuInfo.threadGroup = hierView2.threadGroupName;
+        }
+
+        while (fiter2.Next(true)) {
+            var data = new ResourceEditUtility.InstrumentRecord();
+            data.depth = fiter2.depth;
+            data.sampleIndex = fiter2.sampleId;
+            data.calls = (int)hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnCalls);
+            data.gcMemory = hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnGcMemory);
+            data.name = fiter2.name;
+            data.layerPath = fiter2.path;
+            data.totalTime = hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnTotalTime);
+            data.totalPercent = hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnTotalPercent);
+            data.selfTime = hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnSelfTime);
+            data.selfPercent = hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnSelfPercent);
+
+            info.totalCalls += data.calls;
+            info.gpuRecords.Add(data);
+        }
+
+        info.cpuModule = cpuInfo;
+        info.gpuModule = gpuInfo;
 
         var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
         var addVars = new Dictionary<string, BoxedValue> { { "instrument", BoxedValue.FromObject(info) } };

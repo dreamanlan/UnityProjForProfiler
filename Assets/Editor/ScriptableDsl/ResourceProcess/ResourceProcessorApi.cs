@@ -188,6 +188,14 @@ internal static class ResourceEditUtility
         internal long size = 0;
         internal List<MemoryInfo> memories = new List<MemoryInfo>();
     }
+    internal class InstrumentModuleInfo
+    {
+        internal string moduleId;
+        internal int theadIndex;
+        internal ulong threadId;
+        internal string threadName;
+        internal string threadGroup;
+    }
     internal class InstrumentRecord
     {
         internal int depth;
@@ -197,7 +205,7 @@ internal static class ResourceEditUtility
         internal float totalPercent;
         internal float selfTime;
         internal float selfPercent;
-        internal float fps;
+        internal int sampleIndex;
         internal int calls;
         internal float gcMemory;
     }
@@ -214,7 +222,10 @@ internal static class ResourceEditUtility
         internal int viewType;
         internal float batch;
         internal float triangle;
-        internal List<InstrumentRecord> records = new List<InstrumentRecord>();
+        internal InstrumentModuleInfo cpuModule;
+        internal InstrumentModuleInfo gpuModule;
+        internal List<InstrumentRecord> cpuRecords = new List<InstrumentRecord>();
+        internal List<InstrumentRecord> gpuRecords = new List<InstrumentRecord>();
     }
     internal class SectionInfo
     {
@@ -436,6 +447,11 @@ internal static class ResourceEditUtility
         calc.Register("calcrefbycount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcRefByCountExp>());
         calc.Register("findasset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindAssetExp>());
         calc.Register("selectframe", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectFrameExp>());
+        calc.Register("filtercpusample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FilterCpuSampleExp>());
+        calc.Register("filtergpusampled", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FilterGpuSampleExp>());
+        calc.Register("selectsample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectSampleExp>());
+        calc.Register("selectpropertypath", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectPropertyPathExp>());
+        calc.Register("setmakerfilter", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMarkerFilterExp>());
         calc.Register("setmaxrefbynumperobj", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxRefByNumPerObjExp>());
         calc.Register("findshortestpathtoroot", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindShortestPathToRootExp>());
         calc.Register("getobjdatarefbyhash", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetObjectDataRefByHashExp>());
@@ -2217,6 +2233,91 @@ namespace ResourceEditApi
                 w.Show(true);
                 w.Focus();
                 w.selectedFrameIndex = frame - 1;
+                r = true;
+            }
+            return r;
+        }
+    }
+    internal class FilterCpuSampleExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            bool r = false;
+            if (operands.Count >= 1) {
+                var filter = operands[0].AsString;
+                var w = EditorWindow.GetWindow<ProfilerWindow>();
+                w.Show(true);
+                w.Focus();
+                var sel = w.GetFrameTimeViewSampleSelectionController(ProfilerWindow.cpuModuleIdentifier);
+                sel.sampleNameSearchFilter = filter;
+                r = true;
+            }
+            return r;
+        }
+    }
+    internal class FilterGpuSampleExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            bool r = false;
+            if (operands.Count >= 1) {
+                var filter = operands[0].AsString;
+                var w = EditorWindow.GetWindow<ProfilerWindow>();
+                w.Show(true);
+                w.Focus();
+                var sel = w.GetFrameTimeViewSampleSelectionController(ProfilerWindow.gpuModuleIdentifier);
+                sel.sampleNameSearchFilter = filter;
+                r = true;
+            }
+            return r;
+        }
+    }
+    internal class SelectSampleExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            bool r = false;
+            if (operands.Count >= 3) {
+                var frame = operands[0].As<ResourceEditUtility.InstrumentInfo>();
+                var record = operands[1].As<ResourceEditUtility.InstrumentRecord>();
+                var minfo = operands[2].As<ResourceEditUtility.InstrumentModuleInfo>();
+                var w = EditorWindow.GetWindow<ProfilerWindow>();
+                w.Show(true);
+                w.Focus();
+                var sel = w.GetFrameTimeViewSampleSelectionController(ProfilerWindow.cpuModuleIdentifier);
+                sel.SetSelection(new UnityEditor.Profiling.ProfilerTimeSampleSelection(frame.frame, minfo.threadGroup, minfo.threadName, minfo.threadId, record.sampleIndex, record.name));
+                r = true;
+            }
+            return r;
+        }
+    }
+    internal class SelectPropertyPathExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            bool r = false;
+            if (operands.Count >= 1) {
+                var path = operands[0].AsString;
+                ProfilerDriver.selectedPropertyPath = path;
+                var w = EditorWindow.GetWindow<ProfilerWindow>();
+                w.Show(true);
+                w.Focus();
+                r = true;
+            }
+            return r;
+        }
+    }
+    internal class SetMarkerFilterExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            bool r = false;
+            if (operands.Count >= 1) {
+                var filter = operands[0].AsString;
+                ProfilerDriver.SetMarkerFiltering(filter);
+                var w = EditorWindow.GetWindow<ProfilerWindow>();
+                w.Show(true);
+                w.Focus();
                 r = true;
             }
             return r;
