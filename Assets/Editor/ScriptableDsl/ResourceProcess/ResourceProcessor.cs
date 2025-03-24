@@ -2187,7 +2187,7 @@ internal sealed class ResourceProcessor
                 prop.onlyShowGPUSamples = false;
 
                 StringBuilder sb = new StringBuilder();
-                sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \triangles:{4} \tbatches:{5}", prop.depth, prop.frameFPS, prop.frameTime, prop.frameGpuTime, triangle, batch);
+                sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \ttriangles:{4} \tbatches:{5}", prop.depth, prop.frameFPS, prop.frameTime, prop.frameGpuTime, triangle, batch);
                 sb.AppendLine();
                 while (prop.Next(true)) {
                     sb.AppendFormat("{0}:{1}->{2}\t{3}\t{4}\t{5}\t{6}", prop.depth, prop.propertyName, prop.propertyPath, prop.GetColumn(HierarchyFrameDataView.columnCalls), prop.GetColumn(HierarchyFrameDataView.columnGcMemory), prop.GetColumn(HierarchyFrameDataView.columnSelfPercent), prop.GetColumn(HierarchyFrameDataView.columnSelfTime));
@@ -2216,7 +2216,7 @@ internal sealed class ResourceProcessor
 
                 sb.AppendLine();
 
-                sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \triangles:{4} \tbatches:{5}", fiter.depth, hierView.frameFps, hierView.frameTimeMs, hierView.frameGpuTimeMs, triangle, batch);
+                sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \ttriangles:{4} \tbatches:{5}", fiter.depth, hierView.frameFps, hierView.frameTimeMs, hierView.frameGpuTimeMs, triangle, batch);
                 sb.AppendLine();
                 while (fiter.Next(true)) {
                     sb.AppendFormat("{0}:{1}->{2}\t{3}\t{4}\t{5}\t{6}", fiter.depth, fiter.name, fiter.path, hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnCalls), hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnGcMemory) / 1024.0f, hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnSelfPercent), hierView.GetItemColumnDataAsFloat(fiter.sampleId, HierarchyFrameDataView.columnSelfTime));
@@ -2225,7 +2225,7 @@ internal sealed class ResourceProcessor
 
                 sb.AppendLine();
 
-                sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \triangles:{4} \tbatches:{5}", fiter2.depth, hierView2.frameFps, hierView2.frameTimeMs, hierView2.frameGpuTimeMs, triangle, batch);
+                sb.AppendFormat("depth:{0}\tfps:{1}\tcpu time:{2}\tgpu time:{3} \ttriangles:{4} \tbatches:{5}", fiter2.depth, hierView2.frameFps, hierView2.frameTimeMs, hierView2.frameGpuTimeMs, triangle, batch);
                 sb.AppendLine();
                 while (fiter2.Next(true)) {
                     sb.AppendFormat("{0}:{1}->{2}\t{3}\t{4}\t{5}\t{6}", fiter2.depth, fiter2.name, fiter2.path, hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnCalls), hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnGcMemory) / 1024.0f, hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnSelfPercent), hierView2.GetItemColumnDataAsFloat(fiter2.sampleId, HierarchyFrameDataView.columnSelfTime));
