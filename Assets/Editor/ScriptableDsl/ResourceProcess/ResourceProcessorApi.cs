@@ -19,6 +19,7 @@ using System.IO;
 using System.Linq;
 using StoryScript;
 using StoryScript.DslExpression;
+using UnityEditor.Profiling;
 
 internal enum ProfilerViewType
 {
@@ -198,6 +199,7 @@ internal static class ResourceEditUtility
     }
     internal class InstrumentRecord
     {
+        internal int sampleCount;
         internal int depth;
         internal string name;
         internal string layerPath;
@@ -205,21 +207,21 @@ internal static class ResourceEditUtility
         internal float totalPercent;
         internal float selfTime;
         internal float selfPercent;
-        internal int sampleIndex;
+        internal int markerId;
         internal int calls;
         internal float gcMemory;
     }
     internal class InstrumentInfo
     {
-        internal int index;
         internal int frame;
+        internal int sampleCount;
         internal float fps;
         internal float totalGcMemory;
         internal int totalCalls;
         internal float totalCpuTime;
         internal float totalGpuTime;
+        internal int viewMode;
         internal int sortType;
-        internal int viewType;
         internal float batch;
         internal float triangle;
         internal InstrumentModuleInfo cpuModule;
@@ -2287,8 +2289,36 @@ namespace ResourceEditApi
                 w.Show(true);
                 w.Focus();
                 var sel = w.GetFrameTimeViewSampleSelectionController(ProfilerWindow.cpuModuleIdentifier);
-                sel.SetSelection(new UnityEditor.Profiling.ProfilerTimeSampleSelection(frame.frame, minfo.threadGroup, minfo.threadName, minfo.threadId, record.sampleIndex, record.name));
-                r = true;
+                sel.focusedThreadIndex = minfo.theadIndex;
+
+                using (var hierView = ProfilerDriver.GetHierarchyFrameDataView(frame.frame, minfo.theadIndex, HierarchyFrameDataView.ViewModes.MergeSamplesWithTheSameName, HierarchyFrameDataView.columnTotalTime, true)) {
+                    List<int> parentsCacheList = new List<int>();
+                    List<int> childrenCacheList = new List<int>();
+                    List<int> indices = new List<int>();
+                    int rootId = hierView.GetRootItemID();
+                    hierView.GetItemDescendantsThatHaveChildren(rootId, parentsCacheList);
+                    foreach (int parentId in parentsCacheList) {
+                        childrenCacheList.Clear();
+                        hierView.GetItemChildren(parentId, childrenCacheList);
+
+                        foreach (var id in childrenCacheList) {
+                            string path = hierView.GetItemPath(id);
+                            if (path == record.layerPath) {
+                                int markerId = hierView.GetItemMarkerID(id);
+                                List<int> markerIdPath = new List<int>();
+                                hierView.GetItemMarkerIDPath(id, markerIdPath);
+
+                                string name = hierView.GetItemName(id);
+
+                                ProfilerEditorUtility.SetSelection(sel, frame.frame - 1, minfo.threadGroup, minfo.threadName, markerId, markerIdPath, minfo.threadId);
+                                r = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                //ProfilerEditorUtility.SetSelection(sel, frame.frame, minfo.threadGroup, minfo.threadName, record.name);
+                //r = true;
             }
             return r;
         }

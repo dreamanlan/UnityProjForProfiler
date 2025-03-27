@@ -1,8 +1,8 @@
 input
 {
 	float("minFps", 30);
-	float("maxTime", 50);
-	float("maxTotalGC", 100);
+	float("maxFrameTime", 50);
+	float("maxFrameGC", 100);
 	float("maxTotalTime", 10);
 	float("maxSelfTime", 1);
 	float("maxGC",10);
@@ -13,40 +13,55 @@ input
 }
 filter
 {
-	order = instrument.index;
-	if(instrument.fps <= minFps || instrument.totalCpuTime >= maxTime || instrument.totalGcMemory >= maxTotalGC){
-		info = format("frame:{0} fps:{1} cpu:{2} gpu:{3} gc:{4}",
-			instrument.frame, instrument.fps, instrument.totalCpuTime, instrument.totalGpuTime, instrument.totalGcMemory
-		);
+	if(instrument.fps <= minFps || instrument.totalCpuTime >= maxFrameTime || instrument.totalGcMemory >= maxFrameGC){
 		value = instrument.totalGcMemory;
 		assetpath = "go";
 		extraobject = instrument;
+		$maxTotalTime = 0;
+		$maxTotalTimeName = "[null]";
 		$ct = 0;
 		extralist = newextralist();
 		looplist(instrument.cpuRecords){
 			if($ct < 32){
 				$record = $$;
-				if($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC || stringcontains($record.name, filterKey) || stringcontains($record.layerPath, filterKey)){
-					extralistadd(extralist, $record.name, [instrument, $record, instrument.cpuModule]);
-				}
+				if($record.depth > 0 && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontains($record.name, filterKey) || stringcontains($record.layerPath, filterKey))){
+					$name = $record.depth + ":" + $record.name + "|c|" + $record.markerId + "|" + $record.sampleCount;
+					extralistadd(extralist, $name, [instrument, $record, instrument.cpuModule]);
+					$ct = $ct + 1;
+
+					if($record.totalTime >= $maxTotalTime){
+						$maxTotalTime = $record.totalTime;
+						$maxTotalTimeName = $name;
+					};
+				};
 			}
 			else{
 				break;
 			};
-			$ct = $ct + 1;
 		};
 		looplist(instrument.gpuRecords){
 			if($ct < 32){
 				$record = $$;
-				if($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC || stringcontains($record.name, filterKey) || stringcontains($record.layerPath, filterKey)){
-					extralistadd(extralist, $record.name, [instrument, $record, instrument.gpuModule]);
-				}
+				if($record.depth > 0 && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontains($record.name, filterKey) || stringcontains($record.layerPath, filterKey))){
+					$name = $record.depth + ":" + $record.name + "|g|" + $record.markerId + "|" + $record.sampleCount;
+					extralistadd(extralist, $name, [instrument, $record, instrument.gpuModule]);
+					$ct = $ct + 1;
+
+					if($record.totalTime >= $maxTotalTime){
+						$maxTotalTime = $record.totalTime;
+						$maxTotalTimeName = $name;
+					};
+				};
 			}
 			else{
 				break;
 			};
-			$ct = $ct + 1;
 		};
+		order = $maxTotalTime;
+		info = format("frame:{0} count:{1} fps:{2} cpu:{3} gpu:{4} gc:{5} max_total_time:{6} name:{7}",
+			instrument.frame, instrument.sampleCount, instrument.fps, instrument.totalCpuTime, instrument.totalGpuTime,
+			instrument.totalGcMemory, $maxTotalTime, $maxTotalTimeName
+		);
 		extralistadd(extralist, "[goto_frame]", [instrument, null(), null()]);
 		extralistclick = "OnClickExtraListItem";
 		1;
