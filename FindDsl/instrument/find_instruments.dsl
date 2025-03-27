@@ -1,12 +1,17 @@
 input
 {
+	label("l1","frames");
 	float("minFps", 30);
-	float("maxFrameTime", 50);
-	float("maxFrameGC", 100);
-	float("maxTotalTime", 10);
-	float("maxSelfTime", 1);
-	float("maxGC",10);
-	string("filterKey", "");
+	float("maxFrameTime", 1000);
+	float("maxFrameGC", 1000);
+	label("l2","functions");
+	float("maxTotalTime", 0);
+	float("maxSelfTime", 0);
+	float("maxGC",0);
+	stringlist("containsAny", "");
+	stringlist("nameNotContains", "");
+	int("minDepth", 1);
+	bool("filterPath", false);
 	feature("source", "instruments");
 	feature("menu", "7.Profiler/time and gc");
 	feature("description", "just so so");
@@ -17,44 +22,42 @@ filter
 		value = instrument.totalGcMemory;
 		assetpath = "go";
 		extraobject = instrument;
+		$maxTotalTimeRecord = null();
+		$maxTotalTimeModule = null();
 		$maxTotalTime = 0;
 		$maxTotalTimeName = "[null]";
 		$ct = 0;
 		extralist = newextralist();
 		looplist(instrument.cpuRecords){
-			if($ct < 32){
-				$record = $$;
-				if($record.depth > 0 && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontains($record.name, filterKey) || stringcontains($record.layerPath, filterKey))){
-					$name = $record.depth + ":" + $record.name + "|c|" + $record.markerId + "|" + $record.sampleCount;
+			$record = $$;
+			if($record.depth >= minDepth && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontainsany($record.name, containsAny) || filterPath && stringcontainsany($record.layerPath, containsAny)) && stringnotcontains($record.name, nameNotContains)){
+				$name = $record.depth + ":" + $record.name + "|c|" + $record.markerId + "|" + $record.sampleCount;
+				if($ct < 32){
 					extralistadd(extralist, $name, [instrument, $record, instrument.cpuModule]);
 					$ct = $ct + 1;
-
-					if($record.totalTime >= $maxTotalTime){
-						$maxTotalTime = $record.totalTime;
-						$maxTotalTimeName = $name;
-					};
 				};
-			}
-			else{
-				break;
+				if($record.totalTime >= $maxTotalTime){
+					$maxTotalTimeRecord = $record;
+					$maxTotalTimeModule = instrument.cpuModule;
+					$maxTotalTime = $record.totalTime;
+					$maxTotalTimeName = $name;
+				};
 			};
 		};
 		looplist(instrument.gpuRecords){
-			if($ct < 32){
-				$record = $$;
-				if($record.depth > 0 && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontains($record.name, filterKey) || stringcontains($record.layerPath, filterKey))){
-					$name = $record.depth + ":" + $record.name + "|g|" + $record.markerId + "|" + $record.sampleCount;
+			$record = $$;
+			if($record.depth >= minDepth && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontainsany($record.name, containsAny) || filterPath && stringcontainsany($record.layerPath, containsAny)) && stringnotcontains($record.name, nameNotContains)){
+				$name = $record.depth + ":" + $record.name + "|g|" + $record.markerId + "|" + $record.sampleCount;
+				if($ct < 32){
 					extralistadd(extralist, $name, [instrument, $record, instrument.gpuModule]);
 					$ct = $ct + 1;
-
-					if($record.totalTime >= $maxTotalTime){
-						$maxTotalTime = $record.totalTime;
-						$maxTotalTimeName = $name;
-					};
 				};
-			}
-			else{
-				break;
+				if($record.totalTime >= $maxTotalTime){
+					$maxTotalTimeRecord = $record;
+					$maxTotalTimeModule = instrument.gpuModule;
+					$maxTotalTime = $record.totalTime;
+					$maxTotalTimeName = $name;
+				};
 			};
 		};
 		order = $maxTotalTime;
@@ -62,6 +65,9 @@ filter
 			instrument.frame, instrument.sampleCount, instrument.fps, instrument.totalCpuTime, instrument.totalGpuTime,
 			instrument.totalGcMemory, $maxTotalTime, $maxTotalTimeName
 		);
+		if(!isnull($maxTotalTimeRecord) && !isnull($maxTotalTimeModule)){
+			extralistadd(extralist, $name, [instrument, $maxTotalTimeRecord, $maxTotalTimeModule]);
+		};
 		extralistadd(extralist, "[goto_frame]", [instrument, null(), null()]);
 		extralistclick = "OnClickExtraListItem";
 		1;

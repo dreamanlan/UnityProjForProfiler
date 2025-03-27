@@ -196,7 +196,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                 ResourceEditUtility.ParamInfo info;
                 if (paramInfos.TryGetValue(name, out info)) {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(info.Name, GUILayout.Width(160));
+                    EditorGUILayout.LabelField(info.Type == typeof(UnityEngine.UIElements.Label) ? info.StringValue : info.Name, GUILayout.Width(160));
                     string oldVal = info.StringValue;
                     string newVal = oldVal;
                     if (!string.IsNullOrEmpty(info.Script)) {
@@ -333,6 +333,9 @@ internal sealed class ResourceEditWindow : EditorWindow
                             double v = EditorGUILayout.DoubleField((double)info.Value, GUILayout.MaxWidth(1024));
                             newVal = v.ToString();
                         }
+                    }
+                    else if(info.Type == typeof(UnityEngine.UIElements.Label)) {
+                        EditorGUILayout.LabelField(":");
                     }
                     else if (info.Type == typeof(UnityEngine.GUIContent)) {
                         if (GUILayout.Button(new GUIContent(string.Format("Return [{0}]", oldVal), oldVal))) {
@@ -3068,6 +3071,12 @@ internal sealed class ResourceProcessor
             //bool(name, val);
             bool v = bool.Parse(val);
             m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(bool), Value = v, StringValue = val };
+            m_ParamNames.Add(key);
+        }
+        else if (id == "label") {
+            //label(name, val);
+            string v = val;
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(UnityEngine.UIElements.Label), Value = v, StringValue = val };
             m_ParamNames.Add(key);
         }
         else if (id == "button") {
