@@ -1113,7 +1113,9 @@ internal sealed class ResourceEditWindow : EditorWindow
             Sort(false);
         }
         GUILayout.Label(string.Format("Total value ({0})", m_TotalItemValue));
+        GUILayout.Label("ItemCmd");
         m_ItemCommand = EditorGUILayout.TextField(m_ItemCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 180));
+        GUILayout.Label("GroupCmd");
         m_GroupCommand = EditorGUILayout.TextField(m_GroupCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 120));
         if (GUILayout.Button("ReGroup", EditorStyles.toolbarButton, GUILayout.Width(60))) {
             DeferAction(w => ReGroup());
@@ -1322,7 +1324,9 @@ internal sealed class ResourceEditWindow : EditorWindow
             GroupSort(false);
         }
         GUILayout.Label(string.Format("Total value ({0})", m_TotalItemValue));
+        GUILayout.Label("ItemCmd");
         m_ItemCommand = EditorGUILayout.TextField(m_ItemCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 180));
+        GUILayout.Label("GroupCmd");
         m_GroupCommand = EditorGUILayout.TextField(m_GroupCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 120));
         if (GUILayout.Button("ReGroup", EditorStyles.toolbarButton, GUILayout.Width(60))) {
             DeferAction(w => ReGroup());

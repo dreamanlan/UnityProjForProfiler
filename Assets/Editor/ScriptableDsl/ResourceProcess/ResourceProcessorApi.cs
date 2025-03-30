@@ -633,7 +633,10 @@ internal static class ResourceEditUtility
                     }
                 }
                 if (calc.TryGetGlobalVariable("group", out v)) {
-                    item.Group = v.AsString;
+                    var g = v.AsString;
+                    if (null != g) {
+                        item.Group = g;
+                    }
                 }
                 if (calc.TryGetGlobalVariable("extralist", out v)) {
                     var list = v.As<IList>();
