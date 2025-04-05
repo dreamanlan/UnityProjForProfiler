@@ -1189,7 +1189,10 @@ internal sealed class ResourceEditWindow : EditorWindow
                     GUI.skin.button.alignment = oldAlignment;
                 }
                 else {
-                    Texture icon = AssetDatabase.GetCachedIcon(item.AssetPath);
+                    Texture icon = null;
+                    if (ResourceEditUtility.IsValidAssetPath(item.AssetPath)) {
+                        icon = AssetDatabase.GetCachedIcon(item.AssetPath);
+                    }
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(buttonName, icon, buttonName), minWidth, maxWidth)) {
@@ -1234,7 +1237,10 @@ internal sealed class ResourceEditWindow : EditorWindow
                 EditorGUILayout.EndHorizontal();
                 foreach (string assetPath in refSet) {
                     EditorGUILayout.BeginHorizontal();
-                    Texture icon = AssetDatabase.GetCachedIcon(assetPath);
+                    Texture icon = null;
+                    if (ResourceEditUtility.IsValidAssetPath(assetPath)) {
+                        icon = AssetDatabase.GetCachedIcon(assetPath);
+                    }
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(assetPath, icon, assetPath), GUILayout.MinWidth(80), GUILayout.MaxWidth(rightWidth))) {
@@ -1253,7 +1259,10 @@ internal sealed class ResourceEditWindow : EditorWindow
                 EditorGUILayout.EndHorizontal();
                 foreach (string assetPath in refBySet) {
                     EditorGUILayout.BeginHorizontal();
-                    Texture icon = AssetDatabase.GetCachedIcon(assetPath);
+                    Texture icon = null;
+                    if (ResourceEditUtility.IsValidAssetPath(assetPath)) {
+                        icon = AssetDatabase.GetCachedIcon(assetPath);
+                    }
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(assetPath, icon, assetPath), GUILayout.MinWidth(80), GUILayout.MaxWidth(rightWidth))) {
@@ -1272,7 +1281,10 @@ internal sealed class ResourceEditWindow : EditorWindow
                 foreach (var pair in m_SelectedItem.ExtraList) {
                     var info = pair.Key;
                     EditorGUILayout.BeginHorizontal();
-                    Texture icon = AssetDatabase.GetCachedIcon(info);
+                    Texture icon = null;
+                    if (ResourceEditUtility.IsValidAssetPath(info)) {
+                        icon = AssetDatabase.GetCachedIcon(info);
+                    }
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(info, icon, info), GUILayout.MinWidth(80), GUILayout.MaxWidth(rightWidth))) {
@@ -1397,7 +1409,10 @@ internal sealed class ResourceEditWindow : EditorWindow
                     GUI.skin.button.alignment = oldAlignment;
                 }
                 else {
-                    Texture icon = AssetDatabase.GetCachedIcon(item.AssetPath);
+                    Texture icon = null;
+                    if (ResourceEditUtility.IsValidAssetPath(item.AssetPath)) {
+                        icon = AssetDatabase.GetCachedIcon(item.AssetPath);
+                    }
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(buttonName, icon, buttonName), minWidth, maxWidth)) {
@@ -1439,7 +1454,10 @@ internal sealed class ResourceEditWindow : EditorWindow
             if (ResourceProcessor.Instance.ReferenceAssets.TryGetValue(m_SelectedAssetPath, out refSet)) {
                 foreach (string assetPath in refSet) {
                     EditorGUILayout.BeginHorizontal();
-                    Texture icon = AssetDatabase.GetCachedIcon(assetPath);
+                    Texture icon = null;
+                    if (ResourceEditUtility.IsValidAssetPath(assetPath)) {
+                        icon = AssetDatabase.GetCachedIcon(assetPath);
+                    }
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(assetPath, icon, assetPath), GUILayout.MinWidth(80), GUILayout.MaxWidth(rightWidth))) {
@@ -1458,7 +1476,10 @@ internal sealed class ResourceEditWindow : EditorWindow
             if (ResourceProcessor.Instance.ReferenceByAssets.TryGetValue(m_SelectedAssetPath, out refBySet)) {
                 foreach (string assetPath in refBySet) {
                     EditorGUILayout.BeginHorizontal();
-                    Texture icon = AssetDatabase.GetCachedIcon(assetPath);
+                    Texture icon = null;
+                    if (ResourceEditUtility.IsValidAssetPath(assetPath)) {
+                        icon = AssetDatabase.GetCachedIcon(assetPath);
+                    }
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(assetPath, icon, assetPath), GUILayout.MinWidth(80), GUILayout.MaxWidth(rightWidth))) {
@@ -1477,7 +1498,10 @@ internal sealed class ResourceEditWindow : EditorWindow
                 foreach (var pair in m_SelectedGroup.ExtraList) {
                     var info = pair.Key;
                     EditorGUILayout.BeginHorizontal();
-                    Texture icon = AssetDatabase.GetCachedIcon(info);
+                    Texture icon = null;
+                    if (ResourceEditUtility.IsValidAssetPath(info)) {
+                        icon = AssetDatabase.GetCachedIcon(info);
+                    }
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(info, icon, info), GUILayout.MinWidth(80), GUILayout.MaxWidth(rightWidth))) {
@@ -2223,14 +2247,9 @@ internal sealed class ResourceProcessor
 
                 //0--cpu 1--rendering
                 StringBuilder sb = new StringBuilder();
-
-                using (var hierView = ProfilerDriver.GetHierarchyFrameDataView(lastIndex, 0, viewMode, sortColumn, sortAscending)) {
-                    sb.AppendFormat("cpu module:{0} thead index:{1} id:{2} name:{3} group:{4}", ProfilerWindow.cpuModuleIdentifier, hierView.threadIndex, hierView.threadId, hierView.threadName, hierView.threadGroupName);
-                    sb.AppendLine();
-                }
-
-                using (var hierView2 = ProfilerDriver.GetHierarchyFrameDataView(lastIndex, 1, viewMode, sortColumn, sortAscending)) {
-                    sb.AppendFormat("gpu module:{0} thead index:{1} id:{2} name:{3} group:{4}", ProfilerWindow.gpuModuleIdentifier, hierView2.threadIndex, hierView2.threadId, hierView2.threadName, hierView2.threadGroupName);
+                foreach(var pair in threads) {
+                    var thread = pair.Value;
+                    sb.AppendFormat("thead index:{0} id:{1} name:{2} group:{3}", thread.theadIndex, thread.threadId, thread.threadName, thread.threadGroup);
                     sb.AppendLine();
                 }
 
@@ -4802,7 +4821,7 @@ internal sealed class ResourceProcessor
             //0--cpu 1--rendering
             //Neither the item id nor the raw index is stable, so we record the marker id, which is not unique but stable, and we find the item by its path later.
             using (var hierView = ProfilerDriver.GetHierarchyFrameDataView(frame, tindex, viewMode, sortColumn, sortAscending)) {
-                if (null != hierView) {
+                if (null != hierView && hierView.valid) {
                     try {
                         if (tindex == 0) {
                             float cpu = hierView.frameTimeMs;

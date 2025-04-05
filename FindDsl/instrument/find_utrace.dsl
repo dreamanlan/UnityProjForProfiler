@@ -1,13 +1,13 @@
 input
 {
-	label("l1","frames");
-	float("minFps", 30);
-	float("maxFrameTime", 1000);
-	label("l2","functions");
-	float("maxTotalTime", 0);
-	stringlist("containsAny", "");
-	stringlist("nameNotContains", "");
-	int("minDepth", 1);
+	label("l1","frame's");
+	float("minFps<=", 30);
+	float("or maxFrameTime>=", 1000);
+	label("l2","function's");
+	float("maxTotalTime>=", 0);
+	stringlist("and containsAny", "");
+	stringlist("and nameNotContains", "");
+	int("and minDepth>=", 1);
 	feature("source", "utrace");
 	feature("menu", "7.Profiler/utrace csv");
 	feature("description", "just so so");

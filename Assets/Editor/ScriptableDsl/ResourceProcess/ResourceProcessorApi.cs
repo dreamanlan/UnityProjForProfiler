@@ -1182,6 +1182,17 @@ internal static class ResourceEditUtility
         }
         return match;
     }
+    internal static bool IsValidAssetPath(string path)
+    {
+        if (path.IndexOfAny(s_InvalidPathChars) >= 0 || path.IndexOfAny(s_InvalidFileNameChars) >= 0) {
+            return false;
+        }
+        string absolutePath = Path.Combine(Application.dataPath, path.Replace("Assets/", ""));
+        if (absolutePath.StartsWith(Application.dataPath)) {
+            return File.Exists(absolutePath);
+        }
+        return false;
+    }
     internal static bool IsAssetPath(string path)
     {
         string rootPath = Application.dataPath.Replace('\\', '/');
@@ -1359,6 +1370,9 @@ internal static class ResourceEditUtility
     private static Dictionary<string, Regex> s_Regexes = new Dictionary<string, Regex>();
     private static Dictionary<string, List<string>> s_PathMatchInfos = new Dictionary<string, List<string>>();
     private static string s_RootPath = string.Empty;
+
+    private static char[] s_InvalidPathChars = Path.GetInvalidPathChars();
+    private static char[] s_InvalidFileNameChars = Path.GetInvalidFileNameChars();
     private const string c_IndentString = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 
     private static DslCalculator s_ResourceParamsCalculator = null;
@@ -2266,11 +2280,15 @@ namespace ResourceEditApi
             bool r = false;
             if (operands.Count >= 1) {
                 var filter = operands[0].AsString;
+                var threadIndex = 0;
+                if (operands.Count >= 2) {
+                    threadIndex = operands[1].GetInt();
+                }
                 var w = EditorWindow.GetWindow<ProfilerWindow>();
                 w.Show(true);
                 w.Focus();
                 var sel = w.GetFrameTimeViewSampleSelectionController(ProfilerWindow.cpuModuleIdentifier);
-                sel.focusedThreadIndex = 0;
+                sel.focusedThreadIndex = threadIndex;
                 sel.sampleNameSearchFilter = filter;
                 r = true;
             }
@@ -2311,27 +2329,29 @@ namespace ResourceEditApi
                 sel.focusedThreadIndex = tinfo.theadIndex;
 
                 using (var hierView = ProfilerDriver.GetHierarchyFrameDataView(frame.frame, tinfo.theadIndex, HierarchyFrameDataView.ViewModes.MergeSamplesWithTheSameName, HierarchyFrameDataView.columnTotalTime, true)) {
-                    List<int> parentsCacheList = new List<int>();
-                    List<int> childrenCacheList = new List<int>();
-                    List<int> indices = new List<int>();
-                    int rootId = hierView.GetRootItemID();
-                    hierView.GetItemDescendantsThatHaveChildren(rootId, parentsCacheList);
-                    foreach (int parentId in parentsCacheList) {
-                        childrenCacheList.Clear();
-                        hierView.GetItemChildren(parentId, childrenCacheList);
+                    if (null != hierView && hierView.valid) {
+                        List<int> parentsCacheList = new List<int>();
+                        List<int> childrenCacheList = new List<int>();
+                        List<int> indices = new List<int>();
+                        int rootId = hierView.GetRootItemID();
+                        hierView.GetItemDescendantsThatHaveChildren(rootId, parentsCacheList);
+                        foreach (int parentId in parentsCacheList) {
+                            childrenCacheList.Clear();
+                            hierView.GetItemChildren(parentId, childrenCacheList);
 
-                        foreach (var id in childrenCacheList) {
-                            string path = hierView.GetItemPath(id);
-                            if (path == record.layerPath) {
-                                int markerId = hierView.GetItemMarkerID(id);
-                                List<int> markerIdPath = new List<int>();
-                                hierView.GetItemMarkerIDPath(id, markerIdPath);
+                            foreach (var id in childrenCacheList) {
+                                string path = hierView.GetItemPath(id);
+                                if (path == record.layerPath) {
+                                    int markerId = hierView.GetItemMarkerID(id);
+                                    List<int> markerIdPath = new List<int>();
+                                    hierView.GetItemMarkerIDPath(id, markerIdPath);
 
-                                string name = hierView.GetItemName(id);
+                                    string name = hierView.GetItemName(id);
 
-                                ProfilerEditorUtility.SetSelection(sel, frame.frame - 1, tinfo.threadGroup, tinfo.threadName, markerId, markerIdPath, tinfo.threadId);
-                                r = true;
-                                break;
+                                    ProfilerEditorUtility.SetSelection(sel, frame.frame - 1, tinfo.threadGroup, tinfo.threadName, markerId, markerIdPath, tinfo.threadId);
+                                    r = true;
+                                    break;
+                                }
                             }
                         }
                     }

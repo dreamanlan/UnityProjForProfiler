@@ -1,16 +1,16 @@
 input
 {
-	label("l1","frames");
-	float("minFps", 30);
-	float("maxFrameTime", 1000);
-	float("maxFrameGC", 1000);
-	label("l2","functions");
-	float("maxTotalTime", 0);
-	float("maxSelfTime", 0);
-	float("maxGC",0);
-	stringlist("containsAny", "");
-	stringlist("nameNotContains", "");
-	int("minDepth", 1);
+	label("l1","frame's");
+	float("minFps<=", 30);
+	float("or maxFrameTime>=", 1000);
+	float("or maxFrameGC>=", 1000);
+	label("l2","function's");
+	float("(maxTotalTime>=", 0);
+	float("or maxSelfTime>=", 1000);
+	float("or maxGC>=",1000);
+	stringlist(") and containsAny", "");
+	stringlist("and nameNotContains", "");
+	int("and minDepth>=", 1);
 	bool("filterPath", false);
 	feature("source", "instruments");
 	feature("menu", "7.Profiler/time and gc");
@@ -62,10 +62,19 @@ filter
 
 script(OnClickExtraListItem)args($obj,$item)
 {
-	if(isnull($obj.Value[1])){
-    	selectframe($obj.Value[0].frame);
+	$instrument = $obj.Value[0];
+	$record = $obj.Value[1];
+	$thread = $obj.Value[2];
+	if(isnull($record)){
+    	selectframe($instrument.frame);
 	}
 	else{
-		selectsample($obj.Value[0], $obj.Value[1], $obj.Value[2]);
+		if($record.threadIndex == 1){
+			filtergpusample($record.name);
+		}
+		else{
+			filtercpusample($record.name, $record.threadIndex);
+		};
+		selectsample($instrument, $record, $thread);
 	};
 };
