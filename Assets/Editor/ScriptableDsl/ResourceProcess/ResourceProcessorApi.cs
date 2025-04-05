@@ -189,9 +189,8 @@ internal static class ResourceEditUtility
         internal long size = 0;
         internal List<MemoryInfo> memories = new List<MemoryInfo>();
     }
-    internal class InstrumentModuleInfo
+    internal class InstrumentThreadInfo
     {
-        internal string moduleId;
         internal int theadIndex;
         internal ulong threadId;
         internal string threadName;
@@ -199,35 +198,31 @@ internal static class ResourceEditUtility
     }
     internal class InstrumentRecord
     {
+        internal int frame;
+        internal int threadIndex;
         internal int sampleCount;
         internal int depth;
         internal string name;
         internal string layerPath;
+        internal float calls;
+        internal float gcMemory;
         internal float totalTime;
         internal float totalPercent;
         internal float selfTime;
         internal float selfPercent;
         internal int markerId;
-        internal int calls;
-        internal float gcMemory;
     }
     internal class InstrumentInfo
     {
         internal int frame;
-        internal int sampleCount;
         internal float fps;
         internal float totalGcMemory;
-        internal int totalCalls;
         internal float totalCpuTime;
         internal float totalGpuTime;
-        internal int viewMode;
-        internal int sortType;
         internal float batch;
         internal float triangle;
-        internal InstrumentModuleInfo cpuModule;
-        internal InstrumentModuleInfo gpuModule;
-        internal List<InstrumentRecord> cpuRecords = new List<InstrumentRecord>();
-        internal List<InstrumentRecord> gpuRecords = new List<InstrumentRecord>();
+        internal SortedDictionary<int, InstrumentThreadInfo> threads = new SortedDictionary<int, InstrumentThreadInfo>();
+        internal List<InstrumentRecord> records = new List<InstrumentRecord>();
     }
     internal class uTraceTimeline
     {
@@ -2308,14 +2303,14 @@ namespace ResourceEditApi
             if (operands.Count >= 3) {
                 var frame = operands[0].As<ResourceEditUtility.InstrumentInfo>();
                 var record = operands[1].As<ResourceEditUtility.InstrumentRecord>();
-                var minfo = operands[2].As<ResourceEditUtility.InstrumentModuleInfo>();
+                var tinfo = operands[2].As<ResourceEditUtility.InstrumentThreadInfo>();
                 var w = EditorWindow.GetWindow<ProfilerWindow>();
                 w.Show(true);
                 w.Focus();
                 var sel = w.GetFrameTimeViewSampleSelectionController(ProfilerWindow.cpuModuleIdentifier);
-                sel.focusedThreadIndex = minfo.theadIndex;
+                sel.focusedThreadIndex = tinfo.theadIndex;
 
-                using (var hierView = ProfilerDriver.GetHierarchyFrameDataView(frame.frame, minfo.theadIndex, HierarchyFrameDataView.ViewModes.MergeSamplesWithTheSameName, HierarchyFrameDataView.columnTotalTime, true)) {
+                using (var hierView = ProfilerDriver.GetHierarchyFrameDataView(frame.frame, tinfo.theadIndex, HierarchyFrameDataView.ViewModes.MergeSamplesWithTheSameName, HierarchyFrameDataView.columnTotalTime, true)) {
                     List<int> parentsCacheList = new List<int>();
                     List<int> childrenCacheList = new List<int>();
                     List<int> indices = new List<int>();
@@ -2334,7 +2329,7 @@ namespace ResourceEditApi
 
                                 string name = hierView.GetItemName(id);
 
-                                ProfilerEditorUtility.SetSelection(sel, frame.frame - 1, minfo.threadGroup, minfo.threadName, markerId, markerIdPath, minfo.threadId);
+                                ProfilerEditorUtility.SetSelection(sel, frame.frame - 1, tinfo.threadGroup, tinfo.threadName, markerId, markerIdPath, tinfo.threadId);
                                 r = true;
                                 break;
                             }

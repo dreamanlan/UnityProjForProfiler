@@ -23,50 +23,34 @@ filter
 		assetpath = "go";
 		extraobject = instrument;
 		$maxTotalTimeRecord = null();
-		$maxTotalTimeModule = null();
+		$maxTotalTimeThread = null();
 		$maxTotalTime = 0;
 		$maxTotalTimeName = "[null]";
 		$ct = 0;
 		extralist = newextralist();
-		looplist(instrument.cpuRecords){
+		looplist(instrument.records){
 			$record = $$;
 			if($record.depth >= minDepth && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontainsany($record.name, containsAny) || filterPath && stringcontainsany($record.layerPath, containsAny)) && stringnotcontains($record.name, nameNotContains)){
-				$name = $record.depth + ":" + $record.name + "|c|" + $record.markerId + "|" + $record.sampleCount;
+				$name = $record.depth + ":" + $record.name + "|" + $record.threadIndex + "|" + $record.markerId + "|" + $record.sampleCount;
 				if($ct < 32){
-					extralistadd(extralist, $name, [instrument, $record, instrument.cpuModule]);
+					extralistadd(extralist, $name, [instrument, $record, instrument.threads[$record.threadIndex]]);
 					$ct = $ct + 1;
 				};
 				if($record.totalTime >= $maxTotalTime){
 					$maxTotalTimeRecord = $record;
-					$maxTotalTimeModule = instrument.cpuModule;
-					$maxTotalTime = $record.totalTime;
-					$maxTotalTimeName = $name;
-				};
-			};
-		};
-		looplist(instrument.gpuRecords){
-			$record = $$;
-			if($record.depth >= minDepth && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontainsany($record.name, containsAny) || filterPath && stringcontainsany($record.layerPath, containsAny)) && stringnotcontains($record.name, nameNotContains)){
-				$name = $record.depth + ":" + $record.name + "|g|" + $record.markerId + "|" + $record.sampleCount;
-				if($ct < 32){
-					extralistadd(extralist, $name, [instrument, $record, instrument.gpuModule]);
-					$ct = $ct + 1;
-				};
-				if($record.totalTime >= $maxTotalTime){
-					$maxTotalTimeRecord = $record;
-					$maxTotalTimeModule = instrument.gpuModule;
+					$maxTotalTimeThread = instrument.threads[$record.threadIndex];
 					$maxTotalTime = $record.totalTime;
 					$maxTotalTimeName = $name;
 				};
 			};
 		};
 		order = $maxTotalTime;
-		info = format("frame:{0} count:{1} fps:{2} cpu:{3} gpu:{4} gc:{5} max_total_time:{6} name:{7}",
-			instrument.frame, instrument.sampleCount, instrument.fps, instrument.totalCpuTime, instrument.totalGpuTime,
+		info = format("frame:{0} fps:{1} cpu:{2} gpu:{3} gc:{4} max_total_time:{5} name:{6}",
+			instrument.frame, instrument.fps, instrument.totalCpuTime, instrument.totalGpuTime,
 			instrument.totalGcMemory, $maxTotalTime, $maxTotalTimeName
 		);
-		if(!isnull($maxTotalTimeRecord) && !isnull($maxTotalTimeModule)){
-			extralistadd(extralist, $name, [instrument, $maxTotalTimeRecord, $maxTotalTimeModule]);
+		if(!isnull($maxTotalTimeRecord) && !isnull($maxTotalTimeThread)){
+			extralistadd(extralist, $name, [instrument, $maxTotalTimeRecord, $maxTotalTimeThread]);
 		};
 		extralistadd(extralist, "[goto_frame]", [instrument, null(), null()]);
 		extralistclick = "OnClickExtraListItem";
