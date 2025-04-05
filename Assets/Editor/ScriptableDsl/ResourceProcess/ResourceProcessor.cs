@@ -105,6 +105,9 @@ internal sealed class ResourceEditWindow : EditorWindow
         if (GUILayout.Button("加载", EditorStyles.toolbarButton)) {
             DeferAction(obj => { ResourceProcessor.Instance.LoadInstrumentInfo(); });
         }
+        if (GUILayout.Button("uTraceCsv", EditorStyles.toolbarButton)) {
+            DeferAction(obj => { ResourceProcessor.Instance.LoadUTraceCsv(); });
+        }
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
@@ -1112,7 +1115,7 @@ internal sealed class ResourceEditWindow : EditorWindow
         if (GUILayout.Button("降序", GUILayout.Width(60))) {
             Sort(false);
         }
-        GUILayout.Label(string.Format("Total value ({0})", m_TotalItemValue));
+        GUILayout.Label(string.Format("Total/Avg value ({0}/{1})", m_TotalItemValue, m_TotalItemValue / m_ItemList.Count));
         GUILayout.Label("ItemCmd");
         m_ItemCommand = EditorGUILayout.TextField(m_ItemCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 180));
         GUILayout.Label("GroupCmd");
@@ -1323,7 +1326,7 @@ internal sealed class ResourceEditWindow : EditorWindow
         if (GUILayout.Button("降序", GUILayout.Width(60))) {
             GroupSort(false);
         }
-        GUILayout.Label(string.Format("Total value ({0})", m_TotalItemValue));
+        GUILayout.Label(string.Format("Total/Avg value ({0}/{1})", m_TotalItemValue, m_TotalItemValue / m_GroupList.Count));
         GUILayout.Label("ItemCmd");
         m_ItemCommand = EditorGUILayout.TextField(m_ItemCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 180));
         GUILayout.Label("GroupCmd");
@@ -2117,6 +2120,7 @@ internal sealed class ResourceProcessor
     internal void ClearInstrumentInfo()
     {
         m_InstrumentInfos.Clear();
+        m_uTraceFrames.Clear();
     }
     internal void RecordInstrument()
     {
@@ -2343,8 +2347,8 @@ internal sealed class ResourceProcessor
 
                     if (!string.IsNullOrEmpty(name) && char.IsNumber(name[0]) && !string.IsNullOrEmpty(layerPath) && char.IsNumber(layerPath[0])) {
                         var info = new ResourceEditUtility.InstrumentInfo();
-                        info.sampleCount = sampleCount;
                         info.frame = frame;
+                        info.sampleCount = sampleCount;
                         info.fps = float.Parse(fpsOrId);
                         info.totalCalls = calls;
                         info.totalGcMemory = gc;
@@ -2358,7 +2362,7 @@ internal sealed class ResourceProcessor
                         info.cpuModule = cpuInfo;
                         info.gpuModule = gpuInfo;
 
-                        m_InstrumentInfos[sampleCount] = info;
+                        m_InstrumentInfos[frame] = info;
                     }
                     else {
                         if (fields[3] == "cpu_module") {
@@ -2370,7 +2374,7 @@ internal sealed class ResourceProcessor
                             continue;
                         }
                         ResourceEditUtility.InstrumentInfo info;
-                        if (m_InstrumentInfos.TryGetValue(sampleCount, out info)) {
+                        if (m_InstrumentInfos.TryGetValue(frame, out info)) {
                             var record = new ResourceEditUtility.InstrumentRecord();
                             record.sampleCount = sampleCount;
                             record.depth = depth;
@@ -2398,6 +2402,55 @@ internal sealed class ResourceProcessor
             }
             catch (Exception ex) {
                 EditorUtility.DisplayDialog("异常", string.Format("line {0} exception {1}\n{2}", i, ex.Message, ex.StackTrace), "ok");
+            }
+            EditorUtility.ClearProgressBar();
+        }
+    }
+    internal void LoadUTraceCsv()
+    {
+        string file = EditorPrefs.GetString(c_pref_key_load_utracecsv);
+        string path = EditorUtility.OpenFilePanel("请指定要加载utrace信息的CSV文件", string.IsNullOrEmpty(file) ? string.Empty : Path.GetDirectoryName(file), "csv");
+        if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
+            EditorPrefs.SetString(c_pref_key_load_utracecsv, path);
+
+            int ix = 0;
+            try {
+                m_uTraceFrames.Clear();
+                var lines = File.ReadAllLines(path);
+                for (ix = 1; ix < lines.Length; ++ix) {
+                    var line = lines[ix];
+                    var fields = line.Split(';');
+                    if (fields.Length < 8) {
+                        continue;
+                    }
+                    var frame = int.Parse(fields[0]);
+                    var timelineIndex = int.Parse(fields[1]);
+                    var threadId = int.Parse(fields[2]);
+                    var depth = int.Parse(fields[3]);
+                    var startTime = double.Parse(fields[4]);
+                    var endTime = double.Parse(fields[5]);
+                    var time = double.Parse(fields[6]);
+                    var name = fields[7];
+
+                    if (timelineIndex == 0 && threadId == 0 && depth == 0 && name == "[frame]") {
+                        var info = new ResourceEditUtility.uTraceFrame { frame = frame, startTime = startTime, endTime = endTime, time = time };
+                        m_uTraceFrames[frame] = info;
+                    }
+                    else if (m_uTraceFrames.TryGetValue(frame, out var info)) {
+                        var timeline = new ResourceEditUtility.uTraceTimeline { frame = frame, timelineIndex = timelineIndex, threadId = threadId, depth = depth, startTime = startTime, endTime = endTime, time = time, name = name };
+                        info.records.Add(timeline);
+                    }
+                    else {
+                        //Skip thread group and thread name information, which comes before frame information
+                        continue;
+                    }
+                    if (DisplayCancelableProgressBar("加载进度", ix, lines.Length)) {
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex) {
+                EditorUtility.DisplayDialog("异常", string.Format("line {0} exception {1}\n{2}", ix, ex.Message, ex.StackTrace), "ok");
             }
             EditorUtility.ClearProgressBar();
         }
@@ -3478,6 +3531,18 @@ internal sealed class ResourceProcessor
             m_CurSearchCount = 0;
             m_TotalSearchCount = 0;
             SearchInstruments();
+            EditorUtility.ClearProgressBar();
+        }
+        else if (m_SearchSource == "utrace") {
+            if (m_uTraceFrames.Count <= 0) {
+                if (!isBatch)
+                    EditorUtility.DisplayDialog("错误", "未找到utrace信息，请先执行‘uTraceCsv’！", "ok");
+                return;
+            }
+            m_ItemList.Clear();
+            m_CurSearchCount = 0;
+            m_TotalSearchCount = 0;
+            SearchUTrace();
             EditorUtility.ClearProgressBar();
         }
         else {
@@ -4717,6 +4782,25 @@ internal sealed class ResourceProcessor
             }
         }
     }
+    private void SearchUTrace()
+    {
+        if (m_uTraceFrames.Count <= 0)
+            return;
+
+        m_TotalSearchCount = m_uTraceFrames.Count;
+        foreach (var pair in m_uTraceFrames) {
+            var info = pair.Value;
+            ++m_CurSearchCount;
+            var item = new ResourceEditUtility.ItemInfo { AssetPath = string.Empty, ScenePath = string.Empty, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
+            var ret = ResourceEditUtility.Filter(item, new Dictionary<string, BoxedValue> { { "utraceframe", BoxedValue.FromObject(info) } }, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+            if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
+                m_ItemList.AddRange(m_Results);
+            }
+            if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
+                break;
+            }
+        }
+    }
 
     private bool RecordInstrumentFrame(int frame, HierarchyFrameDataView.ViewModes viewMode, int sortColumn, bool sortAscending, float triangle, float batch, List<int> parentsCacheList, List<int> childrenCacheList, ref ResourceEditUtility.InstrumentModuleInfo cpuInfo, ref ResourceEditUtility.InstrumentModuleInfo gpuInfo)
     {
@@ -5042,6 +5126,7 @@ internal sealed class ResourceProcessor
     private SortedDictionary<string, ResourceEditUtility.MemoryGroupInfo> m_ClassifiedManagedMemoryInfos = new SortedDictionary<string, ResourceEditUtility.MemoryGroupInfo>();
 
     private SortedList<int, ResourceEditUtility.InstrumentInfo> m_InstrumentInfos = new SortedList<int, ResourceEditUtility.InstrumentInfo>();
+    private SortedList<int, ResourceEditUtility.uTraceFrame> m_uTraceFrames = new SortedList<int, ResourceEditUtility.uTraceFrame>();
 
     internal static bool ReadMenuAndDescription(string path, out string menu, out string desc)
     {
@@ -5152,6 +5237,7 @@ internal sealed class ResourceProcessor
     private const string c_pref_key_save_dependencies = "ResourceProcessor_SaveDependencies";
     private const string c_pref_key_load_instrument = "ResourceProcessor_LoadInstrument";
     private const string c_pref_key_save_instrument = "ResourceProcessor_SaveInstrument";
+    private const string c_pref_key_load_utracecsv = "ResourceProcessor_LoadUTraceCsv";
     private const string c_pref_key_load_result = "ResourceProcessor_LoadResult";
     private const string c_pref_key_save_result = "ResourceProcessor_SaveResult";
 

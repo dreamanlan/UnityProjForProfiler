@@ -229,6 +229,27 @@ internal static class ResourceEditUtility
         internal List<InstrumentRecord> cpuRecords = new List<InstrumentRecord>();
         internal List<InstrumentRecord> gpuRecords = new List<InstrumentRecord>();
     }
+    internal class uTraceTimeline
+    {
+        internal int frame;
+        internal int timelineIndex;
+        internal int threadId;
+        internal string threadGroup;
+        internal string threadName;
+        internal int depth;
+        internal double startTime;
+        internal double endTime;
+        internal double time;
+        internal string name;
+    }
+    internal class uTraceFrame
+    {
+        internal int frame;
+        internal double startTime;
+        internal double endTime;
+        internal double time;
+        internal List<uTraceTimeline> records = new List<uTraceTimeline>();
+    }
     internal class SectionInfo
     {
         internal ulong vm_start = 0;
