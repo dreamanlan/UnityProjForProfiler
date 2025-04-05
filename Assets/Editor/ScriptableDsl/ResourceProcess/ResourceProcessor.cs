@@ -201,7 +201,12 @@ internal sealed class ResourceEditWindow : EditorWindow
                 ResourceEditUtility.ParamInfo info;
                 if (paramInfos.TryGetValue(name, out info)) {
                     EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.LabelField(info.Type == typeof(UnityEngine.UIElements.Label) ? info.StringValue : info.Name, GUILayout.Width(160));
+                    if (info.Type == typeof(UnityEngine.UIElements.Label)) {
+                        EditorGUILayout.LabelField(new GUIContent(info.Caption, info.Tooltip));
+                    }
+                    else {
+                        EditorGUILayout.LabelField(new GUIContent(info.Caption, info.Tooltip), GUILayout.Width(160));
+                    }
                     string oldVal = info.StringValue;
                     string newVal = oldVal;
                     if (!string.IsNullOrEmpty(info.Script)) {
@@ -340,7 +345,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                         }
                     }
                     else if(info.Type == typeof(UnityEngine.UIElements.Label)) {
-                        EditorGUILayout.LabelField(":");
+                        //label don't need a input control.
                     }
                     else if (info.Type == typeof(UnityEngine.GUIContent)) {
                         if (GUILayout.Button(new GUIContent(string.Format("Return [{0}]", oldVal), oldVal))) {
@@ -2912,46 +2917,49 @@ internal sealed class ResourceProcessor
         string id = callData.GetId();
         string key = callData.GetParamId(0);
         string val = callData.GetParamId(1);
+        int num = callData.GetParamNum();
+        string caption = num > 2 ? callData.GetParamId(2) : (id == "label" ? val : key);
+        string tooltip = num > 3 ? callData.GetParamId(3) : caption;
         if (id == "int") {
             //int(name, val);
             int v = int.Parse(val);
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(int), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(int), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "uint") {
             //uint(name, val);
             uint v = uint.Parse(val);
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(uint), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(uint), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "long") {
             //long(name, val);
             long v = long.Parse(val);
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(long), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(long), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "ulong") {
             //ulong(name, val);
             ulong v = ulong.Parse(val);
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(ulong), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(ulong), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "float") {
             //float(name, val);
             float v = float.Parse(val);
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(float), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(float), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "double") {
             //double(name, val);
             double v = double.Parse(val);
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(double), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(double), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "string") {
             //string(name, val);
             string v = val;
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(string), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(string), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "intlist") {
@@ -2963,7 +2971,7 @@ internal sealed class ResourceProcessor
                 int.TryParse(str, out iv);
                 list.Add(iv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<int>), Value = BoxedValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<int>), Value = BoxedValue.FromObject(list), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "uintlist") {
@@ -2975,7 +2983,7 @@ internal sealed class ResourceProcessor
                 uint.TryParse(str, out iv);
                 list.Add(iv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<uint>), Value = BoxedValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<uint>), Value = BoxedValue.FromObject(list), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "longlist") {
@@ -2987,7 +2995,7 @@ internal sealed class ResourceProcessor
                 long.TryParse(str, out iv);
                 list.Add(iv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<long>), Value = BoxedValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<long>), Value = BoxedValue.FromObject(list), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "ulonglist") {
@@ -2999,7 +3007,7 @@ internal sealed class ResourceProcessor
                 ulong.TryParse(str, out iv);
                 list.Add(iv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<ulong>), Value = BoxedValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<ulong>), Value = BoxedValue.FromObject(list), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "floatlist") {
@@ -3011,7 +3019,7 @@ internal sealed class ResourceProcessor
                 float.TryParse(str, out fv);
                 list.Add(fv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<float>), Value = BoxedValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<float>), Value = BoxedValue.FromObject(list), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "doublelist") {
@@ -3023,13 +3031,13 @@ internal sealed class ResourceProcessor
                 double.TryParse(str, out fv);
                 list.Add(fv);
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<double>), Value = BoxedValue.FromObject(list), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<double>), Value = BoxedValue.FromObject(list), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "stringlist") {
             //stringlist(name, val);
             var v = val.Split(new char[] { ';', '|' }, StringSplitOptions.RemoveEmptyEntries);
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<string>), Value = BoxedValue.FromObject(v), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(List<string>), Value = BoxedValue.FromObject(v), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "inthash") {
@@ -3043,7 +3051,7 @@ internal sealed class ResourceProcessor
                     hash.Add(iv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<int>), Value = BoxedValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<int>), Value = BoxedValue.FromObject(hash), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "uinthash") {
@@ -3057,7 +3065,7 @@ internal sealed class ResourceProcessor
                     hash.Add(iv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<uint>), Value = BoxedValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<uint>), Value = BoxedValue.FromObject(hash), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "longhash") {
@@ -3071,7 +3079,7 @@ internal sealed class ResourceProcessor
                     hash.Add(iv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<long>), Value = BoxedValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<long>), Value = BoxedValue.FromObject(hash), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "ulonghash") {
@@ -3085,7 +3093,7 @@ internal sealed class ResourceProcessor
                     hash.Add(iv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<ulong>), Value = BoxedValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<ulong>), Value = BoxedValue.FromObject(hash), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "floathash") {
@@ -3099,7 +3107,7 @@ internal sealed class ResourceProcessor
                     hash.Add(fv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<float>), Value = BoxedValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<float>), Value = BoxedValue.FromObject(hash), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "doublehash") {
@@ -3113,7 +3121,7 @@ internal sealed class ResourceProcessor
                     hash.Add(fv);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<double>), Value = BoxedValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<double>), Value = BoxedValue.FromObject(hash), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "stringhash") {
@@ -3125,43 +3133,43 @@ internal sealed class ResourceProcessor
                     hash.Add(str);
                 }
             }
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<string>), Value = BoxedValue.FromObject(hash), StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(HashSet<string>), Value = BoxedValue.FromObject(hash), StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "bool") {
             //bool(name, val);
             bool v = bool.Parse(val);
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(bool), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(bool), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "label") {
             //label(name, val);
             string v = val;
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(UnityEngine.UIElements.Label), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(UnityEngine.UIElements.Label), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "button") {
             //button(name, val);
             string v = val;
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(UnityEngine.GUIContent), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(UnityEngine.GUIContent), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "table") {
             //table(name, val);
             string v = val;
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(ResourceEditUtility.DataTable), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(ResourceEditUtility.DataTable), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "excel") {
             //excel(name, val);
             string v = val;
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(NPOI.SS.UserModel.IWorkbook), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(NPOI.SS.UserModel.IWorkbook), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "script") {
             //script(name, val);
             string v = val;
-            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(object), Value = v, StringValue = val };
+            m_Params[key] = new ResourceEditUtility.ParamInfo { Name = key, Type = typeof(object), Value = v, StringValue = val, Caption = caption, Tooltip = tooltip };
             m_ParamNames.Add(key);
         }
         else if (id == "feature") {
@@ -3956,6 +3964,8 @@ internal sealed class ResourceProcessor
                     if (paramInfos.TryGetValue(key, out info) && val.Type == info.Type) {
                         val.StringValue = info.StringValue;
                         val.Value = info.Value;
+                        val.Caption = info.Caption;
+                        val.Tooltip = info.Tooltip;
                     }
                 }
             }

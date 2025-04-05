@@ -41,6 +41,9 @@ internal static class ResourceEditUtility
         internal Type Type;
         internal BoxedValue Value;
         internal string StringValue = string.Empty;
+        internal string Caption;
+        internal string Tooltip;
+
         internal string Encoding;
         internal BoxedValue MinValue;
         internal BoxedValue MaxValue;

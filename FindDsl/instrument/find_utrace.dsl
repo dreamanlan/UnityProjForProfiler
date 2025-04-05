@@ -1,13 +1,13 @@
 input
 {
-	label("l1","frame's");
-	float("minFps<=", 30);
-	float("or maxFrameTime>=", 1000);
-	label("l2","function's");
-	float("maxTotalTime>=", 0);
-	stringlist("and containsAny", "");
-	stringlist("and nameNotContains", "");
-	int("and minDepth>=", 1);
+	label("l1", "frame's");
+	float("minFps", 30, "minFps<=");
+	float("maxFrameTime", 1000, "or maxFrameTime>=");
+	label("l2", "function's (only the first 64 matching results in unsorted order)");
+	float("maxTotalTime", 0, "maxTotalTime>=");
+	stringlist("containsAny", "", "and containsAny");
+	stringlist("nameNotContains", "", "and nameNotContains");
+	int("minDepth", 1, "and minDepth>=");
 	feature("source", "utrace");
 	feature("menu", "7.Profiler/utrace csv");
 	feature("description", "just so so");
@@ -26,7 +26,7 @@ filter
 			$record = $$;
 			if($record.depth >= minDepth && ($record.time >= maxTotalTime) && stringcontainsany($record.name, containsAny) && stringnotcontains($record.name, nameNotContains)){
 				$name = $record.depth + ":" + $record.name + "|" + $record.frame + "|" + $record.timelineIndex + "|" + $record.threadId;
-				if($ct < 32){
+				if($ct < 64){
 					extralistadd(extralist, $name, [utraceframe, $record]);
 					$ct = $ct + 1;
 				};

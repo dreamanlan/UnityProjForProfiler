@@ -1,17 +1,17 @@
 input
 {
 	label("l1","frame's");
-	float("minFps<=", 30);
-	float("or maxFrameTime>=", 1000);
-	float("or maxFrameGC>=", 1000);
-	label("l2","function's");
-	float("(maxTotalTime>=", 0);
-	float("or maxSelfTime>=", 1000);
-	float("or maxGC>=",1000);
-	stringlist(") and containsAny", "");
-	stringlist("and nameNotContains", "");
-	int("and minDepth>=", 1);
-	bool("filterPath", false);
+	float("minFps", 30, "minFps<=");
+	float("maxFrameTime", 1000, "or maxFrameTime>=");
+	float("maxFrameGC", 1000, "or maxFrameGC>=");
+	label("l2","function's (only the first 64 matching results in unsorted order)");
+	float("maxTotalTime", 0, "(maxTotalTime>=");
+	float("maxSelfTime", 1000, "or maxSelfTime>=");
+	float("maxGC",1000, "or maxGC>=");
+	stringlist("containsAny", "", ") and containsAny");
+	stringlist("nameNotContains", "", "and nameNotContains");
+	int("minDepth", 1, "and minDepth>=");
+	bool("filterPath", false, "filterPath", "If checked, the name or path is involved in the judgment, otherwise only the name is involved in the judgment");
 	feature("source", "instruments");
 	feature("menu", "7.Profiler/time and gc");
 	feature("description", "just so so");
@@ -32,7 +32,7 @@ filter
 			$record = $$;
 			if($record.depth >= minDepth && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontainsany($record.name, containsAny) || filterPath && stringcontainsany($record.layerPath, containsAny)) && stringnotcontains($record.name, nameNotContains)){
 				$name = $record.depth + ":" + $record.name + "|" + $record.threadIndex + "|" + $record.markerId + "|" + $record.sampleCount;
-				if($ct < 32){
+				if($ct < 64){
 					extralistadd(extralist, $name, [instrument, $record, instrument.threads[$record.threadIndex]]);
 					$ct = $ct + 1;
 				};
