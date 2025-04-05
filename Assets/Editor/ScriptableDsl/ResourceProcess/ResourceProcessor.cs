@@ -4794,6 +4794,8 @@ internal sealed class ResourceProcessor
         info.triangle = triangle;
         info.batch = batch;
 
+        info.threads = threads;
+
         foreach (var pair in threads) {
             var tindex = pair.Key;
             var tinfo = pair.Value;
