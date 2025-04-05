@@ -2328,6 +2328,7 @@ namespace ResourceEditApi
                 var w = EditorWindow.GetWindow<ProfilerWindow>();
                 w.Show(true);
                 w.Focus();
+                w.selectedFrameIndex = frame.frame - 1;
                 var sel = w.GetFrameTimeViewSampleSelectionController(ProfilerWindow.cpuModuleIdentifier);
                 sel.focusedThreadIndex = tinfo.theadIndex;
 
@@ -2349,18 +2350,16 @@ namespace ResourceEditApi
                                     List<int> markerIdPath = new List<int>();
                                     hierView.GetItemMarkerIDPath(id, markerIdPath);
 
-                                    string name = hierView.GetItemName(id);
-
                                     ProfilerEditorUtility.SetSelection(sel, frame.frame - 1, tinfo.threadGroup, tinfo.threadName, markerId, markerIdPath, tinfo.threadId);
                                     r = true;
-                                    break;
+                                    return r;
                                 }
                             }
                         }
                     }
                 }
-                //ProfilerEditorUtility.SetSelection(sel, frame.frame, minfo.threadGroup, minfo.threadName, record.name);
-                //r = true;
+                ProfilerEditorUtility.SetSelection(sel, frame.frame - 1, tinfo.threadGroup, tinfo.threadName, record.name);
+                r = true;
             }
             return r;
         }

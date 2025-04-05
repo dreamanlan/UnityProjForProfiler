@@ -7,7 +7,7 @@ input
 	float("maxTotalTime", 0, "maxTotalTime>=");
 	stringlist("containsAny", "", "and containsAny");
 	stringlist("nameNotContains", "", "and nameNotContains");
-	int("minDepth", 1, "and minDepth>=");
+	int("minDepth", 2, "and minDepth>=");
 	feature("source", "utrace");
 	feature("menu", "7.Profiler/utrace csv");
 	feature("description", "just so so");

@@ -10,7 +10,7 @@ input
 	float("maxGC",1000, "or maxGC>=");
 	stringlist("containsAny", "", ") and containsAny");
 	stringlist("nameNotContains", "", "and nameNotContains");
-	int("minDepth", 1, "and minDepth>=");
+	int("minDepth", 2, "and minDepth>=");
 	bool("filterPath", false, "filterPath", "If checked, the name or path is involved in the judgment, otherwise only the name is involved in the judgment");
 	feature("source", "instruments");
 	feature("menu", "7.Profiler/time and gc");
