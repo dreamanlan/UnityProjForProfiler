@@ -1,7 +1,7 @@
 input
 {
 	label("l1", "frame's");
-	float("minFps", 30, "minFps<=");
+	float("minFps", 200, "minFps<=");
 	float("maxFrameTime", 1000, "or maxFrameTime>=");
 	label("l2", "function's (only the first 64 matching results in unsorted order)");
 	float("maxTotalTime", 0, "maxTotalTime>=");

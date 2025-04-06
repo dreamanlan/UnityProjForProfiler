@@ -2162,7 +2162,6 @@ internal sealed class ResourceProcessor
         var iter = new ProfilerFrameDataIterator();
         int midFrame = (firstIndex + lastIndex) / 2;
         int threadCount = iter.GetThreadCount(midFrame);
-        typeof(ProfilerWindow).GetProperty("");
         var threads = new SortedDictionary<int, ResourceEditUtility.InstrumentThreadInfo>();
         for (int ix = 0; ix < threadCount; ++ix) {
             var rawView = ProfilerDriver.GetRawFrameDataView(midFrame, ix);
