@@ -50,7 +50,7 @@ filter
 			instrument.totalGcMemory, $maxTotalTime, $maxTotalTimeName
 		);
 		if(!isnull($maxTotalTimeRecord) && !isnull($maxTotalTimeThread)){
-			extralistadd(extralist, $name, [instrument, $maxTotalTimeRecord, $maxTotalTimeThread]);
+			extralistadd(extralist, "*" + $maxTotalTimeName, [instrument, $maxTotalTimeRecord, $maxTotalTimeThread]);
 		};
 		extralistadd(extralist, "[goto_frame]", [instrument, null(), null()]);
 		extralistclick = "OnClickExtraListItem";

@@ -43,7 +43,7 @@ filter
 			utraceframe.frame, 1000.0/utraceframe.time, utraceframe.time, $maxTotalTime, $maxTotalTimeName
 		);
 		if(!isnull($maxTotalTimeRecord)){
-			extralistadd(extralist, $name, [utraceframe, $maxTotalTimeRecord]);
+			extralistadd(extralist, "*" + $maxTotalTimeName, [utraceframe, $maxTotalTimeRecord]);
 		};
 		1;
 	}else{
