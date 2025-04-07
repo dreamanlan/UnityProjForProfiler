@@ -894,6 +894,7 @@ internal sealed class ResourceEditWindow : EditorWindow
             m_GroupList.Clear();
             m_GroupList.AddRange(ResourceProcessor.Instance.GroupList);
             m_TotalItemValue = ResourceProcessor.Instance.TotalItemValue;
+            m_NonZeroItemCount = ResourceProcessor.Instance.NonZeroItemCount;
         }
         finally {
             m_IsReady = true;
@@ -1122,7 +1123,7 @@ internal sealed class ResourceEditWindow : EditorWindow
         if (GUILayout.Button("降序", GUILayout.Width(60))) {
             Sort(false);
         }
-        GUILayout.Label(string.Format("Total/Avg value ({0}/{1})", m_TotalItemValue, m_TotalItemValue / m_ItemList.Count));
+        GUILayout.Label(string.Format("Sum/Avg ({0:f3}/{1:f3}) NZ Avg {2:f3} NZ Count {3}", m_TotalItemValue, m_TotalItemValue / m_ItemList.Count, m_TotalItemValue / m_NonZeroItemCount, m_NonZeroItemCount));
         GUILayout.Label("ItemCmd");
         m_ItemCommand = EditorGUILayout.TextField(m_ItemCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 180));
         GUILayout.Label("GroupCmd");
@@ -1345,7 +1346,7 @@ internal sealed class ResourceEditWindow : EditorWindow
         if (GUILayout.Button("降序", GUILayout.Width(60))) {
             GroupSort(false);
         }
-        GUILayout.Label(string.Format("Total/Avg value ({0}/{1})", m_TotalItemValue, m_TotalItemValue / m_GroupList.Count));
+        GUILayout.Label(string.Format("Sum/Avg ({0:f3}/{1:f3}) NZ Avg {2:f3} NZ Count {3}", m_TotalItemValue, m_TotalItemValue / m_GroupList.Count, m_TotalItemValue / m_NonZeroItemCount, m_NonZeroItemCount));
         GUILayout.Label("ItemCmd");
         m_ItemCommand = EditorGUILayout.TextField(m_ItemCommand, EditorStyles.toolbarTextField, GUILayout.MinWidth(80), GUILayout.MaxWidth(this.position.width - 180));
         GUILayout.Label("GroupCmd");
@@ -1542,6 +1543,7 @@ internal sealed class ResourceEditWindow : EditorWindow
     private List<ResourceEditUtility.GroupInfo> m_GroupList = new List<ResourceEditUtility.GroupInfo>();
     private int m_UnfilteredGroupCount = 0;
     private double m_TotalItemValue = 0;
+    private int m_NonZeroItemCount = 0;
 
     private Vector2 m_PanelPos = Vector2.zero;
     private Vector2 m_PanelPosRight = Vector2.zero;
@@ -1627,6 +1629,10 @@ internal sealed class ResourceProcessor
     internal double TotalItemValue
     {
         get { return m_TotalItemValue; }
+    }
+    internal int NonZeroItemCount
+    {
+        get { return m_NonZeroItemCount; }
     }
     internal AssetInformation AssetBundleInfo
     {
@@ -2342,24 +2348,14 @@ internal sealed class ResourceProcessor
                 var threads = new SortedDictionary<int, ResourceEditUtility.InstrumentThreadInfo>();
                 int curCount = 1;
                 int totalCount = lines.Length;
-                bool cpu = true;
                 for (i = 1; i < lines.Length; ++i) {
                     var fields = lines[i].Split('\t');
-                    if (i == 1 || i == 2) {
-                        var m = new ResourceEditUtility.InstrumentThreadInfo();
-                        m.theadIndex = int.Parse(fields[7]);
-                        m.threadId = ulong.Parse(fields[8]);
-                        m.threadName = fields[9];
-                        m.threadGroup = fields[10];
-                        threads.Add(m.theadIndex, m);
-                        continue;
-                    }
                     var frame = int.Parse(fields[0]);
                     var threadIndex = int.Parse(fields[1]);
                     var sampleCount = int.Parse(fields[2]);
                     var depth = int.Parse(fields[3]);
                     var name = fields[4];
-                    var layerPath = fields[5];
+                    var pathOrGroup = fields[5];
                     var callsOrFps = float.Parse(fields[6]);
                     var gc = float.Parse(fields[7]);
                     var totalTimeOrCpuTime = float.Parse(fields[8]);
@@ -2389,7 +2385,7 @@ internal sealed class ResourceProcessor
                         record.sampleCount = sampleCount;
                         record.depth = depth;
                         record.name = name;
-                        record.layerPath = layerPath;
+                        record.layerPath = pathOrGroup;
                         record.gcMemory = gc;
                         record.calls = callsOrFps;
                         record.totalTime = totalTimeOrCpuTime;
@@ -2399,7 +2395,13 @@ internal sealed class ResourceProcessor
                         record.markerId = markerOrThreadId;
                         info.records.Add(record);
                     }
-                    else {
+                    else if (m_InstrumentInfos.Count == 0) {
+                        var m = new ResourceEditUtility.InstrumentThreadInfo();
+                        m.theadIndex = threadIndex;
+                        m.threadId = (ulong)markerOrThreadId;
+                        m.threadName = name;
+                        m.threadGroup = pathOrGroup;
+                        threads.Add(m.theadIndex, m);
                     }
 
                     ++curCount;
@@ -2425,6 +2427,7 @@ internal sealed class ResourceProcessor
             try {
                 m_uTraceFrames.Clear();
                 var lines = File.ReadAllLines(path);
+                var threads = new SortedDictionary<int, ResourceEditUtility.uTraceThreadInfo>();
                 for (ix = 1; ix < lines.Length; ++ix) {
                     var line = lines[ix];
                     var fields = line.Split(';');
@@ -2442,14 +2445,24 @@ internal sealed class ResourceProcessor
 
                     if (timelineIndex == 0 && threadId == 0 && depth == 0 && name == "[frame]") {
                         var info = new ResourceEditUtility.uTraceFrame { frame = frame, startTime = startTime, endTime = endTime, time = time };
+                        info.threads = threads;
                         m_uTraceFrames[frame] = info;
                     }
                     else if (m_uTraceFrames.TryGetValue(frame, out var info)) {
                         var timeline = new ResourceEditUtility.uTraceTimeline { frame = frame, timelineIndex = timelineIndex, threadId = threadId, depth = depth, startTime = startTime, endTime = endTime, time = time, name = name };
                         info.records.Add(timeline);
                     }
-                    else {
-                        //Skip thread group and thread name information, which comes before frame information
+                    else if (m_uTraceFrames.Count == 0) {
+                        if (!threads.TryGetValue(threadId, out var tinfo)) {
+                            tinfo = new ResourceEditUtility.uTraceThreadInfo { timelineIndex = timelineIndex, theadId = threadId };
+                            threads.Add(threadId, tinfo);
+                        }
+                        if (depth == 1) {
+                            tinfo.threadGroup = name;
+                        }
+                        else if (depth == 2) {
+                            tinfo.threadName = name;
+                        }
                         continue;
                     }
                     if (DisplayCancelableProgressBar("加载进度", ix, lines.Length)) {
@@ -3698,15 +3711,22 @@ internal sealed class ResourceProcessor
     }
     internal void CalcTotalValue()
     {
+        m_NonZeroItemCount = 0;
         m_TotalItemValue = 0;
         if (m_UnfilteredGroupCount <= 0) {
             foreach (var item in m_ItemList) {
                 m_TotalItemValue += item.Value;
+                if (Math.Abs(item.Value) > double.Epsilon) {
+                    ++m_NonZeroItemCount;
+                }
             }
         }
         else {
             foreach (var item in m_GroupList) {
                 m_TotalItemValue += item.Value;
+                if (Math.Abs(item.Value) > double.Epsilon) {
+                    ++m_NonZeroItemCount;
+                }
             }
         }
     }
@@ -5083,6 +5103,7 @@ internal sealed class ResourceProcessor
     private List<ResourceEditUtility.GroupInfo> m_GroupList = new List<ResourceEditUtility.GroupInfo>();
     private int m_UnfilteredGroupCount = 0;
     private double m_TotalItemValue = 0;
+    private int m_NonZeroItemCount = 0;
 
     private AssetInformation m_AssetBundleInfo = null;
     private ResourceEditUtility.SceneDepInfo m_SceneDeps = new ResourceEditUtility.SceneDepInfo();

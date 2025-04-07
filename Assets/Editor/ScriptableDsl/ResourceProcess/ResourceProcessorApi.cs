@@ -227,6 +227,13 @@ internal static class ResourceEditUtility
         internal SortedDictionary<int, InstrumentThreadInfo> threads = new SortedDictionary<int, InstrumentThreadInfo>();
         internal List<InstrumentRecord> records = new List<InstrumentRecord>();
     }
+    internal class uTraceThreadInfo
+    {
+        internal int timelineIndex;
+        internal int theadId;
+        internal string threadName;
+        internal string threadGroup;
+    }
     internal class uTraceTimeline
     {
         internal int frame;
@@ -246,6 +253,7 @@ internal static class ResourceEditUtility
         internal double startTime;
         internal double endTime;
         internal double time;
+        internal SortedDictionary<int, uTraceThreadInfo> threads = new SortedDictionary<int, uTraceThreadInfo>();
         internal List<uTraceTimeline> records = new List<uTraceTimeline>();
     }
     internal class SectionInfo

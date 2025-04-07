@@ -25,7 +25,7 @@ filter
 		looplist(utraceframe.records){
 			$record = $$;
 			if($record.depth >= minDepth && ($record.time >= maxTotalTime) && stringcontainsany($record.name, containsAny) && stringnotcontains($record.name, nameNotContains)){
-				$name = $record.depth + ":" + $record.name + "|" + $record.frame + "|" + $record.timelineIndex + "|" + $record.threadId;
+				$name = $record.depth + ":" + $record.name + "|" + $record.frame + "|" + $record.timelineIndex + "|" + $record.threadId + "|" + utraceframe.threads[$record.threadId].threadName;
 				if($ct < 64){
 					extralistadd(extralist, $name, [utraceframe, $record]);
 					$ct = $ct + 1;
