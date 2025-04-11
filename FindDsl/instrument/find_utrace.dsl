@@ -8,7 +8,7 @@ input
 	stringlist("containsAny", "", "and containsAny");
 	stringlist("nameNotContains", "", "and nameNotContains");
 	int("minDepth", 2, "and minDepth>=");
-	intlist("threads", "", "and threads");
+	inthash("threads", "", "and threads");
 	feature("source", "utrace");
 	feature("menu", "7.Profiler/utrace csv");
 	feature("description", "just so so");
@@ -25,7 +25,7 @@ filter
 		extralist = newextralist();
 		looplist(utraceframe.records){
 			$record = $$;
-			if($record.depth >= minDepth && threads.IndexOf($record.threadId)>=0 && ($record.time >= maxTotalTime) && stringcontainsany($record.name, containsAny) && stringnotcontains($record.name, nameNotContains)){
+			if($record.depth >= minDepth && inthashcontains(threads, $record.threadId) && ($record.time >= maxTotalTime) && stringcontainsany($record.name, containsAny) && stringnotcontains($record.name, nameNotContains)){
 				$name = $record.depth + ":" + $record.name + "|" + $record.frame + "|" + $record.timelineIndex + "|" + $record.threadId + "|" + utraceframe.threads[$record.threadId].threadName;
 				if($ct < 64){
 					extralistadd(extralist, $name, [utraceframe, $record]);
