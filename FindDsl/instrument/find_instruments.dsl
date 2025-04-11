@@ -11,6 +11,7 @@ input
 	stringlist("containsAny", "", ") and containsAny");
 	stringlist("nameNotContains", "", "and nameNotContains");
 	int("minDepth", 2, "and minDepth>=");
+	intlist("threads", "", "and threads");
 	bool("filterPath", false, "filterPath", "If checked, the name or path is involved in the judgment, otherwise only the name is involved in the judgment");
 	feature("source", "instruments");
 	feature("menu", "7.Profiler/time and gc");
@@ -30,7 +31,7 @@ filter
 		extralist = newextralist();
 		looplist(instrument.records){
 			$record = $$;
-			if($record.depth >= minDepth && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontainsany($record.name, containsAny) || filterPath && stringcontainsany($record.layerPath, containsAny)) && stringnotcontains($record.name, nameNotContains)){
+			if($record.depth >= minDepth && threads.IndexOf($record.threadIndex)>=0 && ($record.totalTime >= maxTotalTime || $record.selfTime >= maxSelfTime || $record.gcMemory >= maxGC) && (stringcontainsany($record.name, containsAny) || filterPath && stringcontainsany($record.layerPath, containsAny)) && stringnotcontains($record.name, nameNotContains)){
 				$name = $record.depth + ":" + $record.name + "|" + $record.threadIndex + "|" + $record.markerId + "|" + $record.sampleCount;
 				if($ct < 64){
 					extralistadd(extralist, $name, [instrument, $record, instrument.threads[$record.threadIndex]]);
