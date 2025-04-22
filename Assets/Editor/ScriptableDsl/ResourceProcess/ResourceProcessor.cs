@@ -3285,7 +3285,7 @@ internal sealed class ResourceProcessor
                             var pcd1 = p1 as Dsl.FunctionData;
                             var pcd2 = p2 as Dsl.FunctionData;
                             if (1 == num && null != pcd1) {
-                                if (pcd1.GetParamClass() == (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_OPERATOR && pcd1.GetId() == "..") {
+                                if (pcd1.GetParamClass() == (int)Dsl.ParamClassEnum.PARAM_CLASS_OPERATOR && pcd1.GetId() == "..") {
                                     //xxx(min..max);
                                     int min = int.Parse(pcd1.GetParamId(0));
                                     int max = int.Parse(pcd1.GetParamId(1));
@@ -3296,7 +3296,7 @@ internal sealed class ResourceProcessor
                                         info.OptionNames.Add(kStr);
                                     }
                                 }
-                                else if (pcd1.GetParamClass() == (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET && !pcd1.HaveId()) {
+                                else if (pcd1.GetParamClass() == (int)Dsl.ParamClassEnum.PARAM_CLASS_BRACKET && !pcd1.HaveId()) {
                                     //xxx([v1,v2,v3,v4,v5]);
                                     for (int i = 0; i < pcd1.GetParamNum(); ++i) {
                                         var vStr = pcd1.GetParamId(i);
@@ -3307,7 +3307,7 @@ internal sealed class ResourceProcessor
                             }
                             else if (2 == num) {
                                 if (null != pcd1 && null != pcd2) {
-                                    if (pcd1.GetParamClass() == (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET && !pcd1.HaveId() && pcd2.GetParamClass() == (int)Dsl.FunctionData.ParamClassEnum.PARAM_CLASS_BRACKET && !pcd2.HaveId()) {
+                                    if (pcd1.GetParamClass() == (int)Dsl.ParamClassEnum.PARAM_CLASS_BRACKET && !pcd1.HaveId() && pcd2.GetParamClass() == (int)Dsl.ParamClassEnum.PARAM_CLASS_BRACKET && !pcd2.HaveId()) {
                                         //xxx([k1,k2,k3,k4,k5],[v1,v2,v3,v4,v5]);
                                         int num1 = pcd1.GetParamNum();
                                         int num2 = pcd2.GetParamNum();
