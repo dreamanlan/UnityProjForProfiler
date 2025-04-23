@@ -79,7 +79,7 @@
 
 #all-tracked-memory-table-view__loading-overlay ActivityIndicator
 {
-    background-image: resource('Packages/com.unity.memoryprofiler/Editor/UI/Icons/Loading.png');
+    background-image: resource('Packages/com.unity.memoryprofilerextension/Editor/UI/Icons/Loading.png');
     height: 16px;
     width: 16px;
 }

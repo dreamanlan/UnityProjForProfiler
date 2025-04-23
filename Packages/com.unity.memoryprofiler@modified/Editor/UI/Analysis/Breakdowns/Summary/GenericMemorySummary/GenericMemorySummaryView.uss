@@ -68,12 +68,12 @@
 
 .memory-summary__light #memory-summary__warning__icon
 {
-    background-image: resource('Packages/com.unity.memoryprofiler/Editor/UI/Icons/InfoIcon.png');
+    background-image: resource('Packages/com.unity.memoryprofilerextension/Editor/UI/Icons/InfoIcon.png');
 }
 
 .memory-summary__dark #memory-summary__warning__icon
 {
-    background-image: resource('Packages/com.unity.memoryprofiler/Editor/UI/Icons/d_InfoIcon.png');
+    background-image: resource('Packages/com.unity.memoryprofilerextension/Editor/UI/Icons/d_InfoIcon.png');
 }
 
 #memory-summary__warning__label
@@ -258,7 +258,7 @@
 {
     width: 1px;
     height: 30px;
-    background-image: resource('Packages/com.unity.memoryprofiler/Editor/UI/Icons/Profiler.StripedBackground.png');
+    background-image: resource('Packages/com.unity.memoryprofilerextension/Editor/UI/Icons/Profiler.StripedBackground.png');
 }
 
 .memory-summary__bar__signpost-icon-normal

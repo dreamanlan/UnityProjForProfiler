@@ -497,17 +497,21 @@ namespace Unity.MemoryProfilerExtension.Editor.UI
             var simpleTextContentLabel = groupedItem.Q<Label>("selected-item-details__grouped-item__content");
             var richTextContentLabel = groupedItem.Q<Label>("selected-item-details__grouped-item__content_rich-text-label");
 
-            richTextContentLabel.RegisterCallback<PointerDownLinkTagEvent>(OnDescriptionLabelLinkSelected);
-            richTextContentLabel.RegisterCallback<PointerOverLinkTagEvent>(OnLabelLinkPointerOver);
-            richTextContentLabel.RegisterCallback<PointerOutLinkTagEvent>(OnLabelLinkPointerOut);
+            if (null != richTextContentLabel) {
+                richTextContentLabel.RegisterCallback<PointerDownLinkTagEvent>(OnDescriptionLabelLinkSelected);
+                richTextContentLabel.RegisterCallback<PointerOverLinkTagEvent>(OnLabelLinkPointerOver);
+                richTextContentLabel.RegisterCallback<PointerOutLinkTagEvent>(OnLabelLinkPointerOut);
+            }
             var usedContentLabel = options.HasFlag(SelectedItemDynamicElementOptions.EnableRichText) ? richTextContentLabel : simpleTextContentLabel;
 
             var simpleTextSelectableLabel = groupedItem.Q<TextField>("selected-item-details__grouped-item__content_selectable-label");
             var richTextSelectableLabel = groupedItem.Q<TextField>("selected-item-details__grouped-item__content_rich-text-selectable-label");
 
-            richTextSelectableLabel.RegisterCallback<PointerDownLinkTagEvent>(OnDescriptionLabelLinkSelected);
-            richTextSelectableLabel.RegisterCallback<PointerOverLinkTagEvent>(OnLabelLinkPointerOver);
-            richTextSelectableLabel.RegisterCallback<PointerOutLinkTagEvent>(OnLabelLinkPointerOut);
+            if (null != richTextSelectableLabel) {
+                richTextSelectableLabel.RegisterCallback<PointerDownLinkTagEvent>(OnDescriptionLabelLinkSelected);
+                richTextSelectableLabel.RegisterCallback<PointerOverLinkTagEvent>(OnLabelLinkPointerOver);
+                richTextSelectableLabel.RegisterCallback<PointerOutLinkTagEvent>(OnLabelLinkPointerOut);
+            }
             var usedSelectableLabel = options.HasFlag(SelectedItemDynamicElementOptions.EnableRichText) ? richTextSelectableLabel : simpleTextSelectableLabel;
             if (options.HasFlag(SelectedItemDynamicElementOptions.SelectableLabel))
             {

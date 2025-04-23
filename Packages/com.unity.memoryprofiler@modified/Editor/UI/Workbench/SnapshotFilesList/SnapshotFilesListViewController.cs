@@ -10,7 +10,7 @@ namespace Unity.MemoryProfilerExtension.Editor
 {
     public class SnapshotFilesListViewController : ViewController
     {
-        const string k_UxmlAssetGuid = "87018144588dc0643b5a69ad32eb2571";
+        const string k_UxmlAssetGuid = "18b566df36b592c4fb949adba5ad0b74";
         const string k_UxmlTreeItemGuid = "5ae096ca811ea50429f7109cf87f47e2";
         const string k_TreePersistencyKey = "com.unity.memoryprofiler.snapshotfileslistviewcontroller.treeview";
         const string k_TreePersistencyItemIdsKey = "com.unity.memoryprofiler.snapshotfileslistviewcontroller.treeview.itemids";

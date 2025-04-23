@@ -147,7 +147,7 @@
 
 #memory-profile-snapshotfile__preview-image__editor-icon
 {
-    background-image: resource('Packages/com.unity.memoryprofiler/Editor/UI/Icons/Editor.png');
+    background-image: resource('Packages/com.unity.memoryprofilerextension/Editor/UI/Icons/Editor.png');
 }
 
 #memory-profile-snapshotfile__bar {

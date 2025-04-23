@@ -3,6 +3,9 @@ using UnityEditor;
 using Unity.Profiling.Editor;
 using System;
 using Unity.MemoryProfilerExtension.Editor;
+#if !MEMORY_PROFILER_MODULE_BINDING_USES_CORRECT_NAMESPACE
+using Unity.MemoryProfilerExtension.Editor.MemoryProfilerModule;
+#endif
 
 namespace Unity.MemoryProfilerExtension.MemoryProfilerModule.Editor
 {
@@ -17,6 +20,8 @@ namespace Unity.MemoryProfilerExtension.MemoryProfilerModule.Editor
         // This is an Editor Only class and handled via its InitializeOnLoadMethod.
 #pragma warning disable UDR0001 // Domain Reload Analyzer
         static MemoryProfilerModuleOverride s_Instance;
+        // Only used from tests.
+        internal static int InstantiationCount { get; private set; }
 #pragma warning restore UDR0001 // Domain Reload Analyzer
 
         [SerializeField]
@@ -50,6 +55,7 @@ namespace Unity.MemoryProfilerExtension.MemoryProfilerModule.Editor
 
         static ProfilerModuleViewController CreateDetailsViewController(ProfilerWindow profilerWindow)
         {
+            ++InstantiationCount;
             return new MemoryProfilerModuleViewController(profilerWindow, s_Instance);
         }
     }

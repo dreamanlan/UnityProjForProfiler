@@ -168,7 +168,7 @@
 .memory-category-color__gfx, .memory-bar-element__resident-bar-visible .memory-category-color__gfx
 {
     background-color: #A679E0;
-    --unity-pattern: resource('Packages/com.unity.memoryprofiler/Editor/UI/Icons/Profiler.GraphicsMemoryBackground.png');
+    --unity-pattern: resource('Packages/com.unity.memoryprofilerextension/Editor/UI/Icons/Profiler.GraphicsMemoryBackground.png');
 }
 
 .memory-bar-element__committed-bar > .memory-category-color__gfx
@@ -181,7 +181,7 @@
 {
     background-color: #343434;
     border-width: 1px;
-    --unity-pattern: resource('Packages/com.unity.memoryprofiler/Editor/UI/Icons/Profiler.GraphicsMemoryBackground.png');
+    --unity-pattern: resource('Packages/com.unity.memoryprofilerextension/Editor/UI/Icons/Profiler.GraphicsMemoryBackground.png');
 }
 
 .memory-bar-element__committed-bar > .memory-category-color__other
