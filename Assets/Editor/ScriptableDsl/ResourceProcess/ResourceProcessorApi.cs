@@ -586,6 +586,8 @@ internal static class ResourceEditUtility
         calc.Register("floathashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FloatHashContainsExp>());
         calc.Register("doublehashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.DoubleHashContainsExp>());
         calc.Register("stringhashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.StringHashContainsExp>());
+
+        UnityEditorApi.Register(calc);
     }
     internal static BoxedValue Filter(ItemInfo item, Dictionary<string, BoxedValue> addVars, List<ItemInfo> results, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
     {
