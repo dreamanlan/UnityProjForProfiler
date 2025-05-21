@@ -4387,7 +4387,7 @@ namespace ResourceEditApi
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             var r = BoxedValue.NullObject;
-#if QINSHI
+#if SPECIAL
             if (operands.Count >= 1) {
                 var path = Calculator.GetVariable("assetpath").AsString;
                 var reference = AssetDatabase.LoadAssetAtPath<AnimationReference>(path);
@@ -4416,7 +4416,7 @@ namespace ResourceEditApi
 #endif
             return r;
         }
-#if QINSHI
+#if SPECIAL
         private static void SplitFile(AnimationReference refs, HashSet<string> hashset, IEnumerable coll, string path, int ix)
         {
             var split = UnityEngine.ScriptableObject.CreateInstance<AnimationReference>();
@@ -4830,7 +4830,7 @@ namespace ResourceEditApi
         }
         internal static HashSet<string> BuildHashSet(int sceneId)
         {
-#if QINSHI
+#if SPECIAL
             var hash = new HashSet<string>();
             var txt1 = TxtTableParser.ReadFile("../../Product/Table/temp/qs_sceneinfo.txt", Encoding.UTF8);
             var txtTable1 = TxtTableParser.Decode(txt1);
@@ -4930,7 +4930,7 @@ namespace ResourceEditApi
         }
         private static HashSet<string> BuildDslHashSet()
         {
-#if QINSHI
+#if SPECIAL
             var hash = new HashSet<string>();
             var txt1 = TxtTableParser.ReadFile("../../Product/Table/temp/qs_sceneinfo.txt", Encoding.UTF8);
             var txtTable1 = TxtTableParser.Decode(txt1);
@@ -5029,7 +5029,7 @@ namespace ResourceEditApi
         }
         private static void ReadPlayableString(HashSet<string> strSet)
         {
-#if QINSHI
+#if SPECIAL
             var npc = "../../Product/Table/temp/qs_npc_represent.txt";
             var player = "../../Product/Table/temp/qs_avatar_part.txt";
             var pet = "../../Product/Table/temp/qs_pet_npc.txt";
@@ -5045,7 +5045,7 @@ namespace ResourceEditApi
         }
         private static void ReadStringFromTable(HashSet<string> strSet, string file, Encoding encoding, params string[] cols)
         {
-#if QINSHI
+#if SPECIAL
             var txt = TxtTableParser.ReadFile(file, encoding);
             var table = TxtTableParser.Decode(txt);
             foreach (var col in cols) {
@@ -5060,7 +5060,7 @@ namespace ResourceEditApi
         }
         private static void ReadDisplayString(HashSet<string> strSet)
         {
-#if QINSHI
+#if SPECIAL
             SkillDisplayer.Displayer.LoadAllConfigs();
             var dicts = SkillDisplayer.Displayer.GetAllConfigs();
             int curCt = 0;
@@ -5091,7 +5091,7 @@ namespace ResourceEditApi
         }
         private static void ReadTimelineString(HashSet<string> strSet)
         {
-#if QINSHI
+#if SPECIAL
             var files = Directory.GetFiles("Assets/ResourceAB/LogicScenes", "*.prefab", SearchOption.AllDirectories);
             foreach (var file in files) {
                 var obj = AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>(file);
