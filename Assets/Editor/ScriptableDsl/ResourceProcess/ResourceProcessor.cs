@@ -1837,8 +1837,7 @@ internal sealed class ResourceProcessor
 
             int i = 0;
             try {
-                var txt = File.ReadAllText(path);
-                var lines = txt.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                var lines = File.ReadAllLines(path);
                 m_ReferenceAssets.Clear();
                 m_ReferenceByAssets.Clear();
                 m_UnusedAssets.Clear();
@@ -2342,8 +2341,7 @@ internal sealed class ResourceProcessor
 
             int i = 0;
             try {
-                var txt = File.ReadAllText(path);
-                var lines = txt.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                var lines = File.ReadAllLines(path);
                 m_InstrumentInfos.Clear();
                 var threads = new SortedDictionary<int, ResourceEditUtility.InstrumentThreadInfo>();
                 int curCount = 1;
@@ -2660,8 +2658,7 @@ internal sealed class ResourceProcessor
 
             int i = 0;
             try {
-                var txt = File.ReadAllText(path);
-                var lines = txt.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                var lines = File.ReadAllLines(path);
                 m_ItemList.Clear();
                 int curCount = 1;
                 int totalCount = lines.Length;
