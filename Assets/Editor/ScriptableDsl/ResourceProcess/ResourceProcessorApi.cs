@@ -958,7 +958,7 @@ internal static class ResourceEditUtility
     {
         s_CommandCalculator = null;
     }
-    internal static bool LoadScript(string code, Dictionary<string, ParamInfo> args, Dictionary<string, BoxedValue> addVars)
+    internal static bool LoadCommand(string code, Dictionary<string, ParamInfo> args, Dictionary<string, BoxedValue> addVars)
     {
         bool ret = false;
         string procCode = string.Format("script{{ {0}; }};", code);
@@ -988,7 +988,7 @@ internal static class ResourceEditUtility
         }
         return ret;
     }
-    internal static BoxedValue EvalScript(BoxedValue obj, BoxedValue item)
+    internal static BoxedValue EvalCommand(BoxedValue obj, BoxedValue item)
     {
         var calc = GetCommandCalculator();
         var r = calc.Calc("main", obj, item);
@@ -1281,13 +1281,14 @@ internal static class ResourceEditUtility
     internal static void SelectProjectObject(string assetPath)
     {
         if (assetPath.IndexOfAny(new char[] { '/', '\\' }) < 0) {
-            var guids = AssetDatabase.FindAssets(assetPath);
+            var assetName = Path.GetFileNameWithoutExtension(assetPath);
+            var guids = AssetDatabase.FindAssets(assetName);
             if (guids.Length >= 1) {
                 int ct = 0;
                 for (int i = 0; i < guids.Length; ++i) {
                     var temp = AssetDatabase.GUIDToAssetPath(guids[0]);
                     var name = Path.GetFileNameWithoutExtension(temp);
-                    if (string.Compare(name, assetPath, true) == 0) {
+                    if (string.Compare(name, assetName, true) == 0) {
                         ++ct;
                         if (ct == 1) {
                             assetPath = temp;
@@ -2216,11 +2217,19 @@ namespace ResourceEditApi
                 UnityEngine.Object sceneObj = null;
                 if (!string.IsNullOrEmpty(asset) && !string.IsNullOrEmpty(type)) {
                     bool handled = false;
-                    var guids = AssetDatabase.FindAssets(asset);
+                    string fileName = Path.GetFileNameWithoutExtension(asset);
+                    string dirName = Path.GetDirectoryName(asset).Replace('\\', '/');
+                    string[] guids;
+                    if (string.IsNullOrEmpty(dirName)) {
+                        guids = AssetDatabase.FindAssets(fileName);
+                    }
+                    else {
+                        guids = AssetDatabase.FindAssets(fileName, new string[] { dirName });
+                    }
                     for (int i = 0; i < guids.Length; ++i) {
                         var temp = AssetDatabase.GUIDToAssetPath(guids[0]);
                         var name = Path.GetFileNameWithoutExtension(temp);
-                        if (string.Compare(name, asset, true) == 0) {
+                        if (string.Compare(name, fileName, true) == 0) {
                             assetPath = temp;
                             handled = true;
                             bool result = ResourceEditUtility.FindSceneObject(asset, type, ref assetPath, ref scenePath, ref sceneObj);

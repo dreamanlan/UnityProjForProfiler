@@ -1202,7 +1202,8 @@ internal sealed class ResourceEditWindow : EditorWindow
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(buttonName, icon, buttonName), minWidth, maxWidth)) {
-                        if (null != item.Object || AssetDatabase.FindAssets(item.AssetPath).Length > 0) {
+                        string assetFileName = Path.GetFileNameWithoutExtension(item.AssetPath);
+                        if (null != item.Object || AssetDatabase.FindAssets(assetFileName).Length > 0) {
                             DeferAction(obj => {
                                 if (null != item.Object)
                                     ResourceEditUtility.SelectObject(item.Object);
@@ -1422,7 +1423,8 @@ internal sealed class ResourceEditWindow : EditorWindow
                     var oldAlignment = GUI.skin.button.alignment;
                     GUI.skin.button.alignment = TextAnchor.MiddleLeft;
                     if (GUILayout.Button(new GUIContent(buttonName, icon, buttonName), minWidth, maxWidth)) {
-                        if (AssetDatabase.FindAssets(item.AssetPath).Length > 0) {
+                        string assetFileName = Path.GetFileNameWithoutExtension(item.AssetPath);
+                        if (AssetDatabase.FindAssets(assetFileName).Length > 0) {
                             DeferAction(obj => {
                                 ResourceEditUtility.SelectProjectObject(item.AssetPath);
                                 obj.m_SelectedAssetPath = item.AssetPath;
@@ -1837,40 +1839,51 @@ internal sealed class ResourceProcessor
 
             int i = 0;
             try {
-                var lines = File.ReadAllLines(path);
+                var fi = new FileInfo(path);
+                var len = fi.Length;
+                long curCount = 0;
+                long totalCount = len;
+
                 m_ReferenceAssets.Clear();
                 m_ReferenceByAssets.Clear();
                 m_UnusedAssets.Clear();
-                int curCount = 1;
-                int totalCount = lines.Length;
-                for (i = 1; i < lines.Length; ++i) {
-                    var fields = lines[i].Split('\t');
-                    var one = fields[0];
-                    var two = fields[1];
-
-                    if (one == "unused_asset_tag") {
-                        m_UnusedAssets.Add(two);
-                    }
-                    else {
-                        HashSet<string> refSet;
-                        if (!m_ReferenceAssets.TryGetValue(one, out refSet)) {
-                            refSet = new HashSet<string>();
-                            m_ReferenceAssets.Add(one, refSet);
+                using(var reader = fi.OpenText()) {
+                    int ix = 0;
+                    while (!reader.EndOfStream) {
+                        var line = reader.ReadLine();
+                        curCount = reader.BaseStream.Position;
+                        ++i;
+                        if (i <= 1) {
+                            continue;
                         }
-                        if (!refSet.Contains(two))
-                            refSet.Add(two);
-                        HashSet<string> refBySet;
-                        if (!m_ReferenceByAssets.TryGetValue(two, out refBySet)) {
-                            refBySet = new HashSet<string>();
-                            m_ReferenceByAssets.Add(two, refBySet);
-                        }
-                        if (!refBySet.Contains(one))
-                            refBySet.Add(one);
-                    }
 
-                    ++curCount;
-                    if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
-                        break;
+                        var fields = line.Split('\t');
+                        var one = fields[0];
+                        var two = fields[1];
+
+                        if (one == "unused_asset_tag") {
+                            m_UnusedAssets.Add(two);
+                        }
+                        else {
+                            HashSet<string> refSet;
+                            if (!m_ReferenceAssets.TryGetValue(one, out refSet)) {
+                                refSet = new HashSet<string>();
+                                m_ReferenceAssets.Add(one, refSet);
+                            }
+                            if (!refSet.Contains(two))
+                                refSet.Add(two);
+                            HashSet<string> refBySet;
+                            if (!m_ReferenceByAssets.TryGetValue(two, out refBySet)) {
+                                refBySet = new HashSet<string>();
+                                m_ReferenceByAssets.Add(two, refBySet);
+                            }
+                            if (!refBySet.Contains(one))
+                                refBySet.Add(one);
+                        }
+
+                        if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
+                            break;
+                        }
                     }
                 }
             }
@@ -2340,71 +2353,83 @@ internal sealed class ResourceProcessor
             EditorPrefs.SetString(c_pref_key_load_instrument, path);
 
             int i = 0;
-            try {
-                var lines = File.ReadAllLines(path);
+            try
+            {
+                var fi = new FileInfo(path);
+                var len = fi.Length;
+                long curCount = 0;
+                long totalCount = len;
+
                 m_InstrumentInfos.Clear();
                 var threads = new SortedDictionary<int, ResourceEditUtility.InstrumentThreadInfo>();
-                int curCount = 1;
-                int totalCount = lines.Length;
-                for (i = 1; i < lines.Length; ++i) {
-                    var fields = lines[i].Split('\t');
-                    var frame = int.Parse(fields[0]);
-                    var threadIndex = int.Parse(fields[1]);
-                    var sampleCount = int.Parse(fields[2]);
-                    var depth = int.Parse(fields[3]);
-                    var name = fields[4];
-                    var pathOrGroup = fields[5];
-                    var callsOrFps = float.Parse(fields[6]);
-                    var gc = float.Parse(fields[7]);
-                    var totalTimeOrCpuTime = float.Parse(fields[8]);
-                    var totalPercentOrGpuTime = float.Parse(fields[9]);
-                    var selfTimeOrTriangle = float.Parse(fields[10]);
-                    var selfPercentOrBatch = float.Parse(fields[11]);
-                    var markerOrThreadId = int.Parse(fields[12]);
+                using (var reader = fi.OpenText()) {
+                    while (!reader.EndOfStream) {
+                        var line = reader.ReadLine();
+                        curCount = reader.BaseStream.Position;
+                        ++i;
+                        if (i <= 1)
+                        {
+                            continue;
+                        }
 
-                    if (threadIndex == 0 && sampleCount == 0 && depth == 0 && markerOrThreadId == 0 && name == "[frame]") {
-                        var info = new ResourceEditUtility.InstrumentInfo();
-                        info.frame = frame;
-                        info.fps = callsOrFps;
-                        info.totalGcMemory = gc;
-                        info.totalCpuTime = totalTimeOrCpuTime;
-                        info.totalGpuTime = totalPercentOrGpuTime;
-                        info.triangle = selfTimeOrTriangle;
-                        info.batch = selfPercentOrBatch;
+                        var fields = line.Split('\t');
+                        var frame = int.Parse(fields[0]);
+                        var threadIndex = int.Parse(fields[1]);
+                        var sampleCount = int.Parse(fields[2]);
+                        var depth = int.Parse(fields[3]);
+                        var name = fields[4];
+                        var pathOrGroup = fields[5];
+                        var callsOrFps = float.Parse(fields[6]);
+                        var gc = float.Parse(fields[7]);
+                        var totalTimeOrCpuTime = float.Parse(fields[8]);
+                        var totalPercentOrGpuTime = float.Parse(fields[9]);
+                        var selfTimeOrTriangle = float.Parse(fields[10]);
+                        var selfPercentOrBatch = float.Parse(fields[11]);
+                        var markerOrThreadId = int.Parse(fields[12]);
 
-                        info.threads = threads;
+	                    if (threadIndex == 0 && sampleCount == 0 && depth == 0 && markerOrThreadId == 0 && name == "[frame]") {
+	                        var info = new ResourceEditUtility.InstrumentInfo();
+	                        info.frame = frame;
+	                        info.fps = callsOrFps;
+	                        info.totalGcMemory = gc;
+	                        info.totalCpuTime = totalTimeOrCpuTime;
+	                        info.totalGpuTime = totalPercentOrGpuTime;
+	                        info.triangle = selfTimeOrTriangle;
+	                        info.batch = selfPercentOrBatch;
 
-                        m_InstrumentInfos[frame] = info;
-                    }
-                    else if (m_InstrumentInfos.TryGetValue(frame, out var info)) {
-                        var record = new ResourceEditUtility.InstrumentRecord();
-                        record.frame = frame;
-                        record.threadIndex = threadIndex;
-                        record.sampleCount = sampleCount;
-                        record.depth = depth;
-                        record.name = name;
-                        record.layerPath = pathOrGroup;
-                        record.gcMemory = gc;
-                        record.calls = callsOrFps;
-                        record.totalTime = totalTimeOrCpuTime;
-                        record.totalPercent = totalPercentOrGpuTime;
-                        record.selfTime = selfTimeOrTriangle;
-                        record.selfPercent = selfPercentOrBatch;
-                        record.markerId = markerOrThreadId;
-                        info.records.Add(record);
-                    }
-                    else if (m_InstrumentInfos.Count == 0) {
-                        var m = new ResourceEditUtility.InstrumentThreadInfo();
-                        m.theadIndex = threadIndex;
-                        m.threadId = (ulong)markerOrThreadId;
-                        m.threadName = name;
-                        m.threadGroup = pathOrGroup;
-                        threads.Add(m.theadIndex, m);
-                    }
+	                        info.threads = threads;
 
-                    ++curCount;
-                    if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
-                        break;
+	                        m_InstrumentInfos[frame] = info;
+	                    }
+	                    else if (m_InstrumentInfos.TryGetValue(frame, out var info)) {
+	                        var record = new ResourceEditUtility.InstrumentRecord();
+	                        record.frame = frame;
+	                        record.threadIndex = threadIndex;
+	                        record.sampleCount = sampleCount;
+	                        record.depth = depth;
+	                        record.name = name;
+	                        record.layerPath = pathOrGroup;
+	                        record.gcMemory = gc;
+	                        record.calls = callsOrFps;
+	                        record.totalTime = totalTimeOrCpuTime;
+	                        record.totalPercent = totalPercentOrGpuTime;
+	                        record.selfTime = selfTimeOrTriangle;
+	                        record.selfPercent = selfPercentOrBatch;
+	                        record.markerId = markerOrThreadId;
+	                        info.records.Add(record);
+	                    }
+	                    else if (m_InstrumentInfos.Count == 0) {
+	                        var m = new ResourceEditUtility.InstrumentThreadInfo();
+	                        m.theadIndex = threadIndex;
+	                        m.threadId = (ulong)markerOrThreadId;
+	                        m.threadName = name;
+	                        m.threadGroup = pathOrGroup;
+	                        threads.Add(m.theadIndex, m);
+	                    }
+
+	                    if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
+	                        break;
+                        }
                     }
                 }
             }
@@ -2424,47 +2449,59 @@ internal sealed class ResourceProcessor
             int ix = 0;
             try {
                 m_uTraceFrames.Clear();
-                var lines = File.ReadAllLines(path);
-                var threads = new SortedDictionary<int, ResourceEditUtility.uTraceThreadInfo>();
-                for (ix = 1; ix < lines.Length; ++ix) {
-                    var line = lines[ix];
-                    var fields = line.Split(';');
-                    if (fields.Length < 8) {
-                        continue;
-                    }
-                    var frame = int.Parse(fields[0]);
-                    var timelineIndex = int.Parse(fields[1]);
-                    var threadId = int.Parse(fields[2]);
-                    var depth = int.Parse(fields[3]);
-                    var startTime = double.Parse(fields[4]);
-                    var endTime = double.Parse(fields[5]);
-                    var time = double.Parse(fields[6]);
-                    var name = fields[7];
+                var fi = new FileInfo(path);
+                var len = fi.Length;
+                long curCount = 0;
+                long totalCount = len;
 
-                    if (timelineIndex == 0 && threadId == 0 && depth == 0 && name == "[frame]") {
-                        var info = new ResourceEditUtility.uTraceFrame { frame = frame, startTime = startTime, endTime = endTime, time = time };
-                        info.threads = threads;
-                        m_uTraceFrames[frame] = info;
-                    }
-                    else if (m_uTraceFrames.TryGetValue(frame, out var info)) {
-                        var timeline = new ResourceEditUtility.uTraceTimeline { frame = frame, timelineIndex = timelineIndex, threadId = threadId, depth = depth, startTime = startTime, endTime = endTime, time = time, name = name };
-                        info.records.Add(timeline);
-                    }
-                    else if (m_uTraceFrames.Count == 0) {
-                        if (!threads.TryGetValue(threadId, out var tinfo)) {
-                            tinfo = new ResourceEditUtility.uTraceThreadInfo { timelineIndex = timelineIndex, theadId = threadId };
-                            threads.Add(threadId, tinfo);
+                var threads = new SortedDictionary<int, ResourceEditUtility.uTraceThreadInfo>();
+                using (var reader = fi.OpenText()) {
+                    while (!reader.EndOfStream) {
+                        var line = reader.ReadLine();
+                        curCount = reader.BaseStream.Position;
+                        ++ix;
+                        if (ix <= 1) {
+                            continue;
                         }
-                        if (depth == 1) {
-                            tinfo.threadGroup = name;
+
+                        var fields = line.Split(';');
+                        if (fields.Length < 8) {
+                            continue;
                         }
-                        else if (depth == 2) {
-                            tinfo.threadName = name;
+                        var frame = int.Parse(fields[0]);
+                        var timelineIndex = int.Parse(fields[1]);
+                        var threadId = int.Parse(fields[2]);
+                        var depth = int.Parse(fields[3]);
+                        var startTime = double.Parse(fields[4]);
+                        var endTime = double.Parse(fields[5]);
+                        var time = double.Parse(fields[6]);
+                        var name = fields[7];
+
+	                    if (timelineIndex == 0 && threadId == 0 && depth == 0 && name == "[frame]") {
+	                        var info = new ResourceEditUtility.uTraceFrame { frame = frame, startTime = startTime, endTime = endTime, time = time };
+	                        info.threads = threads;
+	                        m_uTraceFrames[frame] = info;
+	                    }
+	                    else if (m_uTraceFrames.TryGetValue(frame, out var info)) {
+	                        var timeline = new ResourceEditUtility.uTraceTimeline { frame = frame, timelineIndex = timelineIndex, threadId = threadId, depth = depth, startTime = startTime, endTime = endTime, time = time, name = name };
+	                        info.records.Add(timeline);
+	                    }
+	                    else if (m_uTraceFrames.Count == 0) {
+	                        if (!threads.TryGetValue(threadId, out var tinfo)) {
+	                            tinfo = new ResourceEditUtility.uTraceThreadInfo { timelineIndex = timelineIndex, theadId = threadId };
+	                            threads.Add(threadId, tinfo);
+	                        }
+	                        if (depth == 1) {
+	                            tinfo.threadGroup = name;
+	                        }
+	                        else if (depth == 2) {
+	                            tinfo.threadName = name;
+	                        }
+	                        continue;
+	                    }
+	                    if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
+	                        break;
                         }
-                        continue;
-                    }
-                    if (DisplayCancelableProgressBar("加载进度", ix, lines.Length)) {
-                        break;
                     }
                 }
             }
@@ -2657,59 +2694,71 @@ internal sealed class ResourceProcessor
             EditorPrefs.SetString(c_pref_key_load_result, path);
 
             int i = 0;
-            try {
-                var lines = File.ReadAllLines(path);
+            try
+            {
+                var fi = new FileInfo(path);
+                var len = fi.Length;
+                long curCount = 0;
+                long totalCount = len;
+
                 m_ItemList.Clear();
-                int curCount = 1;
-                int totalCount = lines.Length;
                 ResourceEditUtility.ItemInfo lastItem = null;
                 HashSet<string> refs = new HashSet<string>();
                 HashSet<string> refbys = new HashSet<string>();
                 List<KeyValuePair<string, BoxedValue>> extraList = new List<KeyValuePair<string, BoxedValue>>();
-                for (i = 1; i < lines.Length; ++i) {
-                    var fields = lines[i].Split('\t');
-                    var assetPath = fields[0];
-                    var scenePath = fields[1];
-                    var info = fields[2];
-                    var order = double.Parse(fields[3]);
-                    var value = double.Parse(fields[4]);
-                    string refAsset = string.Empty;
-                    string refByAsset = string.Empty;
-                    string extraKeyVal = string.Empty;
-                    if (fields.Length >= 8) {
-                        refAsset = fields[5];
-                        refByAsset = fields[6];
-                        extraKeyVal = fields[7];
-                        if(!string.IsNullOrEmpty(refAsset))
-                            refs.Add(refAsset);
-                        if (!string.IsNullOrEmpty(refByAsset))
-                            refbys.Add(refByAsset);
-                        if (!string.IsNullOrEmpty(extraKeyVal))
-                            extraList.Add(new KeyValuePair<string, BoxedValue>(extraKeyVal, extraKeyVal));
-                    }
-
-                    if (null == lastItem || !lastItem.IsEqual(assetPath, scenePath, info, order, value)) {
-                        var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Info = info, Order = order, Value = value };
-                        if (refs.Count > 0 && !ResourceProcessor.Instance.ReferenceAssets.ContainsKey(assetPath)) {
-                            ResourceProcessor.Instance.ReferenceAssets.Add(assetPath, refs);
-                        }
-                        if (refbys.Count > 0 && !ResourceProcessor.Instance.ReferenceByAssets.ContainsKey(assetPath)) {
-                            ResourceProcessor.Instance.ReferenceByAssets.Add(assetPath, refbys);
-                        }
-                        if (extraList.Count > 0) {
-                            item.ExtraList = extraList;
+                using (var reader = fi.OpenText()) {
+                    while (!reader.EndOfStream) {
+                        var line = reader.ReadLine();
+                        curCount = reader.BaseStream.Position;
+                        ++i;
+                        if (i <= 1) {
+                            continue;
                         }
 
-                        refs = new HashSet<string>();
-                        refbys = new HashSet<string>();
-                        extraList = new List<KeyValuePair<string, BoxedValue>>();
+                        var fields = line.Split('\t');
+                        var assetPath = fields[0];
+                        var scenePath = fields[1];
+                        var info = fields[2];
+                        var order = double.Parse(fields[3]);
+                        var value = double.Parse(fields[4]);
+                        string refAsset = string.Empty;
+                        string refByAsset = string.Empty;
+                        string extraKeyVal = string.Empty;
+                        if (fields.Length >= 8) {
+                            refAsset = fields[5];
+                            refByAsset = fields[6];
+                            extraKeyVal = fields[7];
+                            if (!string.IsNullOrEmpty(refAsset))
+                                refs.Add(refAsset);
+                            if (!string.IsNullOrEmpty(refByAsset))
+                                refbys.Add(refByAsset);
+                            if (!string.IsNullOrEmpty(extraKeyVal))
+                                extraList.Add(new KeyValuePair<string, BoxedValue>(extraKeyVal, extraKeyVal));
+                        }
 
-                        m_ItemList.Add(item);
-                        lastItem = item;
-                    }
-                    ++curCount;
-                    if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
-                        break;
+	                    if (null == lastItem || !lastItem.IsEqual(assetPath, scenePath, info, order, value)) {
+	                        var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Info = info, Order = order, Value = value };
+	                        if (refs.Count > 0 && !ResourceProcessor.Instance.ReferenceAssets.ContainsKey(assetPath)) {
+	                            ResourceProcessor.Instance.ReferenceAssets.Add(assetPath, refs);
+	                        }
+	                        if (refbys.Count > 0 && !ResourceProcessor.Instance.ReferenceByAssets.ContainsKey(assetPath)) {
+	                            ResourceProcessor.Instance.ReferenceByAssets.Add(assetPath, refbys);
+	                        }
+	                        if (extraList.Count > 0) {
+	                            item.ExtraList = extraList;
+	                        }
+
+	                        refs = new HashSet<string>();
+	                        refbys = new HashSet<string>();
+	                        extraList = new List<KeyValuePair<string, BoxedValue>>();
+
+	                        m_ItemList.Add(item);
+	                        lastItem = item;
+	                    }
+
+	                    if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
+	                        break;
+                        }
                     }
                 }
             }
@@ -3600,9 +3649,9 @@ internal sealed class ResourceProcessor
     }
     internal void ReGroup(string itemCommand, string groupCommand)
     {
-        if (!string.IsNullOrEmpty(itemCommand) && ResourceEditUtility.LoadScript(itemCommand, ResourceProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(m_ItemList) } })) {
+        if (!string.IsNullOrEmpty(itemCommand) && ResourceEditUtility.LoadCommand(itemCommand, ResourceProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(m_ItemList) } })) {
             foreach (var item in m_ItemList) {
-                ResourceEditUtility.EvalScript(item.ExtraObject, BoxedValue.FromObject(item));
+                ResourceEditUtility.EvalCommand(item.ExtraObject, BoxedValue.FromObject(item));
             }
         }
         CalcGroupValue(groupCommand);
@@ -3652,7 +3701,7 @@ internal sealed class ResourceProcessor
         }
         m_UnfilteredGroupCount = groups.Count;
         bool hasGroupCommand = false;
-        if (!string.IsNullOrEmpty(groupCommand) && ResourceEditUtility.LoadScript(groupCommand, ResourceProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(groups) } })) {
+        if (!string.IsNullOrEmpty(groupCommand) && ResourceEditUtility.LoadCommand(groupCommand, ResourceProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(groups) } })) {
             hasGroupCommand = true;
         }
         m_GroupList.Clear();
@@ -3677,7 +3726,7 @@ internal sealed class ResourceProcessor
                     itemGroup.Selected = false;
                     BoxedValue ret;
                     if (hasGroupCommand) {
-                        ret = ResourceEditUtility.EvalScript(item.ExtraObject, BoxedValue.FromObject(itemGroup));
+                        ret = ResourceEditUtility.EvalCommand(item.ExtraObject, BoxedValue.FromObject(itemGroup));
                     }
                     else {
                         ret = ResourceEditUtility.Group(itemGroup, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
@@ -3691,7 +3740,7 @@ internal sealed class ResourceProcessor
                 group.PrepareShowInfo();
                 BoxedValue ret;
                 if (hasGroupCommand) {
-                    ret = ResourceEditUtility.EvalScript(group.ExtraObject, BoxedValue.FromObject(group));
+                    ret = ResourceEditUtility.EvalCommand(group.ExtraObject, BoxedValue.FromObject(group));
                 }
                 else {
                     ret = ResourceEditUtility.Group(group, m_GroupCalculator, m_NextGroupIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);

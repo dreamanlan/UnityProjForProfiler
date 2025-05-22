@@ -624,8 +624,8 @@ public class ResourceCommandWindow : EditorWindow
         m_ScriptableInfo.ResourceEditWindowType = typeof(ResourceEditWindow);
         m_ScriptableInfo.ResourceProcessorType = typeof(ResourceProcessor);
         m_ScriptableInfo.ResourceEditUtilityType = typeof(ResourceEditUtility);
-        if(ResourceEditUtility.LoadScript(m_Command, ResourceProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(m_ScriptableInfo) } })) {
-            var r = ResourceEditUtility.EvalScript(m_Object, m_Item);
+        if(ResourceEditUtility.LoadCommand(m_Command, ResourceProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(m_ScriptableInfo) } })) {
+            var r = ResourceEditUtility.EvalCommand(m_Object, m_Item);
             if (!r.IsNullObject) {
                 m_Results.Enqueue(string.Format("cmd:{0} result:{1}", m_Command, r.ToString()));
             }
