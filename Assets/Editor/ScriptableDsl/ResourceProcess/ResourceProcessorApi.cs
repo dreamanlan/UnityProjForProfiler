@@ -6,6 +6,7 @@ using UnityEditor.Animations;
 using UnityEditor.SceneManagement;
 using UnityEditor.MemoryProfiler;
 using UnityEditorInternal;
+using UnityEditor.Profiling;
 using UnityEditor.Profiling.Memory.Experimental;
 using Unity.MemoryProfilerExtension.Editor;
 using System;
@@ -19,7 +20,6 @@ using System.IO;
 using System.Linq;
 using StoryScript;
 using StoryScript.DslExpression;
-using UnityEditor.Profiling;
 
 internal enum ProfilerViewType
 {
@@ -958,6 +958,40 @@ internal static class ResourceEditUtility
     {
         s_CommandCalculator = null;
     }
+    internal static DslCalculator GetCommandCalculator()
+    {
+        if (null == s_CommandCalculator) {
+            s_CommandCalculator = new DslCalculator();
+            InitCalculator(s_CommandCalculator);
+        }
+        return s_CommandCalculator;
+    }
+    internal static BoxedValue RunCommandScript(string name, BoxedValue obj, BoxedValue item, Dictionary<string, ParamInfo> args, Dictionary<string, BoxedValue> addVars)
+    {
+        try {
+            var calc = GetCommandCalculator();
+            var ret = BoxedValue.NullObject;
+            if (null != calc) {
+                calc.SetGlobalVariable("params", BoxedValue.FromObject(args));
+                foreach (var pair in args) {
+                    var p = pair.Value;
+                    calc.SetGlobalVariable(p.Name, p.Value);
+                }
+                if (null != addVars) {
+                    foreach (var pair in addVars) {
+                        calc.SetGlobalVariable(pair.Key, pair.Value);
+                    }
+                }
+
+                ret = calc.Calc(name, obj, item);
+            }
+            return ret;
+        }
+        catch (Exception ex) {
+            Debug.LogErrorFormat("RunCommandScript {0} exception:{1}\n{2}", name, ex.Message, ex.StackTrace);
+            return BoxedValue.NullObject;
+        }
+    }
     internal static bool LoadCommand(string code, Dictionary<string, ParamInfo> args, Dictionary<string, BoxedValue> addVars)
     {
         bool ret = false;
@@ -1349,15 +1383,6 @@ internal static class ResourceEditUtility
         }
         return s_ResourceParamsCalculator;
     }
-    private static DslCalculator GetCommandCalculator()
-    {
-        if (null == s_CommandCalculator) {
-            s_CommandCalculator = new DslCalculator();
-            InitCalculator(s_CommandCalculator);
-        }
-        return s_CommandCalculator;
-    }
-
     private static void AppendLine(StringBuilder sb, string format, params object[] args)
     {
         sb.AppendFormat(format, args);
@@ -2011,7 +2036,7 @@ namespace ResourceEditApi
                 var index = operands[1].GetInt();
                 if (null != items && index >= 0) {
                     HashSet<string> hash = new HashSet<string>();
-                    foreach(var item in items) {
+                    foreach (var item in items) {
                         IList<string> fields;
                         var itemInfo = item as ResourceEditUtility.ItemInfo;
                         var groupInfo = item as ResourceEditUtility.GroupInfo;
@@ -2706,7 +2731,7 @@ namespace ResourceEditApi
                                     }
                                 }
 
-                                foreach(var stifSym in stifSyms) {
+                                foreach (var stifSym in stifSyms) {
                                     long pos = br.BaseStream.Seek(stifSym.NameOffset, SeekOrigin.Begin);
                                     for (int i = 0; i < c_max_name_length && pos + i < fileLength; ++i) {
                                         byte b = br.ReadByte();
@@ -7096,9 +7121,9 @@ class ShortestPathToRootObjectFinder
         //从cache里检索一遍
         ct = snapshot.Connections.Count;
         int ix = 0;
-        foreach(var pair in snapshot.Connections.ReferencedBy) {
+        foreach (var pair in snapshot.Connections.ReferencedBy) {
             var to = pair.Key;
-            foreach(var from in pair.Value) {
+            foreach (var from in pair.Value) {
                 var od = ObjectData.FromSourceLink(snapshot, to);
                 long objIndex = od.GetUnifiedObjectIndex(snapshot);
                 var objData = ObjectData.FromSourceLink(snapshot, from);

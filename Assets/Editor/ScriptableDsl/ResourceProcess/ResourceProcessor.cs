@@ -344,7 +344,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                             newVal = v.ToString();
                         }
                     }
-                    else if(info.Type == typeof(UnityEngine.UIElements.Label)) {
+                    else if (info.Type == typeof(UnityEngine.UIElements.Label)) {
                         //label don't need a input control.
                     }
                     else if (info.Type == typeof(UnityEngine.GUIContent)) {
@@ -1047,7 +1047,7 @@ internal sealed class ResourceEditWindow : EditorWindow
                 else if (!string.IsNullOrEmpty(a.ScenePath) && !string.IsNullOrEmpty(b.ScenePath)) {
                     v = string.CompareOrdinal(a.ScenePath, b.ScenePath);
                 }
-                else if(!string.IsNullOrEmpty(a.Info) && !string.IsNullOrEmpty(b.Info)) {
+                else if (!string.IsNullOrEmpty(a.Info) && !string.IsNullOrEmpty(b.Info)) {
                     v = string.CompareOrdinal(a.Info, b.Info);
                 }
                 else {
@@ -1847,7 +1847,7 @@ internal sealed class ResourceProcessor
                 m_ReferenceAssets.Clear();
                 m_ReferenceByAssets.Clear();
                 m_UnusedAssets.Clear();
-                using(var reader = fi.OpenText()) {
+                using (var reader = fi.OpenText()) {
                     int ix = 0;
                     while (!reader.EndOfStream) {
                         var line = reader.ReadLine();
@@ -1922,7 +1922,7 @@ internal sealed class ResourceProcessor
             memory.isManaged = false;
             memory.sortedObjectIndex = i;
             long index;
-            if(s_CachedSnapshot.NativeObjects.InstanceId2Index.TryGetValue(instanceId, out index)) {
+            if (s_CachedSnapshot.NativeObjects.InstanceId2Index.TryGetValue(instanceId, out index)) {
                 memory.objectData = ObjectData.FromNativeObjectIndex(s_CachedSnapshot, index);
             }
 
@@ -1971,7 +1971,7 @@ internal sealed class ResourceProcessor
             memory.refCount = refCount;
             memory.isManaged = true;
             memory.sortedObjectIndex = i;
-            memory.objectData= ObjectData.FromManagedObjectInfo(s_CachedSnapshot, objInfo);
+            memory.objectData = ObjectData.FromManagedObjectInfo(s_CachedSnapshot, objInfo);
             memory.name = memory.objectData.GetValueAsString(s_CachedSnapshot);
             if (string.IsNullOrEmpty(memory.name)) {
                 memory.name = typeName;
@@ -2037,7 +2037,7 @@ internal sealed class ResourceProcessor
                             list.Add(new KeyValuePair<string, BoxedValue>(string.Format("{0}[{1}]", name, parent.arrayIndex), BoxedValue.FromObject(data.displayObject)));
                         }
                     }
-                    else if(data.isManaged) {
+                    else if (data.isManaged) {
                         string name = string.Empty;
                         if (data.managedTypeIndex >= 0 && data.managedTypeIndex < s_CachedSnapshot.TypeDescriptions.Count) {
                             name = s_CachedSnapshot.TypeDescriptions.TypeDescriptionName[data.managedTypeIndex];
@@ -2269,7 +2269,7 @@ internal sealed class ResourceProcessor
 
                 //0--cpu 1--rendering
                 StringBuilder sb = new StringBuilder();
-                foreach(var pair in threads) {
+                foreach (var pair in threads) {
                     var thread = pair.Value;
                     sb.AppendFormat("thead index:{0} id:{1} name:{2} group:{3}", thread.theadIndex, thread.threadId, thread.threadName, thread.threadGroup);
                     sb.AppendLine();
@@ -2353,8 +2353,7 @@ internal sealed class ResourceProcessor
             EditorPrefs.SetString(c_pref_key_load_instrument, path);
 
             int i = 0;
-            try
-            {
+            try {
                 var fi = new FileInfo(path);
                 var len = fi.Length;
                 long curCount = 0;
@@ -2367,8 +2366,7 @@ internal sealed class ResourceProcessor
                         var line = reader.ReadLine();
                         curCount = reader.BaseStream.Position;
                         ++i;
-                        if (i <= 1)
-                        {
+                        if (i <= 1) {
                             continue;
                         }
 
@@ -2387,48 +2385,48 @@ internal sealed class ResourceProcessor
                         var selfPercentOrBatch = float.Parse(fields[11]);
                         var markerOrThreadId = int.Parse(fields[12]);
 
-	                    if (threadIndex == 0 && sampleCount == 0 && depth == 0 && markerOrThreadId == 0 && name == "[frame]") {
-	                        var info = new ResourceEditUtility.InstrumentInfo();
-	                        info.frame = frame;
-	                        info.fps = callsOrFps;
-	                        info.totalGcMemory = gc;
-	                        info.totalCpuTime = totalTimeOrCpuTime;
-	                        info.totalGpuTime = totalPercentOrGpuTime;
-	                        info.triangle = selfTimeOrTriangle;
-	                        info.batch = selfPercentOrBatch;
+                        if (threadIndex == 0 && sampleCount == 0 && depth == 0 && markerOrThreadId == 0 && name == "[frame]") {
+                            var info = new ResourceEditUtility.InstrumentInfo();
+                            info.frame = frame;
+                            info.fps = callsOrFps;
+                            info.totalGcMemory = gc;
+                            info.totalCpuTime = totalTimeOrCpuTime;
+                            info.totalGpuTime = totalPercentOrGpuTime;
+                            info.triangle = selfTimeOrTriangle;
+                            info.batch = selfPercentOrBatch;
 
-	                        info.threads = threads;
+                            info.threads = threads;
 
-	                        m_InstrumentInfos[frame] = info;
-	                    }
-	                    else if (m_InstrumentInfos.TryGetValue(frame, out var info)) {
-	                        var record = new ResourceEditUtility.InstrumentRecord();
-	                        record.frame = frame;
-	                        record.threadIndex = threadIndex;
-	                        record.sampleCount = sampleCount;
-	                        record.depth = depth;
-	                        record.name = name;
-	                        record.layerPath = pathOrGroup;
-	                        record.gcMemory = gc;
-	                        record.calls = callsOrFps;
-	                        record.totalTime = totalTimeOrCpuTime;
-	                        record.totalPercent = totalPercentOrGpuTime;
-	                        record.selfTime = selfTimeOrTriangle;
-	                        record.selfPercent = selfPercentOrBatch;
-	                        record.markerId = markerOrThreadId;
-	                        info.records.Add(record);
-	                    }
-	                    else if (m_InstrumentInfos.Count == 0) {
-	                        var m = new ResourceEditUtility.InstrumentThreadInfo();
-	                        m.theadIndex = threadIndex;
-	                        m.threadId = (ulong)markerOrThreadId;
-	                        m.threadName = name;
-	                        m.threadGroup = pathOrGroup;
-	                        threads.Add(m.theadIndex, m);
-	                    }
+                            m_InstrumentInfos[frame] = info;
+                        }
+                        else if (m_InstrumentInfos.TryGetValue(frame, out var info)) {
+                            var record = new ResourceEditUtility.InstrumentRecord();
+                            record.frame = frame;
+                            record.threadIndex = threadIndex;
+                            record.sampleCount = sampleCount;
+                            record.depth = depth;
+                            record.name = name;
+                            record.layerPath = pathOrGroup;
+                            record.gcMemory = gc;
+                            record.calls = callsOrFps;
+                            record.totalTime = totalTimeOrCpuTime;
+                            record.totalPercent = totalPercentOrGpuTime;
+                            record.selfTime = selfTimeOrTriangle;
+                            record.selfPercent = selfPercentOrBatch;
+                            record.markerId = markerOrThreadId;
+                            info.records.Add(record);
+                        }
+                        else if (m_InstrumentInfos.Count == 0) {
+                            var m = new ResourceEditUtility.InstrumentThreadInfo();
+                            m.theadIndex = threadIndex;
+                            m.threadId = (ulong)markerOrThreadId;
+                            m.threadName = name;
+                            m.threadGroup = pathOrGroup;
+                            threads.Add(m.theadIndex, m);
+                        }
 
-	                    if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
-	                        break;
+                        if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
+                            break;
                         }
                     }
                 }
@@ -2477,30 +2475,30 @@ internal sealed class ResourceProcessor
                         var time = double.Parse(fields[6]);
                         var name = fields[7];
 
-	                    if (timelineIndex == 0 && threadId == 0 && depth == 0 && name == "[frame]") {
-	                        var info = new ResourceEditUtility.uTraceFrame { frame = frame, startTime = startTime, endTime = endTime, time = time };
-	                        info.threads = threads;
-	                        m_uTraceFrames[frame] = info;
-	                    }
-	                    else if (m_uTraceFrames.TryGetValue(frame, out var info)) {
-	                        var timeline = new ResourceEditUtility.uTraceTimeline { frame = frame, timelineIndex = timelineIndex, threadId = threadId, depth = depth, startTime = startTime, endTime = endTime, time = time, name = name };
-	                        info.records.Add(timeline);
-	                    }
-	                    else if (m_uTraceFrames.Count == 0) {
-	                        if (!threads.TryGetValue(threadId, out var tinfo)) {
-	                            tinfo = new ResourceEditUtility.uTraceThreadInfo { timelineIndex = timelineIndex, theadId = threadId };
-	                            threads.Add(threadId, tinfo);
-	                        }
-	                        if (depth == 1) {
-	                            tinfo.threadGroup = name;
-	                        }
-	                        else if (depth == 2) {
-	                            tinfo.threadName = name;
-	                        }
-	                        continue;
-	                    }
-	                    if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
-	                        break;
+                        if (timelineIndex == 0 && threadId == 0 && depth == 0 && name == "[frame]") {
+                            var info = new ResourceEditUtility.uTraceFrame { frame = frame, startTime = startTime, endTime = endTime, time = time };
+                            info.threads = threads;
+                            m_uTraceFrames[frame] = info;
+                        }
+                        else if (m_uTraceFrames.TryGetValue(frame, out var info)) {
+                            var timeline = new ResourceEditUtility.uTraceTimeline { frame = frame, timelineIndex = timelineIndex, threadId = threadId, depth = depth, startTime = startTime, endTime = endTime, time = time, name = name };
+                            info.records.Add(timeline);
+                        }
+                        else if (m_uTraceFrames.Count == 0) {
+                            if (!threads.TryGetValue(threadId, out var tinfo)) {
+                                tinfo = new ResourceEditUtility.uTraceThreadInfo { timelineIndex = timelineIndex, theadId = threadId };
+                                threads.Add(threadId, tinfo);
+                            }
+                            if (depth == 1) {
+                                tinfo.threadGroup = name;
+                            }
+                            else if (depth == 2) {
+                                tinfo.threadName = name;
+                            }
+                            continue;
+                        }
+                        if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
+                            break;
                         }
                     }
                 }
@@ -2694,8 +2692,7 @@ internal sealed class ResourceProcessor
             EditorPrefs.SetString(c_pref_key_load_result, path);
 
             int i = 0;
-            try
-            {
+            try {
                 var fi = new FileInfo(path);
                 var len = fi.Length;
                 long curCount = 0;
@@ -2736,28 +2733,28 @@ internal sealed class ResourceProcessor
                                 extraList.Add(new KeyValuePair<string, BoxedValue>(extraKeyVal, extraKeyVal));
                         }
 
-	                    if (null == lastItem || !lastItem.IsEqual(assetPath, scenePath, info, order, value)) {
-	                        var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Info = info, Order = order, Value = value };
-	                        if (refs.Count > 0 && !ResourceProcessor.Instance.ReferenceAssets.ContainsKey(assetPath)) {
-	                            ResourceProcessor.Instance.ReferenceAssets.Add(assetPath, refs);
-	                        }
-	                        if (refbys.Count > 0 && !ResourceProcessor.Instance.ReferenceByAssets.ContainsKey(assetPath)) {
-	                            ResourceProcessor.Instance.ReferenceByAssets.Add(assetPath, refbys);
-	                        }
-	                        if (extraList.Count > 0) {
-	                            item.ExtraList = extraList;
-	                        }
+                        if (null == lastItem || !lastItem.IsEqual(assetPath, scenePath, info, order, value)) {
+                            var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = scenePath, Info = info, Order = order, Value = value };
+                            if (refs.Count > 0 && !ResourceProcessor.Instance.ReferenceAssets.ContainsKey(assetPath)) {
+                                ResourceProcessor.Instance.ReferenceAssets.Add(assetPath, refs);
+                            }
+                            if (refbys.Count > 0 && !ResourceProcessor.Instance.ReferenceByAssets.ContainsKey(assetPath)) {
+                                ResourceProcessor.Instance.ReferenceByAssets.Add(assetPath, refbys);
+                            }
+                            if (extraList.Count > 0) {
+                                item.ExtraList = extraList;
+                            }
 
-	                        refs = new HashSet<string>();
-	                        refbys = new HashSet<string>();
-	                        extraList = new List<KeyValuePair<string, BoxedValue>>();
+                            refs = new HashSet<string>();
+                            refbys = new HashSet<string>();
+                            extraList = new List<KeyValuePair<string, BoxedValue>>();
 
-	                        m_ItemList.Add(item);
-	                        lastItem = item;
-	                    }
+                            m_ItemList.Add(item);
+                            lastItem = item;
+                        }
 
-	                    if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
-	                        break;
+                        if (DisplayCancelableProgressBar("加载进度", curCount, totalCount)) {
+                            break;
                         }
                     }
                 }
@@ -2819,7 +2816,7 @@ internal sealed class ResourceProcessor
                     bool check = false;
                     var func = syntaxComponent as Dsl.FunctionData;
                     var info = syntaxComponent as Dsl.StatementData;
-                    if(null==func && null != info) {
+                    if (null == func && null != info) {
                         func = info.First.AsFunction;
                     }
                     int num = null != info ? info.GetFunctionNum() : 1;
@@ -5181,7 +5178,7 @@ internal sealed class ResourceProcessor
                     if (null == func && null != stData) {
                         func = stData.First.AsFunction;
                     }
-                    if (null!=func && func.GetId() == "input") {
+                    if (null != func && func.GetId() == "input") {
                         foreach (var comp in func.Params) {
                             var callData = comp as Dsl.FunctionData;
                             if (null != callData && callData.GetId() == "feature") {
