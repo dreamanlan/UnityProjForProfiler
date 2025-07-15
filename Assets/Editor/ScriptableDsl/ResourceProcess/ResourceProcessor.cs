@@ -1104,9 +1104,9 @@ internal sealed class ResourceEditWindow : EditorWindow
                 item.Selected = false;
             }
         }
-        GUILayout.Label(string.Format("Total count ({0})", m_ItemList.Count), GUILayout.Width(120));
-        GUILayout.Label(string.Format("Go to page ({0})", m_ItemList.Count / c_ItemsPerPage + 1), GUILayout.Width(100));
-        string strPage = EditorGUILayout.TextField(m_Page.ToString(), GUILayout.Width(40));
+        GUILayout.Label(string.Format("Total count ({0})", m_ItemList.Count), GUILayout.Width(160));
+        GUILayout.Label(string.Format("Go to page ({0})", m_ItemList.Count / c_ItemsPerPage + 1), GUILayout.Width(140));
+        string strPage = EditorGUILayout.TextField(m_Page.ToString(), GUILayout.Width(60));
         int.TryParse(strPage, out m_Page);
         if (GUILayout.Button("Prev", GUILayout.Width(80))) {
             m_Page--;
@@ -1328,9 +1328,9 @@ internal sealed class ResourceEditWindow : EditorWindow
                 item.Selected = false;
             }
         }
-        GUILayout.Label(string.Format("Total count ({0})", m_GroupList.Count), GUILayout.Width(120));
-        GUILayout.Label(string.Format("Go to page ({0})", m_GroupList.Count / c_ItemsPerPage + 1), GUILayout.Width(100));
-        string strPage = EditorGUILayout.TextField(m_Page.ToString(), GUILayout.Width(40));
+        GUILayout.Label(string.Format("Total count ({0})", m_GroupList.Count), GUILayout.Width(160));
+        GUILayout.Label(string.Format("Go to page ({0})", m_GroupList.Count / c_ItemsPerPage + 1), GUILayout.Width(140));
+        string strPage = EditorGUILayout.TextField(m_Page.ToString(), GUILayout.Width(60));
         int.TryParse(strPage, out m_Page);
         if (GUILayout.Button("Prev", GUILayout.Width(80))) {
             m_Page--;

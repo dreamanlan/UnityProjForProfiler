@@ -521,6 +521,7 @@ internal static class ResourceEditUtility
         calc.Register("settexturecompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetTextureCompressionExp>());
         calc.Register("gettexturestorage", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureStorageMemorySizeExp>());
         calc.Register("gettexturememory", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureRuntimeMemorySizeExp>());
+        calc.Register("setmaxboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxBoundingBoxExp>());
         calc.Register("resetboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ResetBoundingBoxExp>());
         calc.Register("mergeboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MergeBoundingBoxExp>());
         calc.Register("getboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetBoundingBoxExp>());
@@ -3800,6 +3801,24 @@ namespace ResourceEditApi
         }
         private static MethodInfo s_GetStorageMemorySizeLong = null;
     }
+    internal class SetMaxBoundingBoxExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            bool r = false;
+            if (operands.Count >= 6) {
+                var centerX = operands[0].GetFloat();
+                var centerY = operands[1].GetFloat();
+                var centerZ = operands[2].GetFloat();
+                var sizeX = operands[3].GetFloat();
+                var sizeY = operands[4].GetFloat();
+                var sizeZ = operands[5].GetFloat();
+                GetBoundingBoxExp.s_MaxBoudingBox = new Bounds(new Vector3(centerX, centerY, centerZ), new Vector3(sizeX, sizeY, sizeZ));
+                r = true;
+            }
+            return BoxedValue.FromBool(r);
+        }
+    }
     internal class ResetBoundingBoxExp : SimpleExpressionBase
     {
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
@@ -3812,35 +3831,50 @@ namespace ResourceEditApi
     {
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            int r = 0;
+            bool r = false;
+            Bounds retBounds = new Bounds();
             if (operands.Count >= 1) {
                 var obj = operands[0].As<GameObject>();
                 if (null != obj) {
+                    r = true;
                     var renderers = obj.GetComponentsInChildren<Renderer>();
                     foreach (var r0 in renderers) {
-                        if(GetBoundingBoxExp.s_NeedReset) {
+                        if (GetBoundingBoxExp.s_NeedReset) {
                             GetBoundingBoxExp.s_BoudingBox = r0.bounds;
                             GetBoundingBoxExp.s_NeedReset = false;
                         }
-                        else {
+                        else if (GetBoundingBoxExp.s_MaxBoudingBox.Contains(r0.bounds.center - r0.bounds.extents) && GetBoundingBoxExp.s_MaxBoudingBox.Contains(r0.bounds.center + r0.bounds.extents)) {
                             GetBoundingBoxExp.s_BoudingBox.Encapsulate(r0.bounds);
                         }
+                        else {
+                            r = false;
+                            retBounds = r0.bounds;
+                            break;
+                        }
                     }
-                    r = renderers.Length;
                 }
             }
-            return r;
+            if (r) {
+                retBounds = GetBoundingBoxExp.s_BoudingBox;
+            }
+            return BoxedValue.From(Tuple.Create(BoxedValue.FromBool(r), BoxedValue.FromObject(new[] { retBounds.min.x, retBounds.min.y, retBounds.min.z, retBounds.max.x, retBounds.max.y, retBounds.max.z })));
         }
     }
     internal class GetBoundingBoxExp : SimpleExpressionBase
     {
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
-            var bounds = s_BoudingBox;
-            return BoxedValue.FromObject(new[] { bounds.min.x, bounds.min.y, bounds.min.z, bounds.max.x, bounds.max.y, bounds.max.z });
+            if (s_NeedReset) {
+                return BoxedValue.FromObject(new[] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f });
+            }
+            else {
+                var bounds = s_BoudingBox;
+                return BoxedValue.FromObject(new[] { bounds.min.x, bounds.min.y, bounds.min.z, bounds.max.x, bounds.max.y, bounds.max.z });
+            }
         }
-        public static UnityEngine.Bounds s_BoudingBox = new Bounds();
+        public static Bounds s_BoudingBox = new Bounds();
         public static bool s_NeedReset = true;
+        public static Bounds s_MaxBoudingBox = new Bounds(Vector3.zero, new Vector3(10000.0f, 10000.0f, 10000.0f));
     }
     internal class GetMeshCompressionExp : SimpleExpressionBase
     {
