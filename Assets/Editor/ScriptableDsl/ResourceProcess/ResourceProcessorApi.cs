@@ -3837,7 +3837,7 @@ namespace ResourceEditApi
                 var obj = operands[0].As<GameObject>();
                 if (null != obj) {
                     r = true;
-                    var renderers = obj.GetComponentsInChildren<Renderer>();
+                    var renderers = obj.GetComponents<Renderer>();
                     foreach (var r0 in renderers) {
                         if (GetBoundingBoxExp.s_NeedReset) {
                             GetBoundingBoxExp.s_BoudingBox = r0.bounds;
