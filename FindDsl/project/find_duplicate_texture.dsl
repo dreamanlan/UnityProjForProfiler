@@ -23,13 +23,12 @@ filter
 {
 	$v0 = loadasset(assetpath);
 	if(isnull($v0)){
-		0;
+		$r = 0;
 	} else {;
 		$v1 = $v0.width;
 		$v2 = $v0.height;
 		$v3 = importer.isReadable;
 		$v4 = importer.mipmapEnabled;
-		//unloadasset($v0);
 		order = $v1 < $v2 ? $v2 : $v1;
 		if(($v1 > maxSize || $v2 > maxSize) && assetpath.Contains(filter) && (isnullorempty(notfilter) || !assetpath.Contains(notfilter)) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
 			info = format("{0} size:{1},{2} guid:{3}", assetpath, $v1, $v2, assetpath2guid(assetpath));
@@ -39,11 +38,13 @@ filter
 			}else{
 				group = format("{0}", assetpath2guid(assetpath));
 			};
-			1;
+			$r = 1;
 		} else {
-			0;
+			$r = 0;
 		};
 	};
+	unloadasset($v0);
+	$r;
 }
 group
 {

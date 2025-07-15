@@ -17,7 +17,6 @@ filter
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
         $v0 = loadasset(assetpath);
         $v1 = collectprefabinfo($v0);
-        //unloadasset($v0);
         $totalTriangleCount = $v1.triangleCount;
         if($totalTriangleCount>=totalTriangleCount){
             looplist($v1.meshes){
@@ -41,6 +40,7 @@ filter
                 };
             };
         };
+        unloadasset($v0);
     };
     0;
 };

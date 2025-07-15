@@ -8,8 +8,8 @@ input
     int("skiprows", 0);
     int("ft",1)
     {
-      toggle("fields1",0);
-      toggle("fields2",1);
+        toggle("fields1",0);
+        toggle("fields2",1);
     };
     string("fields1", "product_version,crash_id,elapsed_time,crash_time,issue_id,is_root,ram,rom,is_new_issue");
     string("fields2", "product_version,issue_id,retrace_status,exception_type,process_name,crash_time,crash_id,type,device_id,elapsed_time,is_new_issue,ram,rom,cpu_name,is_root,cpu_type");
@@ -56,10 +56,10 @@ filter
         $v0 = row.GetLine();
         if(stringcontains($v0,contains) && stringcontainsany($v0,containsany) && stringnotcontains($v0,notcontains) && stringnotcontainsany($v0, notcontainsany)){
         info = $v0;
-           value = 0;
-           1;
+            value = 0;
+            1;
         }else{
-           0;
+            0;
         };
     }else{
         $header = sheet.GetRow(0);

@@ -4,7 +4,7 @@ input("*.tga","*.png","*.jpg","*.exr")
 	string("notfilter", "");
 	int("maxSize",1024);
 	feature("source", "project");
-	feature("menu", "6.Tools/Set Sky Texture Size");
+	feature("menu", "2.Tools/Set Sky Texture Size");
 	feature("description", "just so so");
 }
 filter
@@ -12,13 +12,14 @@ filter
 	$v0 = loadasset(assetpath);
 	$v1 = $v0.width;
 	$v2 = $v0.height;
-	//unloadasset($v0);
 	if(($v1 > maxSize || $v2 > maxSize) && assetpath.Contains(filter) && (notfilter=="" || !assetpath.Contains(notfilter))){
 		info = "size:" + $v1 + "," + $v2;
-		1;
+		$r = 1;
 	} else {
-		0;
+		$r = 0;
 	};
+	unloadasset($v0);
+	$r;
 }
 process
 {

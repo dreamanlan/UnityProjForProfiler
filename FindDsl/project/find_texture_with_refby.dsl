@@ -28,7 +28,6 @@ filter
     		$v5 = gettexturesetting("iPhone");
         	$v6 = gettexturesetting("Android");
 			$v7 = calcrefbycount(assetpath);
-    		//unloadasset($v0);
     		//order = $v1 < $v2 ? $v2 : $v1;
     		if(($v1 > maxSize || $v2 > maxSize) && ($v5.maxTextureSize > maxSize || $v6.maxTextureSize > maxSize) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2")) && $v7<=maxRefBy){
     		    $v8 = getreferencebyassets(assetpath);
@@ -41,6 +40,7 @@ filter
     		        $v9.Order = $v7;
     		    };
     		};
+    		unloadasset($v0);
     	};
     };
     0;

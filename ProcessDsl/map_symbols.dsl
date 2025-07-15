@@ -21,7 +21,7 @@ input("MapSymbols")
     };
     bool("reloadmap",false);
 	feature("source", "list");
-	feature("menu", "6.Tools/Map Symbols");
+	feature("menu", "2.Tools/Map Symbols");
 	feature("description", "just so so");
 }
 process

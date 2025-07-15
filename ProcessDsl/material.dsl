@@ -2,9 +2,7 @@ input("*.mat")
 {
   string("shaderName","Standard");
   bool("allMaterial",false);
-  string("replaceWithShaderName","M1Toolv5/BasicPBR"){
-    popup("M1Toolv5/BasicPBR","M1Toolv5/BasicPBR");
-    popup("M1Toolv5/BodySkinSilk","M1Toolv5/BodySkinSilk");
+  string("replaceWithShaderName","Mobile/Diffuse"){
     popup("Mobile/Diffuse","Mobile/Diffuse");
   };
 	feature("source", "project");
@@ -28,6 +26,6 @@ process
 {
   $v0 = loadasset(assetpath);
   $v0.shader = gettype("Shader").Find(replaceWithShaderName);
-	//unloadasset($v0);
+	unloadasset($v0);
   saveandreimport();
 };

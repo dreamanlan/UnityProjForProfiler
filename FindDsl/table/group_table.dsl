@@ -42,8 +42,8 @@ filter
 }
 group
 {
-		order = sum;
-		value = sum;
-		info = format("{0}=>{1}", group, count);
+    order = sum;
+    value = sum;
+    info = format("{0}=>{1}", group, count);
     1;
 };

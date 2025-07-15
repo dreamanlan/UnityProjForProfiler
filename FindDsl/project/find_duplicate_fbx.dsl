@@ -17,9 +17,8 @@ filter
 {
 	$v0 = loadasset(assetpath);
 	if(isnull($v0)){
-		0;
+		$r = 0;
 	} else {
-		//unloadasset($v0);
 		if(assetpath.Contains(filter) && (isnullorempty(notfilter) || !assetpath.Contains(notfilter))){
 			info = format("{0} guid:{1}", assetpath, assetpath2guid(assetpath));
 			order = value;
@@ -29,11 +28,13 @@ filter
 			}else{
 				group = format("{0}", assetpath2guid(assetpath));
 			};
-			1;
+			$r = 1;
 		} else {
-			0;
+			$r = 0;
 		};
 	};
+	unloadasset($v0);
+	$r;
 }
 group
 {

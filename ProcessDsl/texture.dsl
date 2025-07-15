@@ -1,7 +1,7 @@
 input("*.tga","*.png","*.jpg","*.exr")
 {
 	string("filter", "");
-	string("notfilter", "/Select/");
+	string("notfilter", "");
 	int("maxSize",1024);
 	float("pathwidth",240){range(20,4096);};
 	feature("source", "project");
@@ -16,13 +16,14 @@ filter
     	$v2 = $v0.height;
 		$v3 = gettexturesetting("iPhone");
     	$v4 = gettexturesetting("Android");
-    	//unloadasset($v0);
     	if(($v1 > maxSize || $v2 > maxSize) && ($v3.maxTextureSize > maxSize || $v4.maxTextureSize > maxSize)){
     		info = "size:" + $v1 + "," + $v2;
-    		1;
+    		$r = 1;
     	} else {
-    		0;
+    		$r = 0;
     	};
+    	unloadasset($v0);
+		$r;
 	} else {
 		0;
 	};

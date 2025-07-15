@@ -24,16 +24,17 @@ filter
 		$v2 = $v0.height;
 		$v3 = importer.isReadable;
 		$v4 = importer.mipmapEnabled;
-		//unloadasset($v0);
 		order = $v1 < $v2 ? $v2 : $v1;
 		if(($v1 > maxSize || $v2 > maxSize) && assetpath.Contains(filter) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
 			info = format("{0} size:{1},{2}", assetpath, $v1, $v2);
 			value = calcassetsize(assetpath);
 			group = format("{0}|{1}", value, calcassetmd5(assetpath));
-			1;
+			$r = 1;
 		} else {
-			0;
+			$r = 0;
 		};
+		unloadasset($v0);
+		$r;
 	};
 }
 group

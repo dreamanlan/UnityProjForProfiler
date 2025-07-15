@@ -13,7 +13,6 @@ filter
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
         $v0 = loadasset(assetpath);
         $v1 = collectanimatorcontrollerinfo($v0);
-        //unloadasset($v0);
         order = $v1.maxKeyFrameCount;
         if($v1.maxKeyFrameCount >= maxKeyFrameCount){
             $v2 = $v1.clips.orderbydesc($$.maxKeyFrameCount).top(4);
@@ -25,10 +24,12 @@ filter
                 appendlineformat($v3, "clip name:{0}, max keyframe count:{1}", $$.clipName, $$.maxKeyFrameCount);
             };
             info = stringbuildertostring($v3);
-            1;
+            $r = 1;
         }else{
-            0;
+            $r = 0;
         };
+        unloadasset($v0);
+        $r;
     }else{
         0;
     };

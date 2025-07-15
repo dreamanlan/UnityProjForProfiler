@@ -1,12 +1,12 @@
 input
 {
-  string("table", "Mission/mission_story.txt")
-  {
-  	file("txt");
-  };
-  string("encoding", "utf-8");
-  int("skiprows", 0);
-  string("fields", "");
+	string("table", "")
+	{
+		file("txt");
+	};
+	string("encoding", "utf-8");
+	int("skiprows", 0);
+	string("fields", "");
 	string("contains", "");
 	string("notcontains1", "");
 	string("notcontains2", "");
@@ -17,7 +17,7 @@ input
 }
 filter
 {
-  String = gettype("System.String");
+	String = gettype("System.String");
 	order = row.RowIndex;
 	if(isnullorempty(fields)){
 		$v0 = row.GetLine();
@@ -28,9 +28,9 @@ filter
 	};
 	if($v0.Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !$v0.Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !$v0.Contains(notcontains2))){
 		info = $v0;
-	  value = 0;
-	  1;
+		value = 0;
+		1;
 	}else{
-	  0;
+		0;
 	};
 };

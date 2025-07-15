@@ -1,4 +1,4 @@
-input("t:shader")
+input("t:shader","t:visualeffect")
 {
 	string("filter", "");
 	float("pathwidth",240){range(20,4096);};
@@ -8,12 +8,12 @@ input("t:shader")
 }
 filter
 {
-  if(assetpath.Contains(filter)){
-  	$v0 = loadasset(assetpath);
-  	order = getshaderpropertycount($v0);
-  	info = format("{0} property count:{1} texture count:{2}", getfilename(assetpath), order, getshaderpropertycount($v0, 4));
-    1;
-  }else{
-    0;
-  };
+	if(assetpath.Contains(filter)){
+		$v0 = loadasset(assetpath);
+		order = getshaderpropertycount($v0);
+		info = format("{0} guid:{1} property count:{2} texture count:{3}", getfilename(assetpath), assetpath2guid(assetpath), order, getshaderpropertycount($v0, 4));
+		1;
+	}else{
+		0;
+	};
 };

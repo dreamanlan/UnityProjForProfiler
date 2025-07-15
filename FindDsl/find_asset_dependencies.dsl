@@ -12,12 +12,12 @@ input("*.asset")
 filter
 {
 	if(stringcontains(assetpath,filter) && stringnotcontains(assetpath,notfilter)){
-	  $v0 = getdependencies(assetpath);
-	  $v1 = listsize($v0);
-	  $v2 = 0;
-	  if($v1>0){
-		  looplist($v0){
-		  	if(stringcontains($$,depfilter) && stringnotcontains($$,notdepfilter)){
+		$v0 = getdependencies(assetpath);
+		$v1 = listsize($v0);
+		$v2 = 0;
+		if($v1>0){
+			looplist($v0){
+		  		if(stringcontains($$,depfilter) && stringnotcontains($$,notdepfilter)){
 					$v1 = newitem();
 					$v1.AssetPath = $$;
 					$v1.Info = assetpath;
@@ -25,7 +25,7 @@ filter
 					$v1.Value = 0;
 					$v2 = 1;
 				};
-		  };
+			};
 		};
 		$v2;
 	}else{

@@ -10,13 +10,14 @@ filter
 	$v0 = loadasset(assetpath);
 	$v1 = $v0.width;
 	$v2 = $v0.height;
-	//unloadasset($v0);
 	if(!istexturenoalphasource() && assetpath.Contains(filter)){
 		info = "size:" + $v1 + "," + $v2;
-		1;
+		$r = 1;
 	} else {
-		0;
+		$r = 0;
 	};
+	unloadasset($v0);
+	$r;
 }
 process
 {

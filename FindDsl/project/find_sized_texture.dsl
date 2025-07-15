@@ -29,15 +29,15 @@ filter
 
     		$v5 = gettexturesetting("iPhone");
         	$v6 = gettexturesetting("Android");
-
-    		//unloadasset($v0);
     		order = $v1 < $v2 ? $v2 : $v1;
     		if(($v1 > maxSize || $v2 > maxSize) && ($v5.maxTextureSize<$v1 && $v5.maxTextureSize<$v2 || $v6.maxTextureSize<$v1 && $v6.maxTextureSize<$v2) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
     			info = format("size:{0},{1} readable:{2} mipmap:{3}", $v1, $v2, $v3, $v4);
-    			1;
+    			$r = 1;
     		} else {
-    		    0;
+    		    $r = 0;
     		};
+			unloadasset($v0);
+			$r;
     	};
     }else{
         0;

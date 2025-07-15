@@ -1,8 +1,8 @@
 input("*.fbx")
 {
 	string("contains", "");
-	string("not_contains", "Player");	
-	string("not_contains2", "PoTuSanLang");	
+	string("not_contains", "");
+	string("not_contains2", "");
 	string("prop",""){
 		multiple(["not optimize","empty extra exposed"],[1,2]);
 	};

@@ -9,14 +9,14 @@ input("Transform")
 filter
 {
 	if(scenepath.Contains(filter)){
-	  $v0 = getcomponents(object, "Component");
-	  $v1 = 0;
-	  looplist($v0){
-	    if(isnull($$)){
-	      $v1=1;
-	    };
-	  };
-	  $v1;
+		$v0 = getcomponents(object, "Component");
+		$v1 = 0;
+		looplist($v0){
+			if(isnull($$)){
+				$v1=1;
+			};
+		};
+		$v1;
 	}else{
 	  0;
 	};

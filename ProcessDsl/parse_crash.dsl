@@ -23,7 +23,7 @@ input("ParseCrash")
     };
     bool("reloadsymbol",false);
     feature("source", "list");
-    feature("menu", "6.Tools/Parse Crash");
+    feature("menu", "2.Tools/Parse Crash");
     feature("description", "just so so");
 }
 filter
@@ -40,7 +40,7 @@ process
                     @syms=loadbuglyandroidsymbols(il2cpp);
                 }else{
                     @syms=loadbuglyiossymbols(il2cpp);
-                };            
+                };
             }else{
                 @syms=loadidaprosymbols(il2cpp);
             };
@@ -51,7 +51,7 @@ process
                     @syms2=loadbuglyandroidsymbols(unity);
                 }else{
                     @syms2=loadbuglyiossymbols(unity);
-                };            
+                };
             }else{
                 @syms2=loadidaprosymbols(unity);
             };

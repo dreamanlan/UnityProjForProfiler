@@ -1,7 +1,7 @@
 input("*.fbx")
 {
 	string("contains", "");
-	string("not_contains", "Player");	
+	string("not_contains", "");
 	bool("optimize", true);
 	feature("source", "project");
 	feature("menu", "1.Project Resources/UnOptimize Game Object");

@@ -1,7 +1,7 @@
 input("*.tga","*.png","*.jpg","*.exr")
 {
 	stringlist("filter", "");
-	stringlist("notfilter", "/Select/");
+	stringlist("notfilter", "");
 	int("maxSize",512);
 	float("bias",1);
 	float("pathwidth",240){range(20,4096);};
@@ -18,13 +18,14 @@ filter
 		$v3 = gettexturesetting("iPhone");
     	$v4 = gettexturesetting("Android");
     	$v5 = $v0.mipMapBias;
-    	//unloadasset($v0);
     	if(($v1 > maxSize || $v2 > maxSize) && ($v3.maxTextureSize > maxSize || $v4.maxTextureSize > maxSize) && $v5!=bias){
     		info = "size:" + $v1 + "," + $v2;
-    		1;
+    		$r = 1;
     	} else {
-    		0;
+    		$r = 0;
     	};
+    	unloadasset($v0);
+		$r;
     }else{
         0;
     };

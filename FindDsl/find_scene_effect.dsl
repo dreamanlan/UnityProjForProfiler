@@ -8,11 +8,11 @@ input("*.prefab")
 }
 filter
 {
-  object = loadasset(assetpath);
+	object = loadasset(assetpath);
 	$v0 = getcomponentsinchildren(object,"ParticleSystem");
 	order = $v0.Length;
 	if($v0.Length > 0 && assetpath.Contains(filter)){
-	  info = format("particle system count:{0}", $v0.Length);
+		info = format("particle system count:{0}", $v0.Length);
 		1;
 	}else{
 		0;

@@ -24,7 +24,6 @@ filter
             if(lodtype==0 || lodtype==2){
                 $v3 = loadasset($v2);
                 $v4 = collectmeshes($v3, true);
-                //unloadasset($v0);
                 looplist($v4){
                     $mesh = $$;
                     $name = $mesh.name;
@@ -38,12 +37,12 @@ filter
                         $v5.Value = $triangleCount;
                     };
                 };
+                unloadasset($v3);
             };
         }else{
             if(lodtype==0 || lodtype==1){
                 $v3 = loadasset(assetpath);
                 $v4 = collectmeshes($v3, true);
-                //unloadasset($v0);
                 looplist($v4){
                     $mesh = $$;
                     $name = $mesh.name;
@@ -57,6 +56,7 @@ filter
                         $v5.Value = $triangleCount;
                     };
                 };
+                unloadasset($v3);
             };
         };
     };

@@ -15,7 +15,6 @@ filter
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
         $v0 = loadasset(assetpath);
         $v1 = collectmeshes($v0, true);
-        //unloadasset($v0);
         looplist($v1){
             $mesh = $$;
             $name = $mesh.name;
@@ -29,6 +28,7 @@ filter
                 $v2.Value = $triangleCount;
             };
         };
+        unloadasset($v0);
     };
     0;
 };

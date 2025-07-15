@@ -81,7 +81,6 @@ internal static class ResourceEditUtility
         {
             if (string.IsNullOrEmpty(Info)) {
                 Info = string.Format("{0},{1}", AssetPath, ScenePath);
-                Order = 0;
                 Value = 0;
             }
         }
@@ -520,6 +519,11 @@ internal static class ResourceEditUtility
         calc.Register("setnonealphatexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetNoneAlphaTextureExp>());
         calc.Register("gettexturecompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureCompressionExp>());
         calc.Register("settexturecompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetTextureCompressionExp>());
+        calc.Register("gettexturestorage", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureStorageMemorySizeExp>());
+        calc.Register("gettexturememory", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureRuntimeMemorySizeExp>());
+        calc.Register("resetboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ResetBoundingBoxExp>());
+        calc.Register("mergeboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MergeBoundingBoxExp>());
+        calc.Register("getboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetBoundingBoxExp>());
         calc.Register("getmeshcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetMeshCompressionExp>());
         calc.Register("setmeshcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshCompressionExp>());
         calc.Register("setmeshimportexternalmaterials", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshImportExternalMaterialsExp>());
@@ -3737,6 +3741,106 @@ namespace ResourceEditApi
             }
             return r;
         }
+    }
+    internal class GetTextureStorageMemorySizeExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            long r = 0;
+            if (operands.Count >= 1) {
+                var tex = operands[0].As<Texture>();
+                if (null != tex) {
+                    var method = GetStorageMemorySizeLongMethod();
+                    if (null != method) {
+                        r = (long)method.Invoke(null, new object[] { tex });
+                    }
+                }
+            }
+            return r;
+        }
+        public static MethodInfo GetStorageMemorySizeLongMethod()
+        {
+            if (s_GetStorageMemorySizeLong == null) {
+                s_GetStorageMemorySizeLong = GetTextureUtil().GetMethod("GetStorageMemorySizeLong", BindingFlags.Static | BindingFlags.Public);
+            }
+            return s_GetStorageMemorySizeLong;
+        }
+        public static Type GetTextureUtil()
+        {
+            if (s_TextureUtil == null) {
+                s_TextureUtil = Type.GetType("UnityEditor.TextureUtil,UnityEditor");
+            }
+            return s_TextureUtil;
+        }
+        private static Type s_TextureUtil = null;
+        private static MethodInfo s_GetStorageMemorySizeLong = null;
+    }
+    internal class GetTextureRuntimeMemorySizeExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            long r = 0;
+            if (operands.Count >= 1) {
+                var tex = operands[0].As<Texture>();
+                if (null != tex) {
+                    var method = GetRuntimeMemorySizeLongMethod();
+                    if (null != method) {
+                        r = (long) method.Invoke(null, new object[] { tex });
+                    }
+                }
+            }
+            return r;
+        }
+        public static MethodInfo GetRuntimeMemorySizeLongMethod()
+        {
+            if (s_GetStorageMemorySizeLong == null) {
+                s_GetStorageMemorySizeLong = GetTextureStorageMemorySizeExp.GetTextureUtil().GetMethod("GetRuntimeMemorySizeLong", BindingFlags.Static | BindingFlags.Public);
+            }
+            return s_GetStorageMemorySizeLong;
+        }
+        private static MethodInfo s_GetStorageMemorySizeLong = null;
+    }
+    internal class ResetBoundingBoxExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            GetBoundingBoxExp.s_NeedReset = true;
+            return BoxedValue.FromBool(true);
+        }
+    }
+    internal class MergeBoundingBoxExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            int r = 0;
+            if (operands.Count >= 1) {
+                var obj = operands[0].As<GameObject>();
+                if (null != obj) {
+                    var renderers = obj.GetComponentsInChildren<Renderer>();
+                    foreach (var r0 in renderers) {
+                        if(GetBoundingBoxExp.s_NeedReset) {
+                            GetBoundingBoxExp.s_BoudingBox = r0.bounds;
+                            GetBoundingBoxExp.s_NeedReset = false;
+                        }
+                        else {
+                            GetBoundingBoxExp.s_BoudingBox.Encapsulate(r0.bounds);
+                        }
+                    }
+                    r = renderers.Length;
+                }
+            }
+            return r;
+        }
+    }
+    internal class GetBoundingBoxExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            var bounds = s_BoudingBox;
+            return BoxedValue.FromObject(new[] { bounds.min.x, bounds.min.y, bounds.min.z, bounds.max.x, bounds.max.y, bounds.max.z });
+        }
+        public static UnityEngine.Bounds s_BoudingBox = new Bounds();
+        public static bool s_NeedReset = true;
     }
     internal class GetMeshCompressionExp : SimpleExpressionBase
     {

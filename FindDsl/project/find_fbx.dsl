@@ -21,7 +21,6 @@ filter
         $v0 = loadasset(assetpath);
         $v1 = collectmeshinfo($v0, importer);
         $v2 = importer.isReadable;
-        //unloadasset($v0);
         if($v1.triangleCount >= maxTriangleCount && (!hasAnimation || $v1.clipCount>0) && (!hasOffscreenUpdate || $v1.updateWhenOffscreenCount>0) && (!hasAlwaysAnimate || $v1.alwaysAnimateCount>0) && (!readable || $v2)){
             $ret = 0;
             $key = "";
@@ -41,10 +40,11 @@ filter
                     $key, $v1.skinnedMeshCount, $v1.meshFilterCount, $v1.vertexCount, $v1.triangleCount, $v1.boneCount, $v1.materialCount, $v1.maxTexWidth, $v1.maxTexHeight, $v1.maxTexPropName, $v1.maxTexName, $v1.clipCount, $v1.maxKeyFrameCount
                 );
             };
-            $ret;
         }else{
-            0;
+            $ret = 0;
         };
+        unloadasset($v0);
+        $ret;
     }else{
         0;
     };

@@ -14,19 +14,20 @@ filter
 {
 	$v0 = loadasset(assetpath);
 	if(isnull($v0)){
-		0;
+		$r = 0;
 	} else {
-		//unloadasset($v0);
 		if(stringcontains(assetpath,filter) && stringnotcontains(assetpath,notfilter)){
 			info = format("{0} guid:{1}", assetpath, assetpath2guid(assetpath));
 			order = value;
 			value = calcassetsize(assetpath);
 			group = getfilename(assetpath);
-			1;
+			$r = 1;
 		} else {
-			0;
+			$r = 0;
 		};
 	};
+	unloadasset($v0);
+	$r;
 }
 group
 {

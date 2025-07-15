@@ -29,15 +29,16 @@ filter
     		$v3 = importer.isReadable;
     		$v4 = importer.mipmapEnabled;
     		$v5 = gettexturesetting("iPhone");
-        $v6 = gettexturesetting("Android");
-    		//unloadasset($v0);
+        	$v6 = gettexturesetting("Android");
     		order = $v1 < $v2 ? $v2 : $v1;
     		if(($v1 > maxSize || $v2 > maxSize) && ($v5.maxTextureSize > maxSize || $v6.maxTextureSize > maxSize) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2")) && (!notastc || textureisnotastc($v5) || textureisnotastc($v6))){
     			info = format("size:{0},{1} readable:{2} mipmap:{3} filter:{4} refby_count:{5}", $v1, $v2, $v3, $v4, importer.filterMode, calcrefbycount(assetpath));
-    			1;
+    			$r = 1;
     		} else {
-    			0;
+    			$r = 0;
     		};
+    		unloadasset($v0);
+			$r;
     	};
     }else{
         0;

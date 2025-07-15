@@ -15,7 +15,6 @@ filter
     if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
         $v0 = loadasset(assetpath);
         $v1 = collectmeshinfo($v0, importer);
-        //unloadasset($v0);
         order = $v1.triangleCount;
         if($v1.triangleCount >= triangleCount){
             $v2 = calcmeshvertexcomponentcount($v0,true);
@@ -33,6 +32,7 @@ filter
                 };
             };
         };
+        unloadasset($v0);
     };
     0;
 };
