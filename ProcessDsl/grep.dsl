@@ -12,7 +12,7 @@ input("MapSymbols")
     string("filter7", "");
     string("filter8", "");
 	feature("source", "list");
-	feature("menu", "2.Tools/Grep");
+	feature("menu", "1.Tools/Grep");
 	feature("description", "just so so");
 }
 process

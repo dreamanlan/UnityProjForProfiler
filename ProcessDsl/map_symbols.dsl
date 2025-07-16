@@ -21,11 +21,11 @@ input("MapSymbols")
     };
     bool("reloadmap",false);
 	feature("source", "list");
-	feature("menu", "2.Tools/Map Symbols");
+	feature("menu", "1.Tools/Map Symbols");
 	feature("description", "just so so");
 }
 process
-{	
+{
     if(isnull(@syms) && !isnullorempty(il2cpp) || isnull(@syms2) && !isnullorempty(unity) || reloadsymbol){
         if(!isnullorempty(il2cpp)){
             if(il2cppsymtype==1){

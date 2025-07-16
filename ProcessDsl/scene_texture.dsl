@@ -4,7 +4,7 @@ input("*.tga","*.png","*.jpg","*.exr")
 	string("notfilter", "");
 	int("maxSize",1024);
 	feature("source", "project");
-	feature("menu", "1.Project Resources/Scene Texture Size");
+	feature("menu", "2.Project Resources/Scene Texture Size");
 	feature("description", "just so so");
 }
 filter

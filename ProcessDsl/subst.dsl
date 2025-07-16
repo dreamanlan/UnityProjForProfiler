@@ -20,7 +20,7 @@ input("MapSymbols")
     string("pattern8", "");
     string("subst8", "");
 	feature("source", "list");
-	feature("menu", "2.Tools/Subst");
+	feature("menu", "1.Tools/Subst");
 	feature("description", "just so so");
 }
 process

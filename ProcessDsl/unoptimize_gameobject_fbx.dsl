@@ -4,8 +4,8 @@ input("*.fbx")
 	string("not_contains", "");
 	bool("optimize", true);
 	feature("source", "project");
-	feature("menu", "1.Project Resources/UnOptimize Game Object");
-	feature("description", "just so so");	
+	feature("menu", "2.Project Resources/UnOptimize Game Object");
+	feature("description", "just so so");
 }
 filter
 {

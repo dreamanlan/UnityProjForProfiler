@@ -6,7 +6,7 @@ input("*.mat")
     popup("Mobile/Diffuse","Mobile/Diffuse");
   };
 	feature("source", "project");
-	feature("menu", "1.Project Resources/Material Replace");
+	feature("menu", "2.Project Resources/Material Replace");
 	feature("description", "just so so");
 }
 filter

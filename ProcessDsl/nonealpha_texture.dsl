@@ -2,7 +2,7 @@ input("*.tga","*.png","*.jpg","*.exr")
 {
 	string("filter", "");
 	feature("source", "project");
-	feature("menu", "1.Project Resources/Set None Alpha Texture");
+	feature("menu", "2.Project Resources/Set None Alpha Texture");
 	feature("description", "just so so");
 }
 filter

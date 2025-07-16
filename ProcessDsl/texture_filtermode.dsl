@@ -11,7 +11,7 @@ input("*.tga","*.png","*.jpg","*.exr")
 	};
 	float("pathwidth",240){range(20,4096);};
 	feature("source", "project");
-	feature("menu", "1.Project Resources/Texture Filter Mode");
+	feature("menu", "2.Project Resources/Texture Filter Mode");
 	feature("description", "just so so");
 }
 filter

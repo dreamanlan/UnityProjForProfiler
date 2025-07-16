@@ -1,7 +1,7 @@
 input("*.prefab")
 {
 	feature("source", "project");
-	feature("menu", "1.Project Resources/Remove Mesh Collider");
+	feature("menu", "2.Project Resources/Remove Mesh Collider");
 	feature("description", "just so so");
 }
 filter

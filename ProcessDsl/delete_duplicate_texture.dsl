@@ -11,7 +11,7 @@ input("*.tga","*.png","*.jpg")
 		popup(["itemlist", "grouplist"]);
 	};
 	feature("source", "project");
-	feature("menu", "1.Project Resources/Delete Duplicate Texture");
+	feature("menu", "2.Project Resources/Delete Duplicate Texture");
 	feature("description", "just so so");
 }
 filter

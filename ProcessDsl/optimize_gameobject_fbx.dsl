@@ -7,8 +7,8 @@ input("*.fbx")
 		multiple(["not optimize","empty extra exposed"],[1,2]);
 	};
 	feature("source", "project");
-	feature("menu", "1.Project Resources/Optimize Game Object");
-	feature("description", "just so so");	
+	feature("menu", "2.Project Resources/Optimize Game Object");
+	feature("description", "just so so");
 }
 filter
 {

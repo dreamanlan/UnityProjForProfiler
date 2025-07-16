@@ -23,7 +23,7 @@ input("ParseCrash")
     };
     bool("reloadsymbol",false);
     feature("source", "list");
-    feature("menu", "2.Tools/Parse Crash");
+    feature("menu", "1.Tools/Parse Crash");
     feature("description", "just so so");
 }
 filter
@@ -32,7 +32,7 @@ filter
     1;
 }
 process
-{	
+{
     if(isnull(@syms) && !isnullorempty(il2cpp) || isnull(@syms2) && !isnullorempty(unity) || reloadsymbol){
         if(!isnullorempty(il2cpp)){
             if(il2cppsymtype==1){

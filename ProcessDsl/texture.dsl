@@ -5,7 +5,7 @@ input("*.tga","*.png","*.jpg","*.exr")
 	int("maxSize",1024);
 	float("pathwidth",240){range(20,4096);};
 	feature("source", "project");
-	feature("menu", "1.Project Resources/Texture Size");
+	feature("menu", "2.Project Resources/Texture Size");
 	feature("description", "just so so");
 }
 filter

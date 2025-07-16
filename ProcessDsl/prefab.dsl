@@ -1,7 +1,7 @@
 input("*.prefab")
 {
 	feature("source", "project");
-	feature("menu", "1.Project Resources/Prefab Setting");
+	feature("menu", "2.Project Resources/Prefab Setting");
 	feature("description", "just so so");
 }
 filter
