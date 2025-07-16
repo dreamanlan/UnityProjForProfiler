@@ -6,8 +6,8 @@ input("*.tga","*.png","*.jpg","*.exr","*.hdr")
 	string("prop",""){
 		multiple(["readable","mipmap"],[1,2]);
 	};
-	stringlist("filter", "", "contains");
-	stringlist("filter2", "", "or contains");
+	stringlist("filter", "", "contains any");
+	stringlist("filter2", "", "and contains any");
 	stringlist("notfilter", "", "not contains");
 	float("pathwidth",240){range(20,4096);};
 	feature("source", "sceneassets");
@@ -28,7 +28,7 @@ filter
 		$v6 = gettexturememory($v0);
 		order = $v1 < $v2 ? $v2 : $v1;
 		value = $v6/1024.0/1024.0;
-		if(($v1 > maxSize || $v2 > maxSize) && (listsize(filter)==0 && listsize(filter2)==0 || listsize(filter)>0 && stringcontains(assetpath, filter) || listsize(filter2)>0 && stringcontains(assetpath, filter2)) && stringnotcontains(assetpath, notfilter) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
+		if(($v1 > maxSize || $v2 > maxSize) && stringcontainsany(assetpath, filter) && stringcontainsany(assetpath, filter2) && stringnotcontains(assetpath, notfilter) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
 			info = format("size:{0},{1} readable:{2} mipmap:{3} storage:{4:f3}mb runtime memory:{5:f3}mb", $v1, $v2, $v3, $v4, $v5/1024.0/1024.0, $v6/1024.0/1024.0);
 			$r = 1;
 		} else {

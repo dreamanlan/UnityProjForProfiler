@@ -1319,6 +1319,11 @@ internal static class ResourceEditUtility
         get { return s_UseSpecificSettingDB; }
         set { s_UseSpecificSettingDB = value; }
     }
+    internal static bool SaveAfterProcess
+    {
+        get { return s_SaveAfterProcess; }
+        set { s_SaveAfterProcess = value; }
+    }
     internal static bool SaveResultWithXrefs
     {
         get { return s_SaveResultWithXrefs; }
@@ -1421,9 +1426,10 @@ internal static class ResourceEditUtility
         return string.Join("\r\n", lines);
     }
 
-    private static bool s_EnableSaveAndReimport = true;
+    private static bool s_EnableSaveAndReimport = false;
     private static bool s_ForceSaveAndReimport = false;
     private static bool s_UseSpecificSettingDB = true;
+    private static bool s_SaveAfterProcess = false;
     private static bool s_SaveResultWithXrefs = true;
 
     private static Dictionary<string, Regex> s_Regexes = new Dictionary<string, Regex>();

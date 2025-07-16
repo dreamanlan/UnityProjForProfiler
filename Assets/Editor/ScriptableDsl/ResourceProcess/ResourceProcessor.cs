@@ -70,6 +70,7 @@ internal sealed class ResourceEditWindow : EditorWindow
         ResourceEditUtility.EnableSaveAndReimport = EditorGUILayout.Toggle("允许SaveAndReimport", ResourceEditUtility.EnableSaveAndReimport);
         ResourceEditUtility.UseSpecificSettingDB = EditorGUILayout.Toggle("跳过特殊设置DB数据里的资源", ResourceEditUtility.UseSpecificSettingDB);
         ResourceEditUtility.ForceSaveAndReimport = EditorGUILayout.Toggle("强制SaveAndReimport", ResourceEditUtility.ForceSaveAndReimport);
+        ResourceEditUtility.SaveAfterProcess = EditorGUILayout.Toggle("处理后保存", ResourceEditUtility.SaveAfterProcess);
         ResourceEditUtility.SaveResultWithXrefs = EditorGUILayout.Toggle("结果保存包含引用数据", ResourceEditUtility.SaveResultWithXrefs);
         EditorGUILayout.EndHorizontal();
 
@@ -3980,12 +3981,15 @@ internal sealed class ResourceProcessor
         }
         finally {
             AssetDatabase.StopAssetEditing();
-            if (m_SearchSource == "sceneobjects" || m_SearchSource == "scenecomponents") {
-                EditorSceneManager.SaveOpenScenes();
-            }
-            AssetDatabase.SaveAssets();
 
-            AssetDatabase.Refresh(ImportAssetOptions.Default);
+            if (ResourceEditUtility.SaveAfterProcess) {
+                if (m_SearchSource == "sceneobjects" || m_SearchSource == "scenecomponents") {
+                    EditorSceneManager.SaveOpenScenes();
+                }
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh(ImportAssetOptions.Default);
+            }
+
             EditorUtility.UnloadUnusedAssetsImmediate(true);
             EditorUtility.ClearProgressBar();
             if (!isBatch)
