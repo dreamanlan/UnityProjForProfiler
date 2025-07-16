@@ -3919,23 +3919,27 @@ namespace ResourceEditApi
             }
             var gobj = GameObject.CreatePrimitive(PrimitiveType.Cube);
             gobj.name = strName;
-            gobj.SetParent(gobj, false);
             gobj.transform.position = GetBoundingBoxExp.s_BoudingBox.center;
             gobj.transform.localRotation = Quaternion.identity;
             gobj.transform.localScale = GetBoundingBoxExp.s_BoudingBox.size;
             var renderer = gobj.GetComponent<Renderer>();
-            if (!UnityEngine.Object.CheckIsNull(shader)) {
-                renderer.material.shader = shader;
+            Material mat;
+            if (UnityEngine.Object.CheckIsNull(shader)) {
+                mat = renderer.material;
             }
-            renderer.material.SetColor(colorName, color);
+            else {
+                mat = new Material(shader);
+                renderer.material = mat;
+            }
+            mat.SetColor(colorName, color);
             for (int ix = 4; ix < operands.Count - 1; ix += 2) {
                 var argName = operands[ix].GetString();
                 var argVal = operands[ix + 1];
                 if (argVal.IsInteger) {
-                    renderer.material.SetInteger(argName, argVal.GetInt());
+                    mat.SetInteger(argName, argVal.GetInt());
                 }
                 else {
-                    renderer.material.SetFloat(argName, argVal.GetFloat());
+                    mat.SetFloat(argName, argVal.GetFloat());
                 }
             }
             var collider = gobj.GetComponent<BoxCollider>();
