@@ -525,6 +525,7 @@ internal static class ResourceEditUtility
         calc.Register("resetboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ResetBoundingBoxExp>());
         calc.Register("mergeboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MergeBoundingBoxExp>());
         calc.Register("getboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetBoundingBoxExp>());
+        calc.Register("addboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddBoundingBoxExp>());
         calc.Register("getmeshcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetMeshCompressionExp>());
         calc.Register("setmeshcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshCompressionExp>());
         calc.Register("setmeshimportexternalmaterials", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshImportExternalMaterialsExp>());
@@ -608,6 +609,7 @@ internal static class ResourceEditUtility
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
+                calc.SetGlobalVariable("selected", item.Selected);
                 calc.SetGlobalVariable("results", BoxedValue.FromObject(results));
                 calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
                 calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
@@ -664,6 +666,11 @@ internal static class ResourceEditUtility
                 if (calc.TryGetGlobalVariable("value", out v)) {
                     if (!v.IsNullObject) {
                         item.Value = v.GetDouble();
+                    }
+                }
+                if (calc.TryGetGlobalVariable("selected", out v)) {
+                    if (!v.IsNullObject) {
+                        item.Selected = v.GetBool();
                     }
                 }
                 if (calc.TryGetGlobalVariable("group", out v)) {
@@ -753,6 +760,7 @@ internal static class ResourceEditUtility
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
+                calc.SetGlobalVariable("selected", item.Selected);
                 calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
                 calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
                 calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
@@ -791,6 +799,7 @@ internal static class ResourceEditUtility
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
+                calc.SetGlobalVariable("selected", item.Selected);
                 calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
                 calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
                 calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
@@ -830,6 +839,11 @@ internal static class ResourceEditUtility
                 if (calc.TryGetGlobalVariable("value", out v)) {
                     if (!v.IsNullObject) {
                         item.Value = v.GetDouble();
+                    }
+                }
+                if (calc.TryGetGlobalVariable("selected", out v)) {
+                    if (!v.IsNullObject) {
+                        item.Selected = v.GetBool();
                     }
                 }
                 if (calc.TryGetGlobalVariable("extralist", out v)) {
@@ -911,6 +925,7 @@ internal static class ResourceEditUtility
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
+                calc.SetGlobalVariable("selected", item.Selected);
                 calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
                 calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
                 calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
@@ -3875,6 +3890,59 @@ namespace ResourceEditApi
         public static Bounds s_BoudingBox = new Bounds();
         public static bool s_NeedReset = true;
         public static Bounds s_MaxBoudingBox = new Bounds(Vector3.zero, new Vector3(10000.0f, 10000.0f, 10000.0f));
+    }
+    internal class AddBoundingBoxExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            bool r = !GetBoundingBoxExp.s_NeedReset;
+            var strName = "WorldBoundingBox";
+            Shader shader = null;
+            var colorName = "_BaseColor";
+            var color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+            if (operands.Count >= 1) {
+                strName = operands[0].GetString();
+            }
+            if (operands.Count >= 2) {
+                var opd = operands[1];
+                if (opd.IsString) {
+                    shader = Shader.Find(opd.GetString());
+                }
+                else {
+                    shader = opd.As<Shader>();
+                }
+            }
+            if (operands.Count >= 4) {
+                colorName = operands[2].GetString();
+                var t4 = operands[3].GetTuple4();
+                color = new Color(t4.Item1.GetFloat(), t4.Item2.GetFloat(), t4.Item3.GetFloat(), t4.Item4.GetFloat());
+            }
+            var gobj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            gobj.name = strName;
+            gobj.SetParent(gobj, false);
+            gobj.transform.position = GetBoundingBoxExp.s_BoudingBox.center;
+            gobj.transform.localRotation = Quaternion.identity;
+            gobj.transform.localScale = GetBoundingBoxExp.s_BoudingBox.size;
+            var renderer = gobj.GetComponent<Renderer>();
+            if (!UnityEngine.Object.CheckIsNull(shader)) {
+                renderer.material.shader = shader;
+            }
+            renderer.material.SetColor(colorName, color);
+            for (int ix = 4; ix < operands.Count - 1; ix += 2) {
+                var argName = operands[ix].GetString();
+                var argVal = operands[ix + 1];
+                if (argVal.IsInteger) {
+                    renderer.material.SetInteger(argName, argVal.GetInt());
+                }
+                else {
+                    renderer.material.SetFloat(argName, argVal.GetFloat());
+                }
+            }
+            var collider = gobj.GetComponent<BoxCollider>();
+            collider.center = GetBoundingBoxExp.s_BoudingBox.center;
+            collider.size = GetBoundingBoxExp.s_BoudingBox.size;
+            return BoxedValue.FromBool(r);
+        }
     }
     internal class GetMeshCompressionExp : SimpleExpressionBase
     {

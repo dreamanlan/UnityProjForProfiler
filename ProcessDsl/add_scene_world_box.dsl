@@ -5,7 +5,7 @@ input("Transform")
 	float("maxradius", 5000.0);
 	float("pathwidth", 240){range(20,4096);};
 	feature("source", "sceneobjects");
-	feature("menu", "3.Current Scene Objects/Tranforms");
+	feature("menu", "4.Current Scene Objects/Add World Box");
 	feature("description", "just so so");
 }
 filter
@@ -13,6 +13,7 @@ filter
 	if(order<1){
 		setmaxboundingbox(0,0,0,maxradius*2,maxradius*2,maxradius*2);
 		resetboundingbox();
+		selected = true;
 	};
 	if(stringnotcontains(scenepath, notfilter) && stringnotcontains(object.tag, tagnotfilter)){
 		($r, $arr) = mergeboundingbox(object);
@@ -31,4 +32,8 @@ filter
 	}else{
 		0;
 	};
+}
+process
+{
+	addboundingbox("WorldBoundingBox", "Universal Render Pipeline/Simple Lit", "_BaseColor", (0.5,0.5,0.2,0.5), "_Surface", 1.0, "_Blend", 0.0);
 };
