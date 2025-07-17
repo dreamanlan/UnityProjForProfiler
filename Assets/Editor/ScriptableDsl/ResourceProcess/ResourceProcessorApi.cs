@@ -3954,7 +3954,7 @@ namespace ResourceEditApi
                 }
             }
             var collider = gobj.GetComponent<BoxCollider>();
-            collider.center = GetBoundingBoxExp.s_BoudingBox.center;
+            collider.center = Vector3.zero;
             collider.size = Vector3.one;
             return BoxedValue.FromBool(r);
         }
