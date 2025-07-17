@@ -29,7 +29,7 @@ filter
 
 		($r, $arr) = mergeboundingbox(object);
 		if(!$r){
-			$page = listsize(results) / 50.0;
+			$page = order / 50.0;
 			debuglog("path:{0}, out of bounding box ({1:f2} {2:f2} {3:f2})-({4:f2} {5:f2} {6:f2}), page:{7:f1}", scenepath, $arr[0], $arr[1], $arr[2], $arr[3], $arr[4], $arr[5], $page);
 			info = format("path:{0}, out of bounding box ({1:f2} {2:f2} {3:f2})-({4:f2} {5:f2} {6:f2})", scenepath, $arr[0], $arr[1], $arr[2], $arr[3], $arr[4], $arr[5]);
 		}
