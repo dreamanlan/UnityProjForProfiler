@@ -34,7 +34,7 @@ filter
 			$v4 = importer.mipmapEnabled;
 			$v5 = gettexturestorage($v0);
 			$v6 = gettexturememory($v0);
-			order = $v1 < $v2 ? $v2 : $v1;
+			order = $v6;
 			value = $v6/1024.0/1024.0;
 			if(($v1 > maxSize || $v2 > maxSize) && stringcontainsany(assetpath, filter) && stringcontainsany(assetpath, filter2) && stringnotcontains(assetpath, notfilter) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
 				info = format("size:{0},{1} readable:{2} mipmap:{3} storage:{4:f3}mb runtime memory:{5:f3}mb", $v1, $v2, $v3, $v4, $v5/1024.0/1024.0, $v6/1024.0/1024.0);
