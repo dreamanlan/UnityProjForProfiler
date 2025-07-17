@@ -525,7 +525,7 @@ internal static class ResourceEditUtility
         calc.Register("resetboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ResetBoundingBoxExp>());
         calc.Register("mergeboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MergeBoundingBoxExp>());
         calc.Register("getboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetBoundingBoxExp>());
-        calc.Register("addboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddBoundingBoxExp>());
+        calc.Register("addorupdateboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddOrUpdateBoundingBoxExp>());
         calc.Register("getmeshcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetMeshCompressionExp>());
         calc.Register("setmeshcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshCompressionExp>());
         calc.Register("setmeshimportexternalmaterials", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshImportExternalMaterialsExp>());
@@ -3860,12 +3860,14 @@ namespace ResourceEditApi
                     r = true;
                     var renderers = obj.GetComponents<Renderer>();
                     foreach (var r0 in renderers) {
-                        if (GetBoundingBoxExp.s_NeedReset) {
-                            GetBoundingBoxExp.s_BoudingBox = r0.bounds;
-                            GetBoundingBoxExp.s_NeedReset = false;
-                        }
-                        else if (GetBoundingBoxExp.s_MaxBoudingBox.Contains(r0.bounds.center - r0.bounds.extents) && GetBoundingBoxExp.s_MaxBoudingBox.Contains(r0.bounds.center + r0.bounds.extents)) {
-                            GetBoundingBoxExp.s_BoudingBox.Encapsulate(r0.bounds);
+                        if (GetBoundingBoxExp.s_MaxBoudingBox.Contains(r0.bounds.center - r0.bounds.extents) && GetBoundingBoxExp.s_MaxBoudingBox.Contains(r0.bounds.center + r0.bounds.extents)) {
+                            if (GetBoundingBoxExp.s_NeedReset) {
+                                GetBoundingBoxExp.s_BoudingBox = r0.bounds;
+                                GetBoundingBoxExp.s_NeedReset = false;
+                            }
+                            else {
+                                GetBoundingBoxExp.s_BoudingBox.Encapsulate(r0.bounds);
+                            }
                         }
                         else {
                             r = false;
@@ -3897,7 +3899,7 @@ namespace ResourceEditApi
         public static bool s_NeedReset = true;
         public static Bounds s_MaxBoudingBox = new Bounds(Vector3.zero, new Vector3(10000.0f, 10000.0f, 10000.0f));
     }
-    internal class AddBoundingBoxExp : SimpleExpressionBase
+    internal class AddOrUpdateBoundingBoxExp : SimpleExpressionBase
     {
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
@@ -3923,19 +3925,22 @@ namespace ResourceEditApi
                 var t4 = operands[3].GetTuple4();
                 color = new Color(t4.Item1.GetFloat(), t4.Item2.GetFloat(), t4.Item3.GetFloat(), t4.Item4.GetFloat());
             }
-            var gobj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            gobj.name = strName;
+            var gobj = GameObject.Find(strName);
+            if (!gobj) {
+                gobj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                gobj.name = strName;
+            }
             gobj.transform.position = GetBoundingBoxExp.s_BoudingBox.center;
             gobj.transform.localRotation = Quaternion.identity;
             gobj.transform.localScale = GetBoundingBoxExp.s_BoudingBox.size;
             var renderer = gobj.GetComponent<Renderer>();
             Material mat;
-            if (UnityEngine.Object.CheckIsNull(shader)) {
-                mat = renderer.material;
-            }
-            else {
+            if (shader) {
                 mat = new Material(shader);
                 renderer.material = mat;
+            }
+            else {
+                mat = renderer.material;
             }
             mat.SetColor(colorName, color);
             for (int ix = 4; ix < operands.Count - 1; ix += 2) {
@@ -3950,7 +3955,7 @@ namespace ResourceEditApi
             }
             var collider = gobj.GetComponent<BoxCollider>();
             collider.center = GetBoundingBoxExp.s_BoudingBox.center;
-            collider.size = GetBoundingBoxExp.s_BoudingBox.size;
+            collider.size = Vector3.one;
             return BoxedValue.FromBool(r);
         }
     }
