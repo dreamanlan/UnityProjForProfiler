@@ -15,6 +15,56 @@ using StoryScript;
 
 public class ResourceCommandWindow : EditorWindow
 {
+    [InitializeOnLoadMethod]
+    internal static void RunOnEditorStartup()
+    {
+        const string path = "./editor_startup.dsl";
+        if (File.Exists(path)) {
+            ResourceEditUtility.ResetCommandCalculator();
+            var calculator = ResourceEditUtility.GetCommandCalculator();
+            string scriptName = string.Empty;
+            Dsl.DslFile file = new Dsl.DslFile();
+            if (file.Load(path, (string msg) => { Debug.LogError(msg); })) {
+                bool haveError = false;
+                foreach (var syntaxComponent in file.DslInfos) {
+                    bool check = false;
+                    var func = syntaxComponent as Dsl.FunctionData;
+                    var info = syntaxComponent as Dsl.StatementData;
+                    Dsl.FunctionData func2 = null;
+                    if (null == func && null != info) {
+                        func = info.First.AsFunction;
+                        func2 = info.Second.AsFunction;
+                    }
+                    int num = null != info ? info.GetFunctionNum() : 1;
+                    if (num == 1) {
+                        var id = func.GetId();
+                        if (id == "script") {
+                            check = true;
+                            scriptName = func.LowerOrderFunction.GetParamId(0);
+                            calculator.LoadDsl(func);
+                        }
+                    }
+                    else if (num == 2) {
+                        string firstId = info.First.GetId();
+                        string secondId = info.Second.GetId();
+                        if (firstId == "script" && secondId == "args") {
+                            check = true;
+                            scriptName = func.GetParamId(0);
+                            calculator.LoadDsl(info);
+                        }
+                    }
+                    if (!check) {
+                        EditorUtility.DisplayDialog("错误", string.Format("error script:{0}, must be script(name){{...}}; or script(name)args(...){{...}};", info.GetLine()), "ok");
+                        haveError = true;
+                    }
+                }
+                if (!haveError) {
+                    var r = calculator.Calc("main");
+                    Debug.LogFormat("editor startup script result:{0}", r);
+                }
+            }
+        }
+    }
     internal static void InitWindow(ResourceEditWindow resEdit, string content, BoxedValue obj, BoxedValue item)
     {
         ResourceCommandWindow window = (ResourceCommandWindow)EditorWindow.GetWindow(typeof(ResourceCommandWindow));
