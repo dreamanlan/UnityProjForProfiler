@@ -18,9 +18,9 @@ filter
 		$v3 = $$.name;
 		$v4 = $$.shader.name;
 		if($v3.Contains(matName) && $v4.Contains(shaderName)){
-	  	info = "mat:" + $v3 + " shader:" + $v4;
-	  	$v0 = 1;
-	  };
+			info = "mat:" + $v3 + " shader:" + $v4;
+			$v0 = 1;
+		};
 	};
 	$v0;
 };

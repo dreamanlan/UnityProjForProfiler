@@ -3242,7 +3242,7 @@ internal sealed class ResourceProcessor
                 m_DefaultGroupCommand = val;
             }
             else if (key == "source") {
-                //feature("source", "script" or "list" or "excel" or "table" or "project" or "sceneobjects" or "scenecomponents" or "sceneassets" or "allassets" or "unusedassets" or "assetbundle");
+                //feature("source", "script" or "list" or "excel" or "table" or "project" or "sceneobjects" or "scenecomponents" or "sceneassets" or "allassets" or "runtimeobjects" or "unusedassets" or "assetbundle");
                 m_SearchSource = val;
             }
         }
@@ -3543,6 +3543,16 @@ internal sealed class ResourceProcessor
             CountAllAssets();
             if (m_TotalSearchCount > 0) {
                 SearchAllAssets();
+                EditorUtility.ClearProgressBar();
+            }
+        }
+        else if (m_SearchSource == "runtimeobjects") {
+            m_ItemList.Clear();
+            m_CurSearchCount = 0;
+            m_TotalSearchCount = 0;
+            CountRuntimeObjects();
+            if (m_TotalSearchCount > 0) {
+                SearchRuntimeObjects();
                 EditorUtility.ClearProgressBar();
             }
         }
@@ -4242,9 +4252,16 @@ internal sealed class ResourceProcessor
 
     private void SearchSceneAssets()
     {
-        for (int i = 0; i < EditorSceneManager.sceneCount; ++i) {
-            var scene = EditorSceneManager.GetSceneAt(i);
-            var assets = GetDependencies(scene.path);
+        var dontDestroyOnLoadScene = GetDontDestroyOnLoadScene();
+        for (int i = 0; i <= EditorSceneManager.sceneCount; ++i) {
+            var scene = dontDestroyOnLoadScene;
+            if (i < EditorSceneManager.sceneCount) {
+                scene = EditorSceneManager.GetSceneAt(i);
+            }
+            else if (!Application.isPlaying) {
+                return;
+            }
+            var assets = GetSceneDependencies(scene);
 
             foreach (string ext in m_TypeOrExtList) {
                 var files = assets;
@@ -4272,9 +4289,16 @@ internal sealed class ResourceProcessor
     }
     private void CountSceneAssets()
     {
-        for (int i = 0; i < EditorSceneManager.sceneCount; ++i) {
-            var scene = EditorSceneManager.GetSceneAt(i);
-            var assets = GetDependencies(scene.path);
+        var dontDestroyOnLoadScene = GetDontDestroyOnLoadScene();
+        for (int i = 0; i <= EditorSceneManager.sceneCount; ++i) {
+            var scene = dontDestroyOnLoadScene;
+            if (i < EditorSceneManager.sceneCount) {
+                scene = EditorSceneManager.GetSceneAt(i);
+            }
+            else if (!Application.isPlaying) {
+                return;
+            }
+            var assets = GetSceneDependencies(scene);
 
             foreach (string ext in m_TypeOrExtList) {
                 var files = assets;
@@ -4290,8 +4314,15 @@ internal sealed class ResourceProcessor
 
     private void SearchSceneComponents()
     {
-        for (int i = 0; i < EditorSceneManager.sceneCount; ++i) {
-            var scene = EditorSceneManager.GetSceneAt(i);
+        var dontDestroyOnLoadScene = GetDontDestroyOnLoadScene();
+        for (int i = 0; i <= EditorSceneManager.sceneCount; ++i) {
+            var scene = dontDestroyOnLoadScene;
+            if (i < EditorSceneManager.sceneCount) {
+                scene = EditorSceneManager.GetSceneAt(i);
+            }
+            else if (!Application.isPlaying) {
+                return;
+            }
             var objs = scene.GetRootGameObjects();
             foreach (var obj in objs) {
                 if (SearchChildComponentsRecursively(string.Empty, obj))
@@ -4314,7 +4345,7 @@ internal sealed class ResourceProcessor
             foreach (var comp in comps) {
                 if (null != comp) {
                     var key = comp.GetType().Name;
-                    string assetPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromSource(obj));
+                    string assetPath = AssetDatabase.GetAssetPath(comp);
                     AssetImporter importer = null;
                     if (string.IsNullOrEmpty(assetPath)) {
                         assetPath = string.Empty;
@@ -4347,8 +4378,15 @@ internal sealed class ResourceProcessor
     private void SearchSceneObjects()
     {
         RefreshSceneDeps();
-        for (int i = 0; i < EditorSceneManager.sceneCount; ++i) {
-            var scene = EditorSceneManager.GetSceneAt(i);
+        var dontDestroyOnLoadScene = GetDontDestroyOnLoadScene();
+        for (int i = 0; i <= EditorSceneManager.sceneCount; ++i) {
+            var scene = dontDestroyOnLoadScene;
+            if (i < EditorSceneManager.sceneCount) {
+                scene = EditorSceneManager.GetSceneAt(i);
+            }
+            else if (!Application.isPlaying) {
+                return;
+            }
             var objs = scene.GetRootGameObjects();
             foreach (var obj in objs) {
                 if (SearchChildObjectsRecursively(string.Empty, obj))
@@ -4426,8 +4464,15 @@ internal sealed class ResourceProcessor
     private int CountSceneObjects()
     {
         int totalCount = 0;
-        for (int i = 0; i < EditorSceneManager.sceneCount; ++i) {
-            var scene = EditorSceneManager.GetSceneAt(i);
+        var dontDestroyOnLoadScene = GetDontDestroyOnLoadScene();
+        for (int i = 0; i <= EditorSceneManager.sceneCount; ++i) {
+            var scene = dontDestroyOnLoadScene;
+            if (i < EditorSceneManager.sceneCount) {
+                scene = EditorSceneManager.GetSceneAt(i);
+            }
+            else if (!Application.isPlaying) {
+                break;
+            }
             var objs = scene.GetRootGameObjects();
             totalCount += objs.Length;
 
@@ -4448,6 +4493,67 @@ internal sealed class ResourceProcessor
             totalCount += CountChildObjectsRecursively(t.gameObject);
         }
         return totalCount;
+    }
+
+    private void CountRuntimeObjects()
+    {
+        if (m_TypeList.Count <= 0 && m_TypeOrExtList.Count > 0) {
+            foreach (string type in m_TypeOrExtList) {
+                Type t = Type.GetType("UnityEngine." + type + ", UnityEngine");
+                if (null == t) {
+                    t = Type.GetType("UnityEngine.UI." + type + ", UnityEngine.UI");
+                }
+                if (null == t) {
+                    t = Type.GetType(type + ", Assembly-CSharp");
+                }
+                if (null != t) {
+                    m_TypeList.Add(t);
+                }
+            }
+        }
+        foreach (var t in m_TypeList) {
+            var objs = Resources.FindObjectsOfTypeAll(t);
+            m_TotalSearchCount += objs.Length;
+        }
+    }
+    private void SearchRuntimeObjects()
+    {
+        if (m_TypeList.Count <= 0 && m_TypeOrExtList.Count > 0) {
+            foreach (string type in m_TypeOrExtList) {
+                Type t = Type.GetType("UnityEngine." + type + ", UnityEngine");
+                if (null == t) {
+                    t = Type.GetType("UnityEngine.UI." + type + ", UnityEngine.UI");
+                }
+                if (null == t) {
+                    t = Type.GetType(type + ", Assembly-CSharp");
+                }
+                if (null != t) {
+                    m_TypeList.Add(t);
+                }
+            }
+        }
+        foreach (var t in m_TypeList) {
+            var objs = Resources.FindObjectsOfTypeAll(t);
+            foreach (var obj in objs) {
+                ++m_CurSearchCount;
+                string assetPath = GetAssetPath(obj);
+                AssetImporter importer = null;
+                if (string.IsNullOrEmpty(assetPath)) {
+                    assetPath = string.Empty;
+                }
+                else {
+                    importer = AssetImporter.GetAtPath(assetPath);
+                }
+                var item = new ResourceEditUtility.ItemInfo { AssetPath = assetPath, ScenePath = string.Empty, Importer = importer, Object = obj, Info = string.Empty, Order = m_ItemList.Count, Selected = false };
+                var ret = ResourceEditUtility.Filter(item, null, m_Results, m_FilterCalculator, m_NextFilterIndex, m_Params, m_SceneDeps, m_ReferenceAssets, m_ReferenceByAssets);
+                if (m_NextFilterIndex <= 0 || !ret.IsNullObject && ret.GetInt() > 0) {
+                    m_ItemList.AddRange(m_Results);
+                }
+                if (DisplayCancelableProgressBar("采集进度", m_ItemList.Count, m_CurSearchCount, m_TotalSearchCount)) {
+                    return;
+                }
+            }
+        }
     }
 
     private void CountExcelRecords()
@@ -4610,7 +4716,7 @@ internal sealed class ResourceProcessor
                             AssetImporter importer = null;
                             if (null != obj) {
                                 scenePath = path;
-                                assetPath = AssetDatabase.GetAssetPath(PrefabUtility.GetCorrespondingObjectFromSource(obj));
+                                assetPath = GetAssetPath(obj);
                                 if (string.IsNullOrEmpty(assetPath)) {
                                     assetPath = string.Empty;
                                 }
@@ -5076,6 +5182,92 @@ internal sealed class ResourceProcessor
             }
         }
     }
+    private IEnumerable<string> GetSceneDependencies(UnityEngine.SceneManagement.Scene scene)
+    {
+        if (Application.isPlaying) {
+            var rootObjs = scene.GetRootGameObjects();
+            var assets = new HashSet<string>();
+            var dependencies = EditorUtility.CollectDependencies(rootObjs);
+            foreach (var dep in dependencies) {
+                string path = AssetDatabase.GetAssetPath(dep);
+                if (!string.IsNullOrEmpty(path)) {
+                    assets.Add(path);
+                }
+            }
+            var deps = GetDependencies(scene.path);
+            foreach (var dep in deps) {
+                assets.Add(dep);
+            }
+            foreach (var lightmap in LightmapSettings.lightmaps) {
+                if (null != lightmap.lightmapColor) {
+                    var asset = GetAssetPath(lightmap.lightmapColor);
+                    if (!string.IsNullOrEmpty(asset)) {
+                        assets.Add(asset);
+                    }
+                }
+                if (null != lightmap.lightmapDir) {
+                    var asset = GetAssetPath(lightmap.lightmapDir);
+                    if (!string.IsNullOrEmpty(asset)) {
+                        assets.Add(asset);
+                    }
+                }
+                if (null != lightmap.shadowMask) {
+                    var asset = GetAssetPath(lightmap.shadowMask);
+                    if (!string.IsNullOrEmpty(asset)) {
+                        assets.Add(asset);
+                    }
+                }
+            }
+            foreach (var obj in rootObjs) {
+                CollectSceneAssetsRecursively(obj, assets);
+            }
+            return assets;
+        }
+        else {
+            return GetDependencies(scene.path);
+        }
+    }
+    private void CollectSceneAssetsRecursively(GameObject obj, HashSet<string> assets)
+    {
+        string asset = GetAssetPath(obj);
+        if (!string.IsNullOrEmpty(asset)) {
+            var tmps = GetDependencies(asset);
+            foreach (var tmp in tmps) {
+                assets.Add(tmp);
+            }
+            assets.Add(asset);
+        }
+
+        var trans = obj.transform;
+        int ct = trans.childCount;
+        for (int i = 0; i < ct; ++i) {
+            var t = trans.GetChild(i);
+            CollectSceneAssetsRecursively(t.gameObject, assets);
+        }
+    }
+    private string GetAssetPath(UnityEngine.Object obj)
+    {
+        string assetPath = AssetDatabase.GetAssetPath(obj);
+        if (string.IsNullOrEmpty(assetPath)) {
+            var sourceObj = PrefabUtility.GetCorrespondingObjectFromSource(obj);
+            if (null != sourceObj) {
+                assetPath = AssetDatabase.GetAssetPath(sourceObj);
+            }
+        }
+        if (string.IsNullOrEmpty(assetPath)) {
+            var prefabRoot = PrefabUtility.GetNearestPrefabInstanceRoot(obj);
+            if (null != prefabRoot) {
+                assetPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(prefabRoot);
+            }
+        }
+        if (string.IsNullOrEmpty(assetPath)) {
+            var prefabObj = PrefabUtility.GetPrefabInstanceHandle(obj);
+            if (null != prefabObj) {
+                assetPath = AssetDatabase.GetAssetPath(prefabObj);
+            }
+        }
+        return assetPath;
+    }
     private IEnumerable<string> GetDependencies(string path)
     {
         HashSet<string> list;
@@ -5162,6 +5354,15 @@ internal sealed class ResourceProcessor
 
     private SortedList<int, ResourceEditUtility.InstrumentInfo> m_InstrumentInfos = new SortedList<int, ResourceEditUtility.InstrumentInfo>();
     private SortedList<int, ResourceEditUtility.uTraceFrame> m_uTraceFrames = new SortedList<int, ResourceEditUtility.uTraceFrame>();
+
+    internal static UnityEngine.SceneManagement.Scene GetDontDestroyOnLoadScene()
+    {
+        if (null == s_GetDontDestroyOnLoadSceneMethod) {
+            var t = typeof(UnityEditor.SceneManagement.EditorSceneManager);
+            s_GetDontDestroyOnLoadSceneMethod = t.GetMethod("GetDontDestroyOnLoadScene", BindingFlags.NonPublic | BindingFlags.Static);
+        }
+        return (UnityEngine.SceneManagement.Scene)s_GetDontDestroyOnLoadSceneMethod.Invoke(null, null);
+    }
 
     internal static bool ReadMenuAndDescription(string path, out string menu, out string desc)
     {
@@ -5263,12 +5464,14 @@ internal sealed class ResourceProcessor
     internal static readonly char[] s_NumberListSeps = new[] { ',', ';', '|' };
     internal static readonly char[] s_StringListSeps = new[] { ';', '|' };
 
+    private static MethodInfo s_GetDontDestroyOnLoadSceneMethod = null;
+
     private static CachedSnapshot s_CachedSnapshot = null;
     private static ShortestPathToRootObjectFinder s_ShortestPathToRootFinder = null;
     private static readonly HashSet<ObjectData> s_EmptyObjectDataHash = new HashSet<ObjectData>();
     private static readonly List<ObjectData> s_EmptyObjectDataList = new List<ObjectData>();
     private static readonly HashSet<string> s_IgnoredDirs = new HashSet<string> { "plugins", "streamingassets" };
-    private static readonly List<string> s_IgnoreDirKeys = new List<string> { "assets/fgui/", "assets/plugins/", "assets/streamingassets/", "/editor default resources/", "assets/thirdparty/" };
+    private static readonly List<string> s_IgnoreDirKeys = new List<string> { "assets/plugins/", "assets/streamingassets/", "/editor default resources/", "assets/thirdparty/" };
 
     private const string c_pref_key_open_asset_folder = "ResourceProcessor_OpenAssetFolder";
     private const string c_pref_key_load_dependencies = "ResourceProcessor_LoadDependencies";

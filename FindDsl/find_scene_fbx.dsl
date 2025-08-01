@@ -1,4 +1,4 @@
-input("*.fbx")
+input("*.fbx","*.FBX")
 {
     int("maxTriangleCount", 1000);
     bool("hasAnimation", false);
@@ -23,7 +23,7 @@ filter
         }else{
             $r = 0;
         };
-        unloadasset($v0);
+        //unloadasset($v0);
         $r;
     }else{
         0;

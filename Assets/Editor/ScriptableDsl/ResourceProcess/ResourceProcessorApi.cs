@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using StoryScript;
 using StoryScript.DslExpression;
+using UnityEngine.Profiling;
 
 internal enum ProfilerViewType
 {
@@ -521,6 +522,7 @@ internal static class ResourceEditUtility
         calc.Register("settexturecompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetTextureCompressionExp>());
         calc.Register("gettexturestorage", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureStorageMemorySizeExp>());
         calc.Register("gettexturememory", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureRuntimeMemorySizeExp>());
+        calc.Register("getruntimememory", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetRuntimeMemorySizeExp>());
         calc.Register("setmaxboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxBoundingBoxExp>());
         calc.Register("resetboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ResetBoundingBoxExp>());
         calc.Register("mergeboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MergeBoundingBoxExp>());
@@ -3821,6 +3823,22 @@ namespace ResourceEditApi
             return s_GetStorageMemorySizeLong;
         }
         private static MethodInfo s_GetStorageMemorySizeLong = null;
+    }
+    internal class GetRuntimeMemorySizeExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            long r = 0;
+            if (operands.Count >= 1)
+            {
+                var obj = operands[0].As<UnityEngine.Object>();
+                if (null != obj)
+                {
+                    r = Profiler.GetRuntimeMemorySizeLong(obj);
+                }
+            }
+            return r;
+        }
     }
     internal class SetMaxBoundingBoxExp : SimpleExpressionBase
     {
