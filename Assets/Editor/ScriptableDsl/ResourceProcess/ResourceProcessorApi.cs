@@ -7353,7 +7353,7 @@ class ShortestPathToRootObjectFinder
                 long objIndex = snapshot.NativeObjectIndexToUnifiedObjectIndex(to.Index);
                 TryAddRefBy(objIndex, ref objData);
             }
-            if (i % 1000 == 0 && ResourceProcessor.Instance.DisplayCancelableProgressBar("build reference by dictionary", i, ct)) {
+            if (i % 1000 == 0 && ResourceProcessor.Instance.DisplayCancelableProgressBar("build reference using dictionary", i, ct)) {
                 break;
             }
         }
@@ -7369,7 +7369,7 @@ class ShortestPathToRootObjectFinder
                 if (od.isManaged || objData.isManaged) {
                     TryAddRefBy(objIndex, ref objData);
                 }
-                if (ix % 1000 == 0 && ResourceProcessor.Instance.DisplayCancelableProgressBar("build reference by dictionary", ix, ct)) {
+                if (ix % 1000 == 0 && ResourceProcessor.Instance.DisplayCancelableProgressBar("build reference using dictionary", ix, ct)) {
                     goto L_Exit;
                 }
                 ++ix;
