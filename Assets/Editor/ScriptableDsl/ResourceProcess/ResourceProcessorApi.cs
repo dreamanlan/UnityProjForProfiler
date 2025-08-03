@@ -483,8 +483,8 @@ internal static class ResourceEditUtility
         calc.Register("setmarkerfilter", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMarkerFilterExp>());
         calc.Register("setmaxrefbynumperobj", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxRefByNumPerObjExp>());
         calc.Register("findshortestpathtoroot", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindShortestPathToRootExp>());
-        calc.Register("getobjdatarefbyhash", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetObjectDataRefByHashExp>());
-        calc.Register("getobjdatarefbylist", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetObjectDataRefByListExp>());
+        calc.Register("getrefbyobjdata", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetRefByObjectDataExp>());
+        calc.Register("getrefobjdata", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetRefObjectDataExp>());
         calc.Register("objdatafromaddress", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromAddressExp>());
         calc.Register("objdatafromunifiedindex", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromUnifiedObjectIndexExp>());
         calc.Register("objdatafromnativeindex", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromNativeObjectIndexExp>());
@@ -2504,7 +2504,7 @@ namespace ResourceEditApi
             return r;
         }
     }
-    internal class GetObjectDataRefByHashExp : SimpleExpressionBase
+    internal class GetRefByObjectDataExp : SimpleExpressionBase
     {
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
@@ -2513,12 +2513,12 @@ namespace ResourceEditApi
                 var obj = operands[0];
                 if (obj.IsObject && obj.GetObject() is ObjectData) {
                     var data = (ObjectData)obj.GetObject();
-                    r = BoxedValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByHash(data));
+                    r = BoxedValue.FromObject(ResourceProcessor.Instance.GetRefByObjectData(data));
                 }
                 else {
                     try {
                         ulong addr = obj.GetULong();
-                        r = BoxedValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByHash(addr));
+                        r = BoxedValue.FromObject(ResourceProcessor.Instance.GetRefByObjectData(addr));
                     }
                     catch {
                     }
@@ -2527,7 +2527,7 @@ namespace ResourceEditApi
             return r;
         }
     }
-    internal class GetObjectDataRefByListExp : SimpleExpressionBase
+    internal class GetRefObjectDataExp : SimpleExpressionBase
     {
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
@@ -2536,12 +2536,12 @@ namespace ResourceEditApi
                 var obj = operands[0];
                 if (obj.IsObject && obj.GetObject() is ObjectData) {
                     var data = (ObjectData)obj.GetObject();
-                    r = BoxedValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByList(data));
+                    r = BoxedValue.FromObject(ResourceProcessor.Instance.GetRefObjectData(data));
                 }
                 else {
                     try {
                         ulong addr = obj.GetULong();
-                        r = BoxedValue.FromObject(ResourceProcessor.Instance.GetObjectDataRefByList(addr));
+                        r = BoxedValue.FromObject(ResourceProcessor.Instance.GetRefObjectData(addr));
                     }
                     catch {
                     }
@@ -3809,7 +3809,7 @@ namespace ResourceEditApi
                 if (null != tex) {
                     var method = GetRuntimeMemorySizeLongMethod();
                     if (null != method) {
-                        r = (long) method.Invoke(null, new object[] { tex });
+                        r = (long)method.Invoke(null, new object[] { tex });
                     }
                 }
             }
@@ -3829,11 +3829,9 @@ namespace ResourceEditApi
         protected override BoxedValue OnCalc(IList<BoxedValue> operands)
         {
             long r = 0;
-            if (operands.Count >= 1)
-            {
+            if (operands.Count >= 1) {
                 var obj = operands[0].As<UnityEngine.Object>();
-                if (null != obj)
-                {
+                if (null != obj) {
                     r = Profiler.GetRuntimeMemorySizeLong(obj);
                 }
             }
@@ -7328,30 +7326,20 @@ class ShortestPathToRootObjectFinder
     public ShortestPathToRootObjectFinder(CachedSnapshot snapshot)
     {
         _snapshot = snapshot;
-        _refbydict = new Dictionary<long, HashSet<ObjectData>>((int)(snapshot.SortedManagedObjects.Count + snapshot.SortedNativeObjects.Count));
+        _refbydict = new Dictionary<long, HashSet<CachedSnapshot.SourceIndex>>((int)(snapshot.SortedManagedObjects.Count + snapshot.SortedNativeObjects.Count));
 
         long ct = snapshot.CrawledData.Connections.Count;
         for (long i = 0; i < ct; ++i) {
             var c = snapshot.CrawledData.Connections[i];
             var to = c.IndexTo;
             var from = c.IndexFrom;
-            ObjectData objData = ObjectConnection.GetManagedReferenceSource(snapshot, c);
             if (to.Id == CachedSnapshot.SourceIndex.SourceId.ManagedObject) {
-                if (from.Id == CachedSnapshot.SourceIndex.SourceId.ManagedObject
-                    || from.Id == CachedSnapshot.SourceIndex.SourceId.ManagedType
-                    || from.Id == CachedSnapshot.SourceIndex.SourceId.ManagedHeapSection
-                    || from.Id == CachedSnapshot.SourceIndex.SourceId.NativeObject
-                    || from.Id == CachedSnapshot.SourceIndex.SourceId.NativeType
-                    || from.Id == CachedSnapshot.SourceIndex.SourceId.NativeRootReference
-                    || from.Id == CachedSnapshot.SourceIndex.SourceId.GfxResource) {
-                    long objIndex = snapshot.ManagedObjectIndexToUnifiedObjectIndex(to.Index);
-                    TryAddRefBy(objIndex, ref objData);
-                }
+                long objIndex = snapshot.ManagedObjectIndexToUnifiedObjectIndex(to.Index);
+                TryAddRefBy(objIndex, new CachedSnapshot.SourceIndex((CachedSnapshot.SourceIndex.SourceId)0xff, i));
             }
-            else if (to.Id == CachedSnapshot.SourceIndex.SourceId.NativeObject && from.Id == CachedSnapshot.SourceIndex.SourceId.ManagedObject) {
-                //考虑managed->native情形
+            else if (to.Id == CachedSnapshot.SourceIndex.SourceId.NativeObject) {
                 long objIndex = snapshot.NativeObjectIndexToUnifiedObjectIndex(to.Index);
-                TryAddRefBy(objIndex, ref objData);
+                TryAddRefBy(objIndex, new CachedSnapshot.SourceIndex((CachedSnapshot.SourceIndex.SourceId)0xff, i));
             }
             if (i % 1000 == 0 && ResourceProcessor.Instance.DisplayCancelableProgressBar("build reference using dictionary", i, ct)) {
                 break;
@@ -7363,11 +7351,13 @@ class ShortestPathToRootObjectFinder
         foreach (var pair in snapshot.Connections.ReferencedBy) {
             var to = pair.Key;
             foreach (var from in pair.Value) {
-                var od = ObjectData.FromSourceLink(snapshot, to);
-                long objIndex = od.GetUnifiedObjectIndex(snapshot);
-                var objData = ObjectData.FromSourceLink(snapshot, from);
-                if (od.isManaged || objData.isManaged) {
-                    TryAddRefBy(objIndex, ref objData);
+                if (to.Id == CachedSnapshot.SourceIndex.SourceId.ManagedObject) {
+                    long objIndex = snapshot.ManagedObjectIndexToUnifiedObjectIndex(to.Index);
+                    TryAddRefBy(objIndex, from);
+                }
+                else if (to.Id == CachedSnapshot.SourceIndex.SourceId.NativeObject) {
+                    long objIndex = snapshot.NativeObjectIndexToUnifiedObjectIndex(to.Index);
+                    TryAddRefBy(objIndex, from);
                 }
                 if (ix % 1000 == 0 && ResourceProcessor.Instance.DisplayCancelableProgressBar("build reference using dictionary", ix, ct)) {
                     goto L_Exit;
@@ -7397,8 +7387,18 @@ class ShortestPathToRootObjectFinder
                 break;
             }
 
-            HashSet<ObjectData> refBys;
-            if (_refbydict.TryGetValue(subObj.GetUnifiedObjectIndex(_snapshot), out refBys)) {
+            if (_refbydict.TryGetValue(subObj.GetUnifiedObjectIndex(_snapshot), out var hash)) {
+                HashSet<ObjectData> refBys = new HashSet<ObjectData>(hash.Count);
+                foreach (var sindex in hash) {
+                    if ((int)sindex.Id == 0xff) {
+                        var c = _snapshot.CrawledData.Connections[sindex.Index];
+                        ObjectData objData = ObjectConnection.GetManagedReferenceSource(_snapshot, c);
+                        refBys.Add(objData);
+                    }
+                    else {
+                        refBys.Add(ObjectData.FromSourceLink(_snapshot, sindex));
+                    }
+                }
                 foreach (var next in refBys) {
                     if (seen.Contains(next))
                         continue;
@@ -7415,14 +7415,24 @@ class ShortestPathToRootObjectFinder
         EditorUtility.ClearProgressBar();
         return ret;
     }
-    public HashSet<ObjectData> GetReferenceByHash(ObjectData data)
+    public HashSet<ObjectData> GetRefByObjs(ObjectData data)
     {
-        HashSet<ObjectData> hash;
         long index = data.GetUnifiedObjectIndex(_snapshot);
-        _refbydict.TryGetValue(index, out hash);
-        return hash;
+        _refbydict.TryGetValue(index, out var hash);
+        HashSet<ObjectData> objs = new HashSet<ObjectData>(hash.Count);
+        foreach (var sindex in hash) {
+            if ((int)sindex.Id == 0xff) {
+                var c = _snapshot.CrawledData.Connections[sindex.Index];
+                ObjectData objData = ObjectConnection.GetManagedReferenceSource(_snapshot, c);
+                objs.Add(objData);
+            }
+            else {
+                objs.Add(ObjectData.FromSourceLink(_snapshot, sindex));
+            }
+        }
+        return objs;
     }
-    public ObjectData[] GetReferenceByList(ObjectData data)
+    public ObjectData[] GetRefObjs(ObjectData data)
     {
         List<ObjectData> objs = new List<ObjectData>();
         ObjectConnection.GetAllReferencedObjects(_snapshot, data.GetSourceLink(_snapshot), ref objs);
@@ -7449,13 +7459,13 @@ class ShortestPathToRootObjectFinder
             var flags = (int)_snapshot.NativeObjects.Flags[data.nativeObjectIndex];
             var hideFlags = _snapshot.NativeObjects.HideFlags[data.nativeObjectIndex];
 
-            if ((flags & (int)ObjectFlags.IsPersistent) != 0)
+            if ((flags & (int)Unity.MemoryProfilerExtension.Editor.Format.ObjectFlags.IsPersistent) != 0)
                 return false;
-            if ((flags & (int)ObjectFlags.IsManager) != 0) {
+            if ((flags & (int)Unity.MemoryProfilerExtension.Editor.Format.ObjectFlags.IsManager) != 0) {
                 reason = "this is an internal unity'manager' style object, which is a global object that will never be unloaded";
                 return true;
             }
-            if ((flags & (int)ObjectFlags.IsDontDestroyOnLoad) != 0) {
+            if ((flags & (int)Unity.MemoryProfilerExtension.Editor.Format.ObjectFlags.IsDontDestroyOnLoad) != 0) {
                 reason = "DontDestroyOnLoad() was called on this object, so it will never be unloaded";
                 return true;
             }
@@ -7478,8 +7488,8 @@ class ShortestPathToRootObjectFinder
                 return true;
             }
         }
-        reason = "This object is a root, but the memory profiler UI does not yet understand why";
-        return true;
+        reason = "This object might be a root, but the memory profiler UI does not yet understand why";
+        return false;
     }
 
     private bool IsGameObject(int classID)
@@ -7505,23 +7515,24 @@ class ShortestPathToRootObjectFinder
         return baseClassID != -1 && IsComponent(baseClassID);
     }
 
-    private void TryAddRefBy(long objIndex, ref ObjectData objData)
+    private void TryAddRefBy(long objIndex, CachedSnapshot.SourceIndex index)
     {
         if (objIndex >= 0) {
-            HashSet<ObjectData> hash;
+            HashSet<CachedSnapshot.SourceIndex> hash;
             if (!_refbydict.TryGetValue(objIndex, out hash)) {
-                hash = new HashSet<ObjectData>(s_MaxRefByNumPerObj);
+                hash = new HashSet<CachedSnapshot.SourceIndex>(s_InitRefByNumPerObj);
                 _refbydict.Add(objIndex, hash);
             }
             if (hash.Count < s_MaxRefByNumPerObj) {
-                hash.Add(objData);
+                hash.Add(index);
             }
         }
     }
 
     private readonly CachedSnapshot _snapshot;
-    private Dictionary<long, HashSet<ObjectData>> _refbydict;
+    private Dictionary<long, HashSet<CachedSnapshot.SourceIndex>> _refbydict;
 
+    internal static int s_InitRefByNumPerObj = 8;
     internal static int s_MaxRefByNumPerObj = 256;
 }
 #endregion

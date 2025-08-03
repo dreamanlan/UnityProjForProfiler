@@ -2073,29 +2073,29 @@ internal sealed class ResourceProcessor
         list.Add(new KeyValuePair<string, BoxedValue>("[goto self]", BoxedValue.FromObject(obj.displayObject)));
         return list;
     }
-    internal HashSet<ObjectData> GetObjectDataRefByHash(ulong addr)
+    internal HashSet<ObjectData> GetRefByObjectData(ulong addr)
     {
         var data = ObjectDataFromAddress(addr);
-        return GetObjectDataRefByHash(data);
+        return GetRefByObjectData(data);
     }
-    internal HashSet<ObjectData> GetObjectDataRefByHash(ObjectData obj)
+    internal HashSet<ObjectData> GetRefByObjectData(ObjectData obj)
     {
         if (null != s_ShortestPathToRootFinder) {
-            return s_ShortestPathToRootFinder.GetReferenceByHash(obj);
+            return s_ShortestPathToRootFinder.GetRefByObjs(obj);
         }
         else {
             return s_EmptyObjectDataHash;
         }
     }
-    internal IList<ObjectData> GetObjectDataRefByList(ulong addr)
+    internal IList<ObjectData> GetRefObjectData(ulong addr)
     {
         var data = ObjectDataFromAddress(addr);
-        return GetObjectDataRefByList(data);
+        return GetRefObjectData(data);
     }
-    internal IList<ObjectData> GetObjectDataRefByList(ObjectData obj)
+    internal IList<ObjectData> GetRefObjectData(ObjectData obj)
     {
         if (null != s_ShortestPathToRootFinder) {
-            return s_ShortestPathToRootFinder.GetReferenceByList(obj);
+            return s_ShortestPathToRootFinder.GetRefObjs(obj);
         }
         else {
             return s_EmptyObjectDataList;
