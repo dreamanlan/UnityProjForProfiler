@@ -60,7 +60,7 @@ public class ResourceCommandWindow : EditorWindow
                 }
                 if (!haveError) {
                     var r = calculator.Calc("main");
-                    Debug.LogFormat("editor startup script result:{0}", r);
+                    Debug.LogFormat("editor startup script result:{0}", r.ToString());
                 }
             }
         }
