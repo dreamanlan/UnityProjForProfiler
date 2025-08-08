@@ -5045,9 +5045,12 @@ namespace ResourceEditApi
                 for (int ix = 1; ix < operands.Count; ++ix) {
                     properties.Add(operands[ix].GetString());
                 }
-                path = ResourceEditUtility.AssetPathToPath(path);
-                if (File.Exists(path)) {
-                    string txt = File.ReadAllText(path);
+                string full_path = ResourceEditUtility.AssetPathToPath(path);
+                if (File.Exists(full_path)) {
+                    if (full_path.Length >= 260) {
+                        full_path = "\\\\?\\" + full_path;
+                    }
+                    string txt = File.ReadAllText(full_path);
                     if (EditorUtility.IsValidUnityYAML(txt)) {
                         var lines = txt.Split(s_chars, StringSplitOptions.RemoveEmptyEntries);
                         List<string> newLines = new List<string>();
@@ -5065,7 +5068,7 @@ namespace ResourceEditApi
                         }
                         txt = string.Join("\n", newLines.ToArray()) + "\n";
                         if (EditorUtility.IsValidUnityYAML(txt)) {
-                            File.WriteAllText(path, txt);
+                            File.WriteAllText(full_path, txt);
                             return BoxedValue.FromBool(true);
                         }
                     }
