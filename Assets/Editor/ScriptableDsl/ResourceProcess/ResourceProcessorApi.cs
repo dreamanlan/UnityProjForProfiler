@@ -5092,7 +5092,26 @@ namespace ResourceEditApi
                         full_path = "\\\\?\\" + full_path;
                     }
                     string txt = File.ReadAllText(full_path);
-                    return BoxedValue.FromBool(EditorUtility.IsValidUnityYAML(txt));
+                    if (EditorUtility.IsValidUnityYAML(txt)) {
+                        int i1 = -1, i2 = -1, i3 = -1, i4 = -1;
+                        i1 = txt.IndexOf("<<<<<<< .mine");
+                        if (i1 >= 0) {
+                            i2 = txt.IndexOf("||||||| .r", i1);
+                            if (i2 >= 0) {
+                                i3 = txt.IndexOf("=======", i2);
+                                if (i3 >= 0) {
+                                    i4 = txt.IndexOf(">>>>>>> .r", i3);
+                                    if (i4 >= 0) {
+                                        return BoxedValue.FromBool(false);
+                                    }
+                                }
+                            }
+                        }
+                        if (i1 >= 0 || i2 >= 0 || i3 >= 0 || i4 >= 0) {
+                            LogSystem.Warn("[maybe] yaml merge conflict: {0}", full_path);
+                        }
+                        return BoxedValue.FromBool(true);
+                    }
                 }
             }
             return BoxedValue.FromBool(false);

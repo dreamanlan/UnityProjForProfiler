@@ -22,7 +22,7 @@ filter
 				0;
 			};
 		}else{
-			info = assetpath + " may be exist conflict";
+			info = assetpath + ", there may be conflicts";
 			1;
 		};
 	}else{
