@@ -555,6 +555,7 @@ internal static class ResourceEditUtility
         calc.Register("getshaderutil", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderUtilExp>());
         calc.Register("getshaderpropertycount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyCountExp>());
         calc.Register("getshaderpropertynames", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyNamesExp>());
+        calc.Register("removeyamlleafproperties", "removeyamlleafproperties(asset_path,property1,property2,...)", new ExpressionFactoryHelper<ResourceEditApi.RemoveYamlLeafPropertiesExp>());
         calc.Register("getshadervariants", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderVariantsExp>());
         calc.Register("addshadertocollection", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddShaderToCollectionExp>());
         calc.Register("getalldslfiles", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAllDslFilesExp>());
@@ -5033,6 +5034,46 @@ namespace ResourceEditApi
             }
             return r;
         }
+    }
+    internal class RemoveYamlLeafPropertiesExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            if (operands.Count >= 2) {
+                string path = operands[0].GetString();
+                List<string> properties = new List<string>();
+                for (int ix = 1; ix < operands.Count; ++ix) {
+                    properties.Add(operands[ix].GetString());
+                }
+                path = ResourceEditUtility.AssetPathToPath(path);
+                if (File.Exists(path)) {
+                    string txt = File.ReadAllText(path);
+                    if (EditorUtility.IsValidUnityYAML(txt)) {
+                        var lines = txt.Split(s_chars, StringSplitOptions.RemoveEmptyEntries);
+                        List<string> newLines = new List<string>();
+                        foreach (string line in lines) {
+                            bool match = false;
+                            foreach (var p in properties) {
+                                if (line.Contains(p)) {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                            if (!match) {
+                                newLines.Add(line);
+                            }
+                        }
+                        txt = string.Join("\n", newLines.ToArray()) + "\n";
+                        if (EditorUtility.IsValidUnityYAML(txt)) {
+                            File.WriteAllText(path, txt);
+                            return BoxedValue.FromBool(true);
+                        }
+                    }
+                }
+            }
+            return BoxedValue.FromBool(false);
+        }
+        private static char[] s_chars = new[] { '\r', '\n' };
     }
     internal class GetShaderVariantsExp : SimpleExpressionBase
     {
