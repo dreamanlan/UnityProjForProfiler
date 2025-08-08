@@ -5,6 +5,7 @@ input("*.mat")
   string("replaceWithShaderName","Mobile/Diffuse"){
     popup("Mobile/Diffuse","Mobile/Diffuse");
   };
+	float("pathwidth",240){range(20,4096);};
 	feature("source", "project");
 	feature("menu", "2.Project Resources/Material Replace");
 	feature("description", "just so so");
