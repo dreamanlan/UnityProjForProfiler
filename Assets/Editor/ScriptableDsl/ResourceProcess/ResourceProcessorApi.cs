@@ -556,6 +556,7 @@ internal static class ResourceEditUtility
         calc.Register("getshaderpropertycount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyCountExp>());
         calc.Register("getshaderpropertynames", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyNamesExp>());
         calc.Register("removeyamlleafproperties", "removeyamlleafproperties(asset_path,property1,property2,...)", new ExpressionFactoryHelper<ResourceEditApi.RemoveYamlLeafPropertiesExp>());
+        calc.Register("checkyaml", "checkyaml(asset_path)", new ExpressionFactoryHelper<ResourceEditApi.CheckYamlExp>());
         calc.Register("getshadervariants", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderVariantsExp>());
         calc.Register("addshadertocollection", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddShaderToCollectionExp>());
         calc.Register("getalldslfiles", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAllDslFilesExp>());
@@ -5077,6 +5078,24 @@ namespace ResourceEditApi
             return BoxedValue.FromBool(false);
         }
         private static char[] s_chars = new[] { '\r', '\n' };
+    }
+    internal class CheckYamlExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            if (operands.Count >= 1) {
+                string path = operands[0].GetString();
+                string full_path = ResourceEditUtility.AssetPathToPath(path);
+                if (File.Exists(full_path)) {
+                    if (full_path.Length >= 260) {
+                        full_path = "\\\\?\\" + full_path;
+                    }
+                    string txt = File.ReadAllText(full_path);
+                    return BoxedValue.FromBool(EditorUtility.IsValidUnityYAML(txt));
+                }
+            }
+            return BoxedValue.FromBool(false);
+        }
     }
     internal class GetShaderVariantsExp : SimpleExpressionBase
     {
