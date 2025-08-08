@@ -1228,7 +1228,7 @@ internal static class ResourceEditUtility
     internal static bool IsPathMatch(string path, string filter)
     {
         string ext = Path.GetExtension(path);
-        if (ext == ".meta") {
+        if (ext == ".meta" && filter != "*.meta") {
             return false;
         }
         List<string> infos;

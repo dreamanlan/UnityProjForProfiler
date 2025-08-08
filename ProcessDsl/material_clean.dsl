@@ -10,13 +10,17 @@ input("*.mat")
 }
 filter
 {
-	$v0 = loadasset(assetpath);
-	$v1 = $v0.name;
-	$v2 = $v0.shader.name;
-	unloadasset($v0);
-	if(stringcontainsany(assetpath, pathfilter) && stringcontainsany($v2, shaderfilter) || allMaterial){
-  	info = "mat:" + $v1 + " shader:" + $v2;
-  	1;
+  $v0 = loadasset(assetpath);
+  if(!isnull($v0)){
+      $v1 = $v0.name;
+      $v2 = $v0.shader.name;
+      unloadasset($v0);
+      if(stringcontainsany(assetpath, pathfilter) && stringcontainsany($v2, shaderfilter) || allMaterial){
+        info = "mat:" + $v1 + " shader:" + $v2;
+        1;
+      }else{
+        0;
+      };
   }else{
     0;
   };
