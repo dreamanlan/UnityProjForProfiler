@@ -557,6 +557,7 @@ internal static class ResourceEditUtility
         calc.Register("getshaderpropertynames", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyNamesExp>());
         calc.Register("removeyamlleafproperties", "removeyamlleafproperties(asset_path,property1,property2,...)", new ExpressionFactoryHelper<ResourceEditApi.RemoveYamlLeafPropertiesExp>());
         calc.Register("checkyaml", "checkyaml(asset_path)", new ExpressionFactoryHelper<ResourceEditApi.CheckYamlExp>());
+        calc.Register("ispathtoolong", "ispathtoolong(asset_path)", new ExpressionFactoryHelper<ResourceEditApi.IsPathTooLongExp>());
         calc.Register("getshadervariants", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderVariantsExp>());
         calc.Register("addshadertocollection", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddShaderToCollectionExp>());
         calc.Register("getalldslfiles", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAllDslFilesExp>());
@@ -5092,6 +5093,20 @@ namespace ResourceEditApi
                     }
                     string txt = File.ReadAllText(full_path);
                     return BoxedValue.FromBool(EditorUtility.IsValidUnityYAML(txt));
+                }
+            }
+            return BoxedValue.FromBool(false);
+        }
+    }
+    internal class IsPathTooLongExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            if (operands.Count >= 1) {
+                string path = operands[0].GetString();
+                string full_path = ResourceEditUtility.AssetPathToPath(path);
+                if (full_path.Length >= 260) {
+                    return BoxedValue.FromBool(true);
                 }
             }
             return BoxedValue.FromBool(false);
