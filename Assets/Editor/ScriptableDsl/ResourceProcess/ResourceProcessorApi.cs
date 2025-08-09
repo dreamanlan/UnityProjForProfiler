@@ -556,7 +556,7 @@ internal static class ResourceEditUtility
         calc.Register("getshaderpropertycount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyCountExp>());
         calc.Register("getshaderpropertynames", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyNamesExp>());
         calc.Register("removeyamlleafproperties", "removeyamlleafproperties(asset_path,property1,property2,...)", new ExpressionFactoryHelper<ResourceEditApi.RemoveYamlLeafPropertiesExp>());
-        calc.Register("checkyaml", "checkyaml(asset_path)", new ExpressionFactoryHelper<ResourceEditApi.CheckYamlExp>());
+        calc.Register("checkyaml", "checkyaml(asset_path[,int_start,int_count,bool_partial_conflict])", new ExpressionFactoryHelper<ResourceEditApi.CheckYamlExp>());
         calc.Register("ispathtoolong", "ispathtoolong(asset_path)", new ExpressionFactoryHelper<ResourceEditApi.IsPathTooLongExp>());
         calc.Register("getshadervariants", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderVariantsExp>());
         calc.Register("addshadertocollection", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddShaderToCollectionExp>());
@@ -5086,13 +5086,25 @@ namespace ResourceEditApi
         {
             if (operands.Count >= 1) {
                 string path = operands[0].GetString();
+                int start = 0;
+                int count = 8;
+                bool partialConflict = false;
+                if (operands.Count >= 2) {
+                    start = operands[1].GetInt();
+                }
+                if (operands.Count >= 3) {
+                    count = operands[2].GetInt();
+                }
+                if (operands.Count >= 4) {
+                    partialConflict = operands[3].GetBool();
+                }
                 string full_path = ResourceEditUtility.AssetPathToPath(path);
                 if (File.Exists(full_path)) {
                     if (full_path.Length >= 260) {
                         full_path = "\\\\?\\" + full_path;
                     }
                     string txt = File.ReadAllText(full_path);
-                    if (EditorUtility.IsValidUnityYAML(txt)) {
+                    if (IsText(txt, start, count) && EditorUtility.IsValidUnityYAML(txt)) {
                         int i1 = -1, i2 = -1, i3 = -1, i4 = -1;
                         i1 = txt.IndexOf("<<<<<<< .mine");
                         if (i1 >= 0) {
@@ -5108,6 +5120,9 @@ namespace ResourceEditApi
                             }
                         }
                         if (i1 >= 0 || i2 >= 0 || i3 >= 0 || i4 >= 0) {
+                            if(partialConflict) {
+                                return BoxedValue.FromBool(false);
+                            }
                             LogSystem.Warn("[maybe] yaml merge conflict: {0}", full_path);
                         }
                         return BoxedValue.FromBool(true);
@@ -5116,6 +5131,13 @@ namespace ResourceEditApi
             }
             return BoxedValue.FromBool(false);
         }
+        private bool IsText(string txt, int start, int count)
+        {
+            start = start >= 0 && start < txt.Length ? start : 0;
+            count = count > 0 && start + count <= txt.Length ? count : txt.Length - start;
+            return txt.IndexOf('\0', start, count) < 0;
+        }
+        private static string s_WhitespaceChars = " \t\r\n";
     }
     internal class IsPathTooLongExp : SimpleExpressionBase
     {
