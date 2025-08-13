@@ -29,8 +29,11 @@ internal enum ProfilerViewType
     RawHierarchy
 }
 
-internal static class ResourceEditUtility
+public static class ResourceEditUtility
 {
+    public delegate void RegisterApiDelegation(DslCalculator calc);
+    public static RegisterApiDelegation OnRegisterApi;
+
     internal class BatchProcessInfo
     {
         internal string ResPath = string.Empty;
@@ -599,6 +602,9 @@ internal static class ResourceEditUtility
         calc.Register("stringhashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.StringHashContainsExp>());
 
         UnityEditorApi.Register(calc);
+        if (null != OnRegisterApi) {
+            OnRegisterApi(calc);
+        }
     }
     internal static BoxedValue Filter(ItemInfo item, Dictionary<string, BoxedValue> addVars, List<ItemInfo> results, DslCalculator calc, int indexCount, Dictionary<string, ParamInfo> args, SceneDepInfo sceneDeps, Dictionary<string, HashSet<string>> refDict, Dictionary<string, HashSet<string>> refByDict)
     {
