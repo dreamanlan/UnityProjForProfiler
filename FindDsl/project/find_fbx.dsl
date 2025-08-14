@@ -1,4 +1,4 @@
-input("*.fbx")
+input("*.fbx","*.FBX")
 {
     int("maxTriangleCount", 1000);
     bool("hasAnimation", false);

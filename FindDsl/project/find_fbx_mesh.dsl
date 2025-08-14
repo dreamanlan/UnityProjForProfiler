@@ -1,4 +1,4 @@
-input("*.fbx")
+input("*.fbx","*.FBX")
 {
     int("triangleCount", 1000);
     int("componentCount", 3);

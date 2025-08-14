@@ -1,4 +1,4 @@
-input("*.fbx")
+input("*.fbx","*.FBX")
 {
 	string("contains", "");
 	string("not_contains", "");

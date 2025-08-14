@@ -1,4 +1,4 @@
-input("*.fbx")
+input("*.fbx","*.FBX")
 {
 	stringlist("filter", "");
 	stringlist("notfilter", "");

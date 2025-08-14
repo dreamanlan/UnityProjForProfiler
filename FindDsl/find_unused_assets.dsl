@@ -1,4 +1,4 @@
-input("*.tga","*.png","*.jpg","*.fbx","*.exr","*.mat","*.controller","*.prefab","*.asset")
+input("*.tga","*.png","*.jpg","*.fbx","*.FBX","*.exr","*.mat","*.controller","*.prefab","*.asset")
 {
     string("filter", "");
     float("pathwidth",240){range(20,4096);};
