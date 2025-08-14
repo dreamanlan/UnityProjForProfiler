@@ -536,6 +536,7 @@ public static class ResourceEditUtility
         calc.Register("setmeshimportexternalmaterials", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshImportExternalMaterialsExp>());
         calc.Register("setmeshimportinprefabmaterials", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshImportInPrefabMaterialsExp>());
         calc.Register("closemeshanimationifnoanimation", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CloseMeshAnimationIfNoAnimationExp>());
+        calc.Register("singlemeshinfo", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SingleMeshInfoExp>());
         calc.Register("collectmeshes", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectMeshesExp>());
         calc.Register("collectmeshinfo", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectMeshInfoExp>());
         calc.Register("collectanimatorcontrollerinfo", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectAnimatorControllerInfoExp>());
@@ -1482,9 +1483,9 @@ namespace ResourceEditApi
         public List<MaterialInfo> materials = new List<MaterialInfo>();
         public List<AnimationClipInfo> clips = new List<AnimationClipInfo>();
 
-        public void AddSingleMesh(bool isParticle, string name, int count, int vc, int tc)
+        public void AddSingleMesh(bool isParticle, bool isReadable, string name, int count, int bindposeCount, int blendShapeCount, int subMeshCount, int vc, int tc)
         {
-            meshes.Add(new SingleMeshInfo { isParticle = isParticle, meshName = name, meshCount = count, vertexCount = vc, triangleCount = tc, totalVertexCount = count * vc, totalTriangleCount = count * tc });
+            meshes.Add(new SingleMeshInfo { isParticle = isParticle, isReadable = isReadable, meshName = name, meshCount = count, bindposeCount = bindposeCount, blendShapeCount = blendShapeCount, subMeshCount = subMeshCount, vertexCount = vc, triangleCount = tc, totalVertexCount = count * vc, totalTriangleCount = count * tc });
         }
         public void CollectMaterials(IList<Material> mats)
         {
@@ -1557,8 +1558,12 @@ namespace ResourceEditApi
     internal class SingleMeshInfo
     {
         public bool isParticle;
+        public bool isReadable;
         public string meshName;
         public int meshCount;
+        public int bindposeCount;
+        public int blendShapeCount;
+        public int subMeshCount;
         public int vertexCount;
         public int triangleCount;
         public int totalVertexCount;
@@ -1747,17 +1752,14 @@ namespace ResourceEditApi
                         r = true;
                     }
                 }
-                if (param.TryGetValue("filterMode", out val))
-                {
+                if (param.TryGetValue("filterMode", out val)) {
                     FilterMode v;
 
-                    if (string.IsNullOrEmpty(val) || !Enum.TryParse<FilterMode>(val, out v))
-                    {
+                    if (string.IsNullOrEmpty(val) || !Enum.TryParse<FilterMode>(val, out v)) {
                         v = FilterMode.Bilinear;
                     }
 
-                    if (v != importer.filterMode)
-                    {
+                    if (v != importer.filterMode) {
                         importer.filterMode = v;
                         r = true;
                     }
@@ -4084,6 +4086,40 @@ namespace ResourceEditApi
             return r;
         }
     }
+    internal class SingleMeshInfoExp : SimpleExpressionBase
+    {
+        protected override BoxedValue OnCalc(IList<BoxedValue> operands)
+        {
+            var r = BoxedValue.NullObject;
+            if (operands.Count >= 1) {
+                var mesh = operands[0].As<UnityEngine.Mesh>();
+                if (null != mesh) {
+                    int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
+                    var info = new SingleMeshInfo {
+                        isParticle = false,
+                        isReadable = mesh.isReadable,
+                        meshName = mesh.name,
+                        meshCount = 1,
+                        bindposeCount = mesh.bindposeCount,
+                        blendShapeCount = mesh.blendShapeCount,
+                        subMeshCount = mesh.subMeshCount,
+                        vertexCount = mesh.vertexCount,
+                        triangleCount = indexCount / 3
+                    };
+                    r = BoxedValue.FromObject(info);
+                }
+            }
+            return r;
+        }
+        internal static int GetMeshIndexCount(Mesh mesh)
+        {
+            uint ct = 0;
+            for (int i = 0; i < mesh.subMeshCount; ++i) {
+                ct += mesh.GetIndexCount(i);
+            }
+            return (int)ct;
+        }
+    }
     internal class CollectMeshesExp : SimpleExpressionBase
     {
         internal enum ScopeEnum : int
@@ -4176,7 +4212,7 @@ namespace ResourceEditApi
                     info.maxKeyFrameCurveName = string.Empty;
                     info.maxKeyFrameClipName = string.Empty;
                     int vc = 0;
-                    int tc = 0;
+                    int ic = 0;
                     int bc = 0;
                     int mc = 0;
                     int offscreenct = 0;
@@ -4185,9 +4221,10 @@ namespace ResourceEditApi
                     foreach (var renderer in skinnedrenderers) {
                         if (null != renderer.sharedMesh) {
                             var mesh = renderer.sharedMesh;
+                            int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                             vc += mesh.vertexCount;
-                            tc += mesh.triangles.Length;
-                            info.AddSingleMesh(false, renderer.name + "/" + mesh.name, 1, mesh.vertexCount, mesh.triangles.Length / 3);
+                            ic += indexCount;
+                            info.AddSingleMesh(false, mesh.isReadable, renderer.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                         }
                         bc += renderer.bones.Length;
                         mc += renderer.sharedMaterials.Length;
@@ -4200,9 +4237,10 @@ namespace ResourceEditApi
                     foreach (var filter in filters) {
                         if (null != filter.sharedMesh) {
                             var mesh = filter.sharedMesh;
+                            int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                             vc += mesh.vertexCount;
-                            tc += mesh.triangles.Length;
-                            info.AddSingleMesh(false, filter.name + "/" + mesh.name, 1, mesh.vertexCount, mesh.triangles.Length / 3);
+                            ic += indexCount;
+                            info.AddSingleMesh(false, mesh.isReadable, filter.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                         }
                     }
                     var meshrenderers = obj.GetComponentsInChildren<MeshRenderer>();
@@ -4212,7 +4250,7 @@ namespace ResourceEditApi
                         info.CollectMaterials(renderer.sharedMaterials);
                     }
                     info.vertexCount = vc;
-                    info.triangleCount = tc / 3;
+                    info.triangleCount = ic / 3;
                     info.boneCount = bc;
                     info.materialCount = mc;
                     info.updateWhenOffscreenCount = offscreenct;
@@ -4330,7 +4368,7 @@ namespace ResourceEditApi
                     info.maxKeyFrameCurveName = string.Empty;
                     info.maxKeyFrameClipName = string.Empty;
                     int vc = 0;
-                    int tc = 0;
+                    int ic = 0;
                     int bc = 0;
                     int mc = 0;
                     int offscreenct = 0;
@@ -4339,9 +4377,10 @@ namespace ResourceEditApi
                     foreach (var renderer in skinnedrenderers) {
                         if (null != renderer.sharedMesh) {
                             var mesh = renderer.sharedMesh;
+                            int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                             vc += mesh.vertexCount;
-                            tc += mesh.triangles.Length;
-                            info.AddSingleMesh(false, renderer.name + "/" + mesh.name, 1, mesh.vertexCount, mesh.triangles.Length / 3);
+                            ic += indexCount;
+                            info.AddSingleMesh(false, mesh.isReadable, renderer.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                         }
                         bc += renderer.bones.Length;
                         mc += renderer.sharedMaterials.Length;
@@ -4354,9 +4393,10 @@ namespace ResourceEditApi
                     foreach (var filter in filters) {
                         if (null != filter.sharedMesh) {
                             var mesh = filter.sharedMesh;
+                            int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                             vc += mesh.vertexCount;
-                            tc += mesh.triangles.Length;
-                            info.AddSingleMesh(false, filter.name + "/" + mesh.name, 1, mesh.vertexCount, mesh.triangles.Length / 3);
+                            ic += indexCount;
+                            info.AddSingleMesh(false, mesh.isReadable, filter.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                         }
                     }
                     var meshrenderers = obj.GetComponentsInChildren<MeshRenderer>();
@@ -4374,9 +4414,10 @@ namespace ResourceEditApi
                             if (null != renderer && renderer.renderMode == ParticleSystemRenderMode.Mesh) {
                                 if (null != renderer.mesh) {
                                     var mesh = renderer.mesh;
+                                    int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                                     vc += multiple * mesh.vertexCount;
-                                    tc += multiple * mesh.triangles.Length;
-                                    info.AddSingleMesh(true, ps.name + "/" + mesh.name, multiple, mesh.vertexCount, mesh.triangles.Length / 3);
+                                    ic += multiple * indexCount;
+                                    info.AddSingleMesh(true, mesh.isReadable, ps.name + "/" + mesh.name, multiple, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                                 }
                                 mc += renderer.sharedMaterials.Length;
 
@@ -4385,7 +4426,7 @@ namespace ResourceEditApi
                         }
                     }
                     info.vertexCount = vc;
-                    info.triangleCount = tc / 3;
+                    info.triangleCount = ic / 3;
                     info.boneCount = bc;
                     info.materialCount = mc;
                     info.updateWhenOffscreenCount = offscreenct;
@@ -5140,7 +5181,7 @@ namespace ResourceEditApi
                             }
                         }
                         if (i1 >= 0 || i2 >= 0 || i3 >= 0 || i4 >= 0) {
-                            if(partialConflict) {
+                            if (partialConflict) {
                                 return BoxedValue.FromBool(false);
                             }
                             LogSystem.Warn("[maybe] yaml merge conflict: {0}", full_path);
@@ -5383,7 +5424,7 @@ namespace ResourceEditApi
                 cd = val.LowerOrderFunction;
             else if (val.HaveParam())
                 cd = val;
-            if(null != cd)
+            if (null != cd)
                 ReadDslStringFromCallData(cd, strSet);
             if (val.HaveStatement()) {
                 foreach (var p in val.Params) {

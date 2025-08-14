@@ -360,7 +360,7 @@ public class BatchLoadWindow : EditorWindow
                         var cachedSnapshot = SnapshotDataService.LoadSnapshot(reader);
 
                         Debug.LogFormat("Completed loading \"{0}\"", filePath);
-                        
+
                         Debug.LogFormat("Saving \"{0}\"", filePath);
                         var path = Path.GetDirectoryName(filePath);
                         var snapName = Path.GetFileNameWithoutExtension(filePath);
@@ -479,7 +479,7 @@ public class BatchLoadWindow : EditorWindow
                                 var refCount = cachedSnapshot.SortedNativeObjects.Refcount(i);
                                 var instanceId = cachedSnapshot.SortedNativeObjects.InstanceId(i);
                                 long index;
-                                if(!cachedSnapshot.NativeObjects.InstanceId2Index.TryGetValue(instanceId, out index)) {
+                                if (!cachedSnapshot.NativeObjects.InstanceId2Index.TryGetValue(instanceId, out index)) {
                                     index = -1;
                                 }
                                 var nativeTypeIndex = cachedSnapshot.SortedNativeObjects.NativeTypeArrayIndex(i);
@@ -559,7 +559,7 @@ public class BatchLoadWindow : EditorWindow
 
     private static HashSet<string> s_ManagedGroupNames = new HashSet<string> { "System" };
     private static ProfilerMarker s_CrawlManagedData = new ProfilerMarker("CrawlManagedData");
-    
+
     private static string CleanStrings(string text)
     {
         return text.Replace(",", " ");
