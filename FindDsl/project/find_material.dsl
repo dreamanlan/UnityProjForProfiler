@@ -11,9 +11,10 @@ filter
 	$v0 = loadasset(assetpath);
 	$v1 = $v0.name;
 	$v2 = $v0.shader.name;
+	$v3 = getruntimememory($v0);
 	unloadasset($v0);
 	if(stringcontains($v2,shaderNames)){
-        info = "mat:" + $v1 + " shader:" + $v2;
+        info = "mat:" + $v1 + " shader:" + $v2 + " mem:" + $v3;
         1;
     }else{
         0;

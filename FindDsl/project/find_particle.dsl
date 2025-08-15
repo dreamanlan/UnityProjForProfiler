@@ -29,9 +29,10 @@ filter
         };
         if($ret){
             $v3 = collectprefabinfo(object);
+            $v4 = getruntimememory(object);
             $totalTriangleCount = $v3.triangleCount;
             scenepath = getfilenamewithoutextension(assetpath);
-            info = format("key:{0} particle_count:{1} total_prefab_triangle:{2}",$key,$v1,$totalTriangleCount);
+            info = format("key:{0} particle_count:{1} total_prefab_triangle:{2} memory:{3}",$key,$v1,$totalTriangleCount,$v4);
             order = $totalTriangleCount;
             value = $totalTriangleCount;
         };

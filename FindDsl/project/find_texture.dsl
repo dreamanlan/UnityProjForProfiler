@@ -30,9 +30,11 @@ filter
     		$v4 = importer.mipmapEnabled;
     		$v5 = gettexturesetting("iPhone");
         	$v6 = gettexturesetting("Android");
+			$v7 = getruntimememory($v0);
     		order = $v1 < $v2 ? $v2 : $v1;
+			value = $v7;
     		if(($v1 > maxSize || $v2 > maxSize) && ($v5.maxTextureSize > maxSize || $v6.maxTextureSize > maxSize) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2")) && (!notastc || textureisnotastc($v5) || textureisnotastc($v6))){
-    			info = format("size:{0},{1} readable:{2} mipmap:{3} filter:{4} refby_count:{5}", $v1, $v2, $v3, $v4, importer.filterMode, calcrefbycount(assetpath));
+    			info = format("size:{0},{1} readable:{2} mipmap:{3} filter:{4} refby_count:{5} memory:{6}", $v1, $v2, $v3, $v4, importer.filterMode, calcrefbycount(assetpath), $v7);
     			$r = 1;
     		} else {
     			$r = 0;

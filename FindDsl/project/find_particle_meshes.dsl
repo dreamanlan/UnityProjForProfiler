@@ -2,6 +2,7 @@ input("*.prefab")
 {
     int("totalTriangleCount", 1000);
     int("triangleCount", 200);
+    int("subMeshCount", 1);
     bool("onlyParticle", false);
     stringlist("filter", "");
     stringlist("notfilter", "");
@@ -23,16 +24,17 @@ filter
                 $meshInfo = $$;
                 $name = $meshInfo.meshName;
                 $count = $meshInfo.meshCount;
+                $subMeshCount = $meshInfo.subMeshCount;
                 $vertexCount = $meshInfo.vertexCount;
                 $triangleCount = $meshInfo.triangleCount;
                 $tvc = $meshInfo.totalVertexCount;
                 $ttc = $meshInfo.totalTriangleCount;
                 $isps = $meshInfo.isParticle;
-                if(stringcontains($name, meshfilter) && stringnotcontains($name, meshnotfilter) && $ttc>=triangleCount && (!onlyParticle || $isps)){
+                if(stringcontains($name, meshfilter) && stringnotcontains($name, meshnotfilter) && $ttc>=triangleCount && $subMeshCount>=subMeshCount && (!onlyParticle || $isps)){
                     $v3 = newitem();
                     $v3.AssetPath = assetpath;
-                    $v3.ScenePath = getassetpath($mesh);
-                    $v3.Info = format("mesh:{0} vertex:{1} triangle:{2} count:{3} total_vertex:{4} total_triangle:{5} total_prefab_triangle:{6}",$name,$vertexCount,$triangleCount,$count,$tvc,$ttc,$totalTriangleCount);
+                    $v3.ScenePath = getassetpath($meshInfo.mesh);
+                    $v3.Info = format("mesh:{0} vertex:{1} triangle:{2} count:{3} total_vertex:{4} total_triangle:{5} total_prefab_triangle:{6} sub_mesh_count:{7}",$name,$vertexCount,$triangleCount,$count,$tvc,$ttc,$totalTriangleCount,$subMeshCount);
                     $v3.Order = $totalTriangleCount*100000+$ttc;
                     $v3.Value = $ttc;
                     $v3.ExtraList = newextralist($v3.ScenePath => $v3.ScenePath);

@@ -1,6 +1,7 @@
 input("*.prefab")
 {
     int("maxTriangleCount", 1000);
+    int("subMeshCount", 1);
     bool("hasAnimation", false);
     bool("hasOffscreenUpdate", false);
     bool("hasAlwaysAnimate", false);
@@ -24,8 +25,10 @@ filter
             $ret = 0;
             $key = "";
             looplist($v1.meshes){
-                $v3 = getfilename($$.meshName);
-                if(stringhashcontains(meshhashkeys, $v3)){
+                $meshInfo = $$;
+                $v3 = getfilename($meshInfo.meshName);
+                $subMeshCount = $meshInfo.subMeshCount;
+                if(stringhashcontains(meshhashkeys, $v3) && $subMeshCount>=subMeshCount){
                     $ret = 1;
                     $key = $$.meshName;
                     break;
