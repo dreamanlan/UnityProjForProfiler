@@ -1483,15 +1483,16 @@ namespace ResourceEditApi
         public List<MaterialInfo> materials = new List<MaterialInfo>();
         public List<AnimationClipInfo> clips = new List<AnimationClipInfo>();
 
-        public void AddSingleMesh(bool isParticle, bool isReadable, string name, int count, int bindposeCount, int blendShapeCount, int subMeshCount, int vc, int tc)
+        public void AddSingleMesh(Mesh mesh, bool isParticle, bool isReadable, string name, int count, int bindposeCount, int blendShapeCount, int subMeshCount, int vc, int tc)
         {
-            meshes.Add(new SingleMeshInfo { isParticle = isParticle, isReadable = isReadable, meshName = name, meshCount = count, bindposeCount = bindposeCount, blendShapeCount = blendShapeCount, subMeshCount = subMeshCount, vertexCount = vc, triangleCount = tc, totalVertexCount = count * vc, totalTriangleCount = count * tc });
+            meshes.Add(new SingleMeshInfo { mesh = mesh, isParticle = isParticle, isReadable = isReadable, meshName = name, meshCount = count, bindposeCount = bindposeCount, blendShapeCount = blendShapeCount, subMeshCount = subMeshCount, vertexCount = vc, triangleCount = tc, totalVertexCount = count * vc, totalTriangleCount = count * tc });
         }
         public void CollectMaterials(IList<Material> mats)
         {
             foreach (var mat in mats) {
                 if (null != mat) {
                     var matInfo = new MaterialInfo();
+                    matInfo.material = mat;
                     matInfo.name = mat.name;
                     matInfo.shaderName = null == mat.shader ? string.Empty : mat.shader.name;
                     matInfo.maxTexWidth = 0;
@@ -1502,6 +1503,7 @@ namespace ResourceEditApi
                         var tex = mat.GetTexture(prop);
                         if (null != tex) {
                             var texInfo = new TextureInfo();
+                            texInfo.texture = tex;
                             texInfo.propName = prop;
                             texInfo.texName = tex.name;
                             texInfo.width = tex.width;
@@ -1557,6 +1559,7 @@ namespace ResourceEditApi
     }
     internal class SingleMeshInfo
     {
+        public Mesh mesh;
         public bool isParticle;
         public bool isReadable;
         public string meshName;
@@ -1571,6 +1574,7 @@ namespace ResourceEditApi
     }
     internal class TextureInfo
     {
+        public Texture texture;
         public string propName;
         public string texName;
         public int width;
@@ -1578,6 +1582,7 @@ namespace ResourceEditApi
     }
     internal class MaterialInfo
     {
+        public Material material;
         public string name;
         public string shaderName;
         public int maxTexWidth;
@@ -1594,6 +1599,7 @@ namespace ResourceEditApi
     }
     internal class AnimationClipInfo
     {
+        public AnimationClip clip;
         public string clipName = string.Empty;
         public int maxKeyFrameCount;
         public string maxKeyFrameCurveName = string.Empty;
@@ -1614,6 +1620,7 @@ namespace ResourceEditApi
         public void CollectClip(AnimationClip clip)
         {
             var clipInfo = new AnimationClipInfo();
+            clipInfo.clip = clip;
             clipInfo.clipName = clip.name;
             var bindings = AnimationUtility.GetCurveBindings(clip);
             int maxKfc = 0;
@@ -4096,6 +4103,7 @@ namespace ResourceEditApi
                 if (null != mesh) {
                     int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                     var info = new SingleMeshInfo {
+                        mesh = mesh,
                         isParticle = false,
                         isReadable = mesh.isReadable,
                         meshName = mesh.name,
@@ -4224,7 +4232,7 @@ namespace ResourceEditApi
                             int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                             vc += mesh.vertexCount;
                             ic += indexCount;
-                            info.AddSingleMesh(false, mesh.isReadable, renderer.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
+                            info.AddSingleMesh(mesh, false, mesh.isReadable, renderer.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                         }
                         bc += renderer.bones.Length;
                         mc += renderer.sharedMaterials.Length;
@@ -4240,7 +4248,7 @@ namespace ResourceEditApi
                             int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                             vc += mesh.vertexCount;
                             ic += indexCount;
-                            info.AddSingleMesh(false, mesh.isReadable, filter.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
+                            info.AddSingleMesh(mesh, false, mesh.isReadable, filter.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                         }
                     }
                     var meshrenderers = obj.GetComponentsInChildren<MeshRenderer>();
@@ -4380,7 +4388,7 @@ namespace ResourceEditApi
                             int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                             vc += mesh.vertexCount;
                             ic += indexCount;
-                            info.AddSingleMesh(false, mesh.isReadable, renderer.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
+                            info.AddSingleMesh(mesh, false, mesh.isReadable, renderer.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                         }
                         bc += renderer.bones.Length;
                         mc += renderer.sharedMaterials.Length;
@@ -4396,7 +4404,7 @@ namespace ResourceEditApi
                             int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                             vc += mesh.vertexCount;
                             ic += indexCount;
-                            info.AddSingleMesh(false, mesh.isReadable, filter.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
+                            info.AddSingleMesh(mesh, false, mesh.isReadable, filter.name + "/" + mesh.name, 1, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                         }
                     }
                     var meshrenderers = obj.GetComponentsInChildren<MeshRenderer>();
@@ -4417,7 +4425,7 @@ namespace ResourceEditApi
                                     int indexCount = SingleMeshInfoExp.GetMeshIndexCount(mesh);
                                     vc += multiple * mesh.vertexCount;
                                     ic += multiple * indexCount;
-                                    info.AddSingleMesh(true, mesh.isReadable, ps.name + "/" + mesh.name, multiple, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
+                                    info.AddSingleMesh(mesh, true, mesh.isReadable, ps.name + "/" + mesh.name, multiple, mesh.bindposeCount, mesh.blendShapeCount, mesh.subMeshCount, mesh.vertexCount, indexCount / 3);
                                 }
                                 mc += renderer.sharedMaterials.Length;
 
