@@ -26,6 +26,15 @@ using Unity.Collections.LowLevel.Unsafe;
 
 internal sealed class ResourceEditWindow : EditorWindow
 {
+    [MenuItem("Dsl资源工具/编辑器命令", false, 199)]
+    internal static void InitWindowAndShowCommand()
+    {
+        ResourceEditWindow window = (ResourceEditWindow) EditorWindow.GetWindow(typeof(ResourceEditWindow));
+        window.Init();
+        window.Show();
+        EditorUtility.ClearProgressBar();
+        window.ShowCommand();
+    }
     [MenuItem("Dsl资源工具/资源处理", false, 200)]
     internal static void InitWindow()
     {
@@ -59,6 +68,10 @@ internal sealed class ResourceEditWindow : EditorWindow
     private void Init()
     {
         s_CurrentWindow = this;
+    }
+    private void ShowCommand()
+    {
+        DeferAction(obj => { ResourceCommandWindow.InitWindow(obj, string.Empty, BoxedValue.NullObject, BoxedValue.NullObject); });
     }
 
     private void OnGUI()
@@ -187,7 +200,7 @@ internal sealed class ResourceEditWindow : EditorWindow
             DeferAction(obj => { obj.CopyToClipboard(); });
         }
         if (GUILayout.Button("命令", EditorStyles.toolbarButton)) {
-            DeferAction(obj => { ResourceCommandWindow.InitWindow(obj, string.Empty, BoxedValue.NullObject, BoxedValue.NullObject); });
+            ShowCommand();
         }
         GUILayout.Space(20);
         if (GUILayout.Button("批处理", EditorStyles.toolbarButton)) {

@@ -1096,7 +1096,7 @@ public static class ResourceEditUtility
                     ret = true;
                 }
             }
-            var prefabObj = PrefabUtility.GetPrefabObject(obj);
+            var prefabObj = PrefabUtility.GetPrefabInstanceHandle(obj);
             var prefabPath = AssetDatabase.GetAssetPath(prefabObj);
             if (!ret) {
                 var objs = AssetDatabase.LoadAllAssetsAtPath(prefabPath);
