@@ -1546,6 +1546,14 @@ namespace ResourceEditApi
                     curveName = binding.path + "/" + binding.propertyName;
                 }
             }
+            var objBindings = AnimationUtility.GetObjectReferenceCurveBindings(clip);
+            foreach (var objBinding in objBindings)
+            {
+                var objkfs = AnimationUtility.GetObjectReferenceCurve(clip, objBinding);
+                clipInfo.objectReferenceKeyframes.Add(objkfs);
+            }
+            var events = AnimationUtility.GetAnimationEvents(clip);
+            clipInfo.events.AddRange(events);
             clipInfo.maxKeyFrameCount = maxKfc;
             clipInfo.maxKeyFrameCurveName = curveName;
             clips.Add(clipInfo);
@@ -1604,6 +1612,8 @@ namespace ResourceEditApi
         public int maxKeyFrameCount;
         public string maxKeyFrameCurveName = string.Empty;
         public List<KeyFrameCurveInfo> curves = new List<KeyFrameCurveInfo>();
+        public List<ObjectReferenceKeyframe[]> objectReferenceKeyframes = new List<ObjectReferenceKeyframe[]>();
+        public List<AnimationEvent> events = new List<AnimationEvent>();
     }
     internal class AnimatorControllerInfo
     {
@@ -1634,6 +1644,13 @@ namespace ResourceEditApi
                     curveName = binding.path + "/" + binding.propertyName;
                 }
             }
+            var objBindings = AnimationUtility.GetObjectReferenceCurveBindings(clip);
+            foreach (var objBinding in objBindings) {
+                var objkfs = AnimationUtility.GetObjectReferenceCurve(clip, objBinding);
+                clipInfo.objectReferenceKeyframes.Add(objkfs);
+            }
+            var events = AnimationUtility.GetAnimationEvents(clip);
+            clipInfo.events.AddRange(events);
             clipInfo.maxKeyFrameCount = maxKfc;
             clipInfo.maxKeyFrameCurveName = curveName;
             clips.Add(clipInfo);
@@ -4490,6 +4507,14 @@ namespace ResourceEditApi
                                     curveName = binding.path + "/" + binding.propertyName;
                                 }
                             }
+                            var objBindings = AnimationUtility.GetObjectReferenceCurveBindings(clip);
+                            foreach (var objBinding in objBindings)
+                            {
+                                var objkfs = AnimationUtility.GetObjectReferenceCurve(clip, objBinding);
+                                clipInfo.objectReferenceKeyframes.Add(objkfs);
+                            }
+                            var events = AnimationUtility.GetAnimationEvents(clip);
+                            clipInfo.events.AddRange(events);
                             clipInfo.maxKeyFrameCount = maxKfc;
                             clipInfo.maxKeyFrameCurveName = curveName;
                             r = BoxedValue.FromObject(clipInfo);
