@@ -454,7 +454,7 @@ public static class ResourceEditUtility
     internal static void InitCalculator(DslCalculator calc)
     {
         calc.OnLog = msg => { UnityEngine.Debug.LogError(msg); };
-        calc.Init();
+        calc.NewApiRegistry();
         calc.Register("setparamstomodel", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetParamsToModelExp>());
         calc.Register("getparamsfrommodel", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetParamsFromModelExp>());
         calc.Register("setparamstotexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetParamsToTextureExp>());
