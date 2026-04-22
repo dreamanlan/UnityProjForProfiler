@@ -744,7 +744,7 @@ namespace StoryScript.DslExpression
                     sb.Append(" removed_comps:");
                     var removeComps = PrefabUtility.GetRemovedComponents(prefab);
                     if (null != removeComps) {
-                        foreach (var mobj in removeObjs) {
+                        foreach (var mobj in removeComps) {
                             sb.AppendFormat(" {0}", mobj);
                         }
                     }
