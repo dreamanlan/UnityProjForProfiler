@@ -10,12 +10,12 @@ input("*.mat")
 }
 filter
 {
-  if(stringcontainsany(assetpath, pathfilter) && stringcontainsany($v2, shaderfilter) || allMaterial){
-    $v0 = loadasset(assetpath);
-    if(!isnull($v0)){
+  if(string_contains_any(asset_path, pathfilter) && string_contains_any($v2, shaderfilter) || allMaterial){
+    $v0 = load_asset(asset_path);
+    if(!is_null($v0)){
       $v1 = $v0.name;
       $v2 = $v0.shader.name;
-      unloadasset($v0);
+      unload_asset($v0);
       info = "mat:" + $v1 + " shader:" + $v2;
       1;
     }else{
@@ -27,5 +27,5 @@ filter
 }
 process
 {
-  removeyamlleafproperties(assetpath, "- vs_cbuf10_2:", "- vs_cbuf15_54:");
+  removeyaml_leaf_properties(asset_path, "- vs_cbuf10_2:", "- vs_cbuf15_54:");
 };

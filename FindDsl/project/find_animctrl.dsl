@@ -10,9 +10,9 @@ input("*.controller")
 }
 filter
 {
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        $v0 = loadasset(assetpath);
-        $v1 = collectanimatorcontrollerinfo($v0);
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter)){
+        $v0 = load_asset(asset_path);
+        $v1 = collect_animator_controller_info($v0);
         order = $v1.maxKeyFrameCount;
         if($v1.maxKeyFrameCount >= maxKeyFrameCount){
             $v2 = $v1.clips.orderbydesc($$.maxKeyFrameCount).top(4);
@@ -20,7 +20,7 @@ filter
             appendlineformat($v3, "clip name:{0}, total max keyframe count:{1}, layer count:{2}, state count:{3}, sub state machine count:{4}",
                 $v1.maxKeyFrameClipName, $v1.maxKeyFrameCount, $v1.layerCount, $v1.stateCount, $v1.subStateMachineCount
                 );
-            looplist($v2){
+            loop_list($v2){
                 appendlineformat($v3, "clip name:{0}, max keyframe count:{1}", $$.clipName, $$.maxKeyFrameCount);
             };
             info = stringbuildertostring($v3);
@@ -28,7 +28,7 @@ filter
         }else{
             $r = 0;
         };
-        unloadasset($v0);
+        unload_asset($v0);
         $r;
     }else{
         0;

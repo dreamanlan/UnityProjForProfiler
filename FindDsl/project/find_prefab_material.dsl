@@ -10,12 +10,12 @@ input("*.prefab")
 filter
 {
 	$v10 = 0;
-  $v0 = loadasset(assetpath);
+  $v0 = load_asset(asset_path);
   $v1 = getcomponentsinchildren($v0, "Renderer");
-  looplist($v1){
+  loop_list($v1){
   	$v2 = $$.sharedMaterials;
-  	looplist($v2){
-			if(isnull($$))
+  	loop_list($v2){
+			if(is_null($$))
 				continue;
   		$v3 = $$.name;
   		$v4 = $$.shader.name;

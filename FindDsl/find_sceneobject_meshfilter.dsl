@@ -10,8 +10,8 @@ filter
 {
     $v0 = getcomponentinchildren(object, "MeshFilter");
     $v1 = 0;
-    if(!isnull($v0)){
-        if(isnull($v0.sharedMesh)){
+    if(!is_null($v0)){
+        if(is_null($v0.sharedMesh)){
         	$v1=1;
         };
     };

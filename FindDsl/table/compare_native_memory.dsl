@@ -31,17 +31,17 @@ filter
     $ix3 = 5;
     $ix4 = 6;
 
-    $class = getcellstring(row, $ix);
-    $name = getcellstring(row, $ix2);
-    $size = getcellnumeric(row, $ix3);
-    $addr = getcellnumeric(row, $ix4);
+    $class = get_cell_string(row, $ix);
+    $name = get_cell_string(row, $ix2);
+    $size = get_cell_numeric(row, $ix3);
+    $addr = get_cell_numeric(row, $ix4);
 
     $v99 = 0;
-    if(stringcontainsany($class, classcontainsany) && stringcontainsany($name, namecontainsany) && stringnotcontains($class, classnotcontains) && stringnotcontains($name, namenotcontains)){
-        $row = findrowfromhashtable(dict2, [$class, $name]);
-        if(!isnull($row)){
+    if(string_contains_any($class, classcontainsany) && string_contains_any($name, namecontainsany) && string_not_contains($class, classnotcontains) && string_not_contains($name, namenotcontains)){
+        $row = find_row_from_hashtable(dict2, [$class, $name]);
+        if(!is_null($row)){
             if(resultopt!=2){
-                $size2 = getcellnumeric($row, $ix3);
+                $size2 = get_cell_numeric($row, $ix3);
                 info=format("{0}, {1}, size {2}=>{3}",$class,$name,$size,$size2);
                 $v99=1;
             };
@@ -51,8 +51,8 @@ filter
         };
     };
     if($v99==1){
-        assetpath = format("{0}({1})",$name,$addr);
-        scenepath = $class;
+        asset_path = format("{0}({1})",$name,$addr);
+        scene_path = $class;
         order = $size;
         value = $size;
     	extraobject = $addr;
@@ -63,11 +63,11 @@ filter
 
 script(buildHashtable)args($paramInfo)
 {
-    $dict = tabletohashtable(hashtableget(params,"table2").Value,1,[2,1]);
+    $dict = table_to_hashtable(hashtable_get(params,"table2").Value,1,[2,1]);
     return($dict);
 };
 script(BuildExtraList)args($item)
 {
-	$r = findshortestpathtoroot($item.ExtraObject);
+	$r = find_shortest_path_to_root($item.ExtraObject);
 	return($r);
 };

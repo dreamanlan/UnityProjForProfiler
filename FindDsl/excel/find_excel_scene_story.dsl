@@ -15,33 +15,33 @@ filter
   String = gettype("System.String");
 	order = row.RowNum;
 	$header = sheet.GetRow(3);
-	$ix = findcellindex($header, "SceneDslFile");
-	$ix2 = findcellindex($header, "Prefab");
-	$ix3 = findcellindex($header, "FollowSceneId");
-	$ix4 = findcellindex($header, "WeiMianSceneFlag");
+	$ix = find_cell_index($header, "SceneDslFile");
+	$ix2 = find_cell_index($header, "Prefab");
+	$ix3 = find_cell_index($header, "FollowSceneId");
+	$ix4 = find_cell_index($header, "WeiMianSceneFlag");
 
-	$v0 = getcellstring(row, $ix);
-	$v1 = stringsplit($v0, [";"]);
+	$v0 = get_cell_string(row, $ix);
+	$v1 = string_split($v0, [";"]);
 	$v2 = 1;
-	$v3 = getcellnumeric(row, $ix3);
-	$v4 = getcellnumeric(row, $ix4);
-	looplist($v1){
+	$v3 = get_cell_numeric(row, $ix3);
+	$v4 = get_cell_numeric(row, $ix4);
+	loop_list($v1){
 		if(!fileexist("../../Product/DslFile/"+$$+".dsl")){
 			$v2 = 0;
 		};
 	};
 
-	if((getcellstring(row, 0)=='*' || getcellstring(row, 1)=='+') && $v0.Contains(filter) && (!notexist || notexist && $v2==0) && (!weimian || weimian && $v3!=0 && $v4>=1 && $v4<=3)){
-		assetpath = "Assets/SceneRes/Scenes/"+getcellstring(row, $ix2)+".unity";
+	if((get_cell_string(row, 0)=='*' || get_cell_string(row, 1)=='+') && $v0.Contains(filter) && (!notexist || notexist && $v2==0) && (!weimian || weimian && $v3!=0 && $v4>=1 && $v4<=3)){
+		asset_path = "Assets/SceneRes/Scenes/"+get_cell_string(row, $ix2)+".unity";
 		info = format("scene:{0} name:{1} dsl:{2} exists:{3} follow:{4} weimian:{5}",
-	      getcellvalue(row, 2),
-	      getcellvalue(row, 3),
-	      getcellstring(row, $ix),
+	      get_cell_value(row, 2),
+	      get_cell_value(row, 3),
+	      get_cell_string(row, $ix),
 	      $v2,
 	      $v3,
 	      $v4
 	    );
-	  value = getcellnumeric(row, 2);
+	  value = get_cell_numeric(row, 2);
 	  1;
 	}else{
 	  0;

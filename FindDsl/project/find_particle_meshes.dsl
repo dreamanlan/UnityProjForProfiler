@@ -15,12 +15,12 @@ input("*.prefab")
 }
 filter
 {
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        $v0 = loadasset(assetpath);
-        $v1 = collectprefabinfo($v0);
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter)){
+        $v0 = load_asset(asset_path);
+        $v1 = collect_prefab_info($v0);
         $totalTriangleCount = $v1.triangleCount;
         if($totalTriangleCount>=totalTriangleCount){
-            looplist($v1.meshes){
+            loop_list($v1.meshes){
                 $meshInfo = $$;
                 $name = $meshInfo.meshName;
                 $count = $meshInfo.meshCount;
@@ -30,24 +30,24 @@ filter
                 $tvc = $meshInfo.totalVertexCount;
                 $ttc = $meshInfo.totalTriangleCount;
                 $isps = $meshInfo.isParticle;
-                if(stringcontains($name, meshfilter) && stringnotcontains($name, meshnotfilter) && $ttc>=triangleCount && $subMeshCount>=subMeshCount && (!onlyParticle || $isps)){
-                    $v3 = newitem();
-                    $v3.AssetPath = assetpath;
-                    $v3.ScenePath = getassetpath($meshInfo.mesh);
+                if(string_contains($name, meshfilter) && string_not_contains($name, meshnotfilter) && $ttc>=triangleCount && $subMeshCount>=subMeshCount && (!onlyParticle || $isps)){
+                    $v3 = new_item();
+                    $v3.AssetPath = asset_path;
+                    $v3.ScenePath = get_asset_path($meshInfo.mesh);
                     $v3.Info = format("mesh:{0} vertex:{1} triangle:{2} count:{3} total_vertex:{4} total_triangle:{5} total_prefab_triangle:{6} sub_mesh_count:{7}",$name,$vertexCount,$triangleCount,$count,$tvc,$ttc,$totalTriangleCount,$subMeshCount);
                     $v3.Order = $totalTriangleCount*100000+$ttc;
                     $v3.Value = $ttc;
-                    $v3.ExtraList = newextralist($v3.ScenePath => $v3.ScenePath);
+                    $v3.ExtraList = new_extra_list($v3.ScenePath => $v3.ScenePath);
                     $v3.ExtraListClickScript = "OnClickExtraListItem";
                 };
             };
         };
-        unloadasset($v0);
+        unload_asset($v0);
     };
     0;
 };
 
 script(OnClickExtraListItem)args($obj,$item)
 {
-    selectprojectobject($obj.Value);
+    select_projectobject($obj.Value);
 };

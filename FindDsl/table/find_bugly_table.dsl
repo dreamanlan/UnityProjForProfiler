@@ -42,7 +42,7 @@ input
     feature("menu", "9.Table/find bugly table");
     feature("description", "just so so");
     feature("itemcommand", "$item.Group = $item.ScenePath");
-    feature("groupcommand", "if($item.Items.Count>100){$item.Info=format(\"Count:{0},DevCount:{1},UserCount:{2}\",$item.Items.Count,calcextraobjectfieldcount($item.Items,8),calcextraobjectfieldcount($item.Items,16));$exinfo=$item.Items[0].ExtraObject[18]+'\\n\\n'+$item.Items[0].ExtraObject[19]+'\\n\\n'+stringreplace(unescapeurl($item.Items[0].ExtraObject[32]),';','\\n')+'\\n\\n'+unescapeurl($item.Items[0].ExtraObject[34],'+')+'\\n\\n'+callscript('parseCrash',unescapeurl($item.Items[0].ExtraObject[33],'+'));$item.ExtraList=newextralist($exinfo=>$exinfo);1;}else{0;};");
+    feature("groupcommand", "if($item.Items.Count>100){$item.Info=format(\"Count:{0},DevCount:{1},UserCount:{2}\",$item.Items.Count,calc_extraobject_field_count($item.Items,8),calc_extraobject_field_count($item.Items,16));$exinfo=$item.Items[0].ExtraObject[18]+'\\n\\n'+$item.Items[0].ExtraObject[19]+'\\n\\n'+string_replace(un_escapeurl($item.Items[0].ExtraObject[32]),';','\\n')+'\\n\\n'+un_escapeurl($item.Items[0].ExtraObject[34],'+')+'\\n\\n'+call_script('parseCrash',un_escapeurl($item.Items[0].ExtraObject[33],'+'));$item.ExtraList=new_extra_list($exinfo=>$exinfo);1;}else{0;};");
 }
 filter
 {
@@ -52,9 +52,9 @@ filter
     }else{
         $fields = fields2;
     };
-    if(isnullorempty($fields)){
+    if(is_null_or_empty($fields)){
         $v0 = row.GetLine();
-        if(stringcontains($v0,contains) && stringcontainsany($v0,containsany) && stringnotcontains($v0,notcontains) && stringnotcontainsany($v0, notcontainsany)){
+        if(string_contains($v0,contains) && string_contains_any($v0,containsany) && string_not_contains($v0,notcontains) && string_not_contains_any($v0, notcontainsany)){
         info = $v0;
             value = 0;
             1;
@@ -63,77 +63,77 @@ filter
         };
     }else{
         $header = sheet.GetRow(0);
-        $v1 = stringsplit($fields,[","]);
-        $v2 = findcellindexes($header, $v1);
-        $v3 = callscript("getfieldstring", $header, row, "kv");
-        $v4 = parseurlargs($v3, "+");
-        $v5 = hashtableget($v4, "C03_B1");
-        $v6 = hashtableget($v4, "C03_B2");
-        $v7 = hashtableget($v4, "C03_B3");
-        $v8 = hashtableget($v4, "C03_B4");
-        $v9 = callscript("getfieldstring", $header, row, "crash_id");
-        $v10 = callscript("getfieldstring", $header, row, "issue_id");
-        $v11 = callscript("getfieldstring", $header, row, "user");
+        $v1 = string_split($fields,[","]);
+        $v2 = find_cell_indexes($header, $v1);
+        $v3 = call_script("getfieldstring", $header, row, "kv");
+        $v4 = parseurl_args($v3, "+");
+        $v5 = hashtable_get($v4, "C03_B1");
+        $v6 = hashtable_get($v4, "C03_B2");
+        $v7 = hashtable_get($v4, "C03_B3");
+        $v8 = hashtable_get($v4, "C03_B4");
+        $v9 = call_script("getfieldstring", $header, row, "crash_id");
+        $v10 = call_script("getfieldstring", $header, row, "issue_id");
+        $v11 = call_script("getfieldstring", $header, row, "user");
 
         $f_kv = $v3;
-        $ukv = stringreplace(unescapeurl($f_kv), ";", "\n");
+        $ukv = string_replace(un_escapeurl($f_kv), ";", "\n");
 
         //device_id,hardware,os,cpu_name,exception_type,stack,exception_message
-        $txt = callscript("getfieldstring", $header, row, "device_id");
-        $device_id = unescapeurl($txt, "+");
+        $txt = call_script("getfieldstring", $header, row, "device_id");
+        $device_id = un_escapeurl($txt, "+");
 
-        $txt = callscript("getfieldstring", $header, row, "hardware");
-        $hardware = unescapeurl($txt, "+");
+        $txt = call_script("getfieldstring", $header, row, "hardware");
+        $hardware = un_escapeurl($txt, "+");
 
-        $txt = callscript("getfieldstring", $header, row, "os");
-        $uos = stringreplace(unescapeurl($txt, "+"), ",", "|");
+        $txt = call_script("getfieldstring", $header, row, "os");
+        $uos = string_replace(un_escapeurl($txt, "+"), ",", "|");
 
-        $txt = callscript("getfieldstring", $header, row, "cpu_name");
-        $cpu_name = unescapeurl($txt, "+");
+        $txt = call_script("getfieldstring", $header, row, "cpu_name");
+        $cpu_name = un_escapeurl($txt, "+");
 
-        $txt = callscript("getfieldstring", $header, row, "exception_type");
-        $exception_type = unescapeurl($txt, "+");
+        $txt = call_script("getfieldstring", $header, row, "exception_type");
+        $exception_type = un_escapeurl($txt, "+");
 
-        $txt = callscript("getfieldstring", $header, row, "stack");
+        $txt = call_script("getfieldstring", $header, row, "stack");
         $f_stack = $txt;
-        $cstack = unescapeurl($txt, "+");
-        if(isnull($cstack)){
+        $cstack = un_escapeurl($txt, "+");
+        if(is_null($cstack)){
             $cstack = "";
         };
 
-        $txt = callscript("getfieldstring", $header, row, "exception_message");
+        $txt = call_script("getfieldstring", $header, row, "exception_message");
         $f_exception = $txt;
-        $exception_message = unescapeurl($txt, "+");
-        if(isnull($exception_message)){
+        $exception_message = un_escapeurl($txt, "+");
+        if(is_null($exception_message)){
             $exception_message = "";
         };
 
         if($f_kv=="kv" && $f_stack=="stack" && $f_exception=="exception_message"){
-            $v0 = rowtoline(row, 0, $v2)+","+$v11+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",menpai,lvl,scene,hz,native,graphics,unknown,pss,vss,mono,"+$f_kv+","+$f_stack+","+$f_exception;
-        }elseif(!isnullorempty($v5) && !isnullorempty($v6) && !isnullorempty($v7)){
-            $v5 = stringreplace($v5, "menpai_", "");
-            $v5 = stringreplace($v5, "level_", "");
-            $v6 = stringreplace($v6, "scene_", "");
-            $v6 = stringreplace($v6, "hz_", "");
-            $v7 = stringreplace($v7, "native_", "");
-            $v7 = stringreplace($v7, "graphics_", "");
-            $v7 = stringreplace($v7, "unknown_", "");
-            $v8 = stringreplace($v8, "pss_", "");
-            $v8 = stringreplace($v8, "vss_", "");
-            $v8 = stringreplace($v8, "mono_", "");
-            $v0 = rowtoline(row, 0, $v2)+",uid:"+$v11+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+","+$v5+","+$v6+","+$v7+","+$v8+","+$f_kv+","+$f_stack+","+$f_exception;
+            $v0 = row_to_line(row, 0, $v2)+","+$v11+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",menpai,lvl,scene,hz,native,graphics,unknown,pss,vss,mono,"+$f_kv+","+$f_stack+","+$f_exception;
+        }elseif(!is_null_or_empty($v5) && !is_null_or_empty($v6) && !is_null_or_empty($v7)){
+            $v5 = string_replace($v5, "menpai_", "");
+            $v5 = string_replace($v5, "level_", "");
+            $v6 = string_replace($v6, "scene_", "");
+            $v6 = string_replace($v6, "hz_", "");
+            $v7 = string_replace($v7, "native_", "");
+            $v7 = string_replace($v7, "graphics_", "");
+            $v7 = string_replace($v7, "unknown_", "");
+            $v8 = string_replace($v8, "pss_", "");
+            $v8 = string_replace($v8, "vss_", "");
+            $v8 = string_replace($v8, "mono_", "");
+            $v0 = row_to_line(row, 0, $v2)+",uid:"+$v11+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+","+$v5+","+$v6+","+$v7+","+$v8+","+$f_kv+","+$f_stack+","+$f_exception;
         }else{
-            $v0 = rowtoline(row, 0, $v2)+",uid:"+$v11+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",,,,,,,,,,,"+$f_kv+","+$f_stack+","+$f_exception;
+            $v0 = row_to_line(row, 0, $v2)+",uid:"+$v11+","+$device_id+","+$hardware+","+$uos+","+$cpu_name+","+$exception_type+",,,,,,,,,,,"+$f_kv+","+$f_stack+","+$f_exception;
         };
 
-        if(stringcontains($v0,contains) && stringcontainsany($v0,containsany) && stringnotcontains($v0,notcontains) && stringnotcontainsany($v0, notcontainsany)){
+        if(string_contains($v0,contains) && string_contains_any($v0,containsany) && string_not_contains($v0,notcontains) && string_not_contains_any($v0, notcontainsany)){
             info = $v0;
             value = 0;
-            assetpath = $v9;
-            scenepath = $v10;
-            extraobject = stringsplit(info, [',']);
-            $exinfo = $uos+"\n\n"+$ukv+"\n\n"+$exception_message+"\n\n"+callscript("parseCrash", $cstack);
-            extralist = newextralist($exinfo => $exinfo);
+            asset_path = $v9;
+            scene_path = $v10;
+            extraobject = string_split(info, [',']);
+            $exinfo = $uos+"\n\n"+$ukv+"\n\n"+$exception_message+"\n\n"+call_script("parseCrash", $cstack);
+            extra_list = new_extra_list($exinfo => $exinfo);
             1;
         }else{
             0;
@@ -143,8 +143,8 @@ filter
 
 script(getfieldstring)args($header, $row, $name)
 {
-    $ix = findcellindex($header, $name);
-    $str = getcellstring($row, $ix);
+    $ix = find_cell_index($header, $name);
+    $str = get_cell_string($row, $ix);
     return($str);
 };
 script(parseCrash)args($crashStack)
@@ -153,47 +153,47 @@ script(parseCrash)args($crashStack)
     {
         return($crashStack);
     };
-    if(isnull(@syms) && !isnullorempty(il2cpp) || isnull(@syms2) && !isnullorempty(unity) || reloadsymbol){
-        if(!isnullorempty(il2cpp)){
+    if(is_null(@syms) && !is_null_or_empty(il2cpp) || is_null(@syms2) && !is_null_or_empty(unity) || reloadsymbol){
+        if(!is_null_or_empty(il2cpp)){
             if(il2cppsymtype==1){
                 if(crashtype==1){
-                    @syms=loadbuglyandroidsymbols(il2cpp);
+                    @syms=loadbugly_android_symbols(il2cpp);
                 }else{
-                    @syms=loadbuglyiossymbols(il2cpp);
+                    @syms=loadbuglyios_symbols(il2cpp);
                 };
             }else{
-                @syms=loadidaprosymbols(il2cpp);
+                @syms=loadidapro_symbols(il2cpp);
             };
         };
-        if(!isnullorempty(unity)){
+        if(!is_null_or_empty(unity)){
             if(unitysymtype==1){
                 if(crashtype==1){
-                    @syms2=loadbuglyandroidsymbols(unity);
+                    @syms2=loadbugly_android_symbols(unity);
                 }else{
-                    @syms2=loadbuglyiossymbols(unity);
+                    @syms2=loadbuglyios_symbols(unity);
                 };
             }else{
-                @syms2=loadidaprosymbols(unity);
+                @syms2=loadidapro_symbols(unity);
             };
         };
     };
 
-    $lines=stringsplit($crashStack, ["\n"]);
+    $lines=string_split($crashStack, ["\n"]);
     if(crashtype==1){
-        if(!isnull(@syms)){
-            $lines=mapbuglyandroidsymbols($lines,@syms,"libil2cpp","0 ");
+        if(!is_null(@syms)){
+            $lines=map_bugly_android_symbols($lines,@syms,"libil2cpp","0 ");
         };
-        if(!isnull(@syms2)){
-            $lines=mapbuglyandroidsymbols($lines,@syms2,"libunity","0 ");
+        if(!is_null(@syms2)){
+            $lines=map_bugly_android_symbols($lines,@syms2,"libunity","0 ");
         };
     }else{
-        if(!isnull(@syms)){
-            $lines=mapbuglyiossymbols($lines,@syms,"libil2cpp","0 ");
+        if(!is_null(@syms)){
+            $lines=map_buglyios_symbols($lines,@syms,"libil2cpp","0 ");
         };
-        if(!isnull(@syms2)){
-            $lines=mapbuglyiossymbols($lines,@syms2,"libunity","0 ");
+        if(!is_null(@syms2)){
+            $lines=map_buglyios_symbols($lines,@syms2,"libunity","0 ");
         };
     };
-    $txt=stringjoin("\r\n", $lines);
+    $txt=string_join("\r\n", $lines);
     return($txt);
 };

@@ -11,9 +11,9 @@ input("*.prefab")
 }
 filter
 {
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        $v0 = loadasset(assetpath);
-        $v1 = collectprefabinfo($v0);
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter)){
+        $v0 = load_asset(asset_path);
+        $v1 = collect_prefab_info($v0);
         order = $v1.triangleCount;
         if($v1.triangleCount >= maxTriangleCount && (!hasAnimation || $v1.clipCount>0)){
             info = format("skinned:{0},mesh:{1},vertex:{2},triangle:{3},bone:{4},material:{5},max_tex_size:({6},{7}),max_tex_name:{8}={9},clip:{10},max_keyframe:{11}",
@@ -23,7 +23,7 @@ filter
         }else{
             $r = 0;
         };
-        unloadasset($v0);
+        unload_asset($v0);
         $r;
     }else{
         0;

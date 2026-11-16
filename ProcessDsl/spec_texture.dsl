@@ -7,49 +7,49 @@ input("SetSpecialTextures")
 }
 filter
 {
-	$lines=callscript("GetLines",0);
-	looplist($lines){
+	$lines=call_script("GetLines",0);
+	loop_list($lines){
 		$v0 = $$;
-		looplist(listallfiles($v0, "*body_d.*")){
-			callscript("NewItem", $$, 0);
+		loop_list(list_all_files($v0, "*body_d.*")){
+			call_script("NewItem", $$, 0);
 		};
-		looplist(listallfiles($v0, "*body_n.*")){
-			callscript("NewItem", $$, 0);
+		loop_list(list_all_files($v0, "*body_n.*")){
+			call_script("NewItem", $$, 0);
 		};
-		looplist(listallfiles($v0, "*face_d.*")){
-			callscript("NewItem", $$, 1);
+		loop_list(list_all_files($v0, "*face_d.*")){
+			call_script("NewItem", $$, 1);
 		};
-		looplist(listallfiles($v0, "*face_n.*")){
-			callscript("NewItem", $$, 1);
+		loop_list(list_all_files($v0, "*face_n.*")){
+			call_script("NewItem", $$, 1);
 		};
 	};
-	$lines=callscript("GetLines",1);
-	looplist($lines){
+	$lines=call_script("GetLines",1);
+	loop_list($lines){
 		$v0 = $$;
-		looplist(listallfiles($v0, "*body*_d.*")){
-			callscript("NewItem", $$, 0);
+		loop_list(list_all_files($v0, "*body*_d.*")){
+			call_script("NewItem", $$, 0);
 		};
-		looplist(listallfiles($v0, "*body*_n.*")){
-			callscript("NewItem", $$, 0);
+		loop_list(list_all_files($v0, "*body*_n.*")){
+			call_script("NewItem", $$, 0);
 		};
 	};
-	$lines=callscript("GetLines",2);
-	looplist($lines){
+	$lines=call_script("GetLines",2);
+	loop_list($lines){
 		$v0 = $$;
-		looplist(listallfiles($v0, "*face*_d.*")){
-			callscript("NewItem", $$, 1);
+		loop_list(list_all_files($v0, "*face*_d.*")){
+			call_script("NewItem", $$, 1);
 		};
-		looplist(listallfiles($v0, "*face*_n.*")){
-			callscript("NewItem", $$, 1);
+		loop_list(list_all_files($v0, "*face*_n.*")){
+			call_script("NewItem", $$, 1);
 		};
 	};
 }
 process
 {
 	if(order==0){
-		callscript("SetTexture", 1024);
+		call_script("SetTexture", 1024);
 	}else{
-		callscript("SetTexture", 512);
+		call_script("SetTexture", 512);
 	};
 };
 
@@ -57,11 +57,11 @@ script(GetLines)args($type)
 {
 	$lines = list();
 	if($type==0){
-		$lines = readalllines("texture_s_npc.txt");
+		$lines = read_all_lines("texture_s_npc.txt");
 	}elseif($type==1){
-		$lines = readalllines("texture_player_body.txt");
+		$lines = read_all_lines("texture_player_body.txt");
 	}elseif($type==2){
-		$lines = readalllines("texture_player_face.txt");
+		$lines = read_all_lines("texture_player_face.txt");
 	};
 	return($lines);
 };
@@ -70,12 +70,12 @@ script(NewItem)args($file, $type)
 {
 	if(!$file.EndsWith(".meta") && $file.Contains(filter)){
 		$v0 = $file.Replace("\\","/");
-		$v10 = loadasset($v0);
+		$v10 = load_asset($v0);
 		$v11 = $v10.width;
 		$v12 = $v10.height;
-		$v1 = newitem();
+		$v1 = new_item();
 		$v1.AssetPath = $v0;
-		$v1.Importer = getassetimporter($v0);
+		$v1.Importer = get_asset_importer($v0);
 		$v1.Info = "w*h:"+$v11+","+$v12;
 		$v1.Order = $type;
 		$v1.Value = 0;
@@ -85,26 +85,26 @@ script(NewItem)args($file, $type)
 script(SetTexture)args($maxSize)
 {
 	/*
-	$v0 = getdefaulttexturesetting();
+	$v0 = get_default_texture_setting();
 	$v0.maxTextureSize = changetype(maxSize, "int");
-	settexturesetting($v0);
+	set_texture_setting($v0);
 
-	$v1 = gettexturesetting("Standalone");
+	$v1 = get_texture_setting("Standalone");
 	$v1.maxTextureSize = changetype(maxSize, "int");
-	settexturesetting($v1);
+	set_texture_setting($v1);
 	*/
 
-	$v2 = gettexturesetting("iPhone");
+	$v2 = get_texture_setting("iPhone");
 	$v2.overridden=true;
 	$v2.maxTextureSize = $maxSize;
-	setastctexture($v2, 8);
-	settexturesetting($v2);
+	set_astc_texture($v2, 8);
+	set_texture_setting($v2);
 
-	$v3 = gettexturesetting("Android");
+	$v3 = get_texture_setting("Android");
 	$v3.overridden=true;
 	$v3.maxTextureSize = $maxSize;
-	setastctexture($v3, 8);
-	settexturesetting($v3);
+	set_astc_texture($v3, 8);
+	set_texture_setting($v3);
 
-	updatetexturedb(assetpath, importer);
+	update_texturedb(asset_path, importer);
 };

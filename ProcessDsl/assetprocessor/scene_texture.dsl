@@ -8,11 +8,11 @@ input("*.tga","*.png","*.jpg")
 }
 filter
 {
-	$v0 = loadasset(assetpath);
+	$v0 = load_asset(asset_path);
 	$v1 = $v0.width;
 	$v2 = $v0.height;
-	//unloadasset($v0);
-	if(($v1 > maxSize || $v2 > maxSize) && stringcontains(assetpath, filter) && stringnotcontains(assetpath, "SplatAlpha")){
+	//unload_asset($v0);
+	if(($v1 > maxSize || $v2 > maxSize) && string_contains(asset_path, filter) && string_not_contains(asset_path, "SplatAlpha")){
 		info = "size:" + $v1 + "," + $v2;
 		1;
 	} else {

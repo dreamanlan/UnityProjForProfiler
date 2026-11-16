@@ -25,33 +25,33 @@ input("MapSymbols")
 }
 process
 {
-    $lines=readalllines(txtfile);
-    if(!isnullorempty(pattern1)){
+    $lines=read_all_lines(txtfile);
+    if(!is_null_or_empty(pattern1)){
         $lines = subst($lines, pattern1, subst1);
     };
-    if(!isnullorempty(pattern2)){
+    if(!is_null_or_empty(pattern2)){
         $lines = subst($lines, pattern2, subst2);
     };
-    if(!isnullorempty(pattern3)){
+    if(!is_null_or_empty(pattern3)){
         $lines = subst($lines, pattern3, subst3);
     };
-    if(!isnullorempty(pattern4)){
+    if(!is_null_or_empty(pattern4)){
         $lines = subst($lines, pattern4, subst4);
     };
-    if(!isnullorempty(pattern5)){
+    if(!is_null_or_empty(pattern5)){
         $lines = subst($lines, pattern5, subst5);
     };
-    if(!isnullorempty(pattern6)){
+    if(!is_null_or_empty(pattern6)){
         $lines = subst($lines, pattern6, subst6);
     };
-    if(!isnullorempty(pattern7)){
+    if(!is_null_or_empty(pattern7)){
         $lines = subst($lines, pattern7, subst7);
     };
-    if(!isnullorempty(pattern8)){
+    if(!is_null_or_empty(pattern8)){
         $lines = subst($lines, pattern8, subst8);
     };
-    $dir = getdirectoryname(txtfile);
-    $filename = getfilenamewithoutextension(txtfile);
-    $file = combinepath($dir,$filename+"_subst.txt");
-    writealllines($file,$lines);
+    $dir = get_directory_name(txtfile);
+    $filename = get_file_name_without_extension(txtfile);
+    $file = combine_path($dir,$filename+"_subst.txt");
+    write_all_lines($file,$lines);
 };

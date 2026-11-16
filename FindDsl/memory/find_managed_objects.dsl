@@ -16,8 +16,8 @@ filter
 {
     String = gettype("System.String");
 	order = memory.size;
-	if(memory.size >= maxSize && (isnullorempty(class) || memory.className == class) && stringcontainsany(memory.name, filter) && memory.refCount>=minRefCount && memory.refCount<=maxRefCount){
-		assetpath = memory.name;
+	if(memory.size >= maxSize && (is_null_or_empty(class) || memory.className == class) && string_contains_any(memory.name, filter) && memory.refCount>=minRefCount && memory.refCount<=maxRefCount){
+		asset_path = memory.name;
 		info = format("name:{0} class:{1} size:{2} refby:{3}",
 	        memory.name, memory.className, memory.size, memory.refCount
 	    );
@@ -32,6 +32,6 @@ filter
 
 script(BuildExtraList)args($item)
 {
-	$r = findshortestpathtoroot($item.ExtraObject);
+	$r = find_shortest_path_to_root($item.ExtraObject);
 	return($r);
 };

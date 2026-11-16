@@ -6,5 +6,5 @@ input
 }
 process
 {
-	deleteasset(assetpath);
+	delete_asset(asset_path);
 };

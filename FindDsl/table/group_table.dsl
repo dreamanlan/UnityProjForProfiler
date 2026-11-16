@@ -22,16 +22,16 @@ input
 filter
 {
     order = row.RowIndex;
-    if(!isnullorempty(fields)){
-        $v1 = stringsplit(fields,[","]);
-        $v2 = findcellindexes(sheet.GetRow(0), $v1);
-        $v0 = rowtoline(row, 0, $v2);
-        if(listsize($v2)>=3 && $v0.Contains(contains) && (isnullorempty(notcontains1) || !$v0.Contains(notcontains1)) && (isnullorempty(notcontains2) || !$v0.Contains(notcontains2))){
-            assetpath = getcellstring(row, $v2[0]);
-            scenepath = "";
+    if(!is_null_or_empty(fields)){
+        $v1 = string_split(fields,[","]);
+        $v2 = find_cell_indexes(sheet.GetRow(0), $v1);
+        $v0 = row_to_line(row, 0, $v2);
+        if(list_size($v2)>=3 && $v0.Contains(contains) && (is_null_or_empty(notcontains1) || !$v0.Contains(notcontains1)) && (is_null_or_empty(notcontains2) || !$v0.Contains(notcontains2))){
+            asset_path = get_cell_string(row, $v2[0]);
+            scene_path = "";
             info = $v0;
-            value = getcellnumeric(row, $v2[2]);
-            group = assetpath;
+            value = get_cell_numeric(row, $v2[2]);
+            group = asset_path;
             1;
         }else{
             0;

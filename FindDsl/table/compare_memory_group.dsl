@@ -26,21 +26,21 @@ filter
 {
     String = gettype("System.String");
     $header = sheet.GetRow(0);
-    $ix = findcellindex($header, "type");
-    $ix2 = findcellindex($header, "count");
-    $ix3 = findcellindex($header, "size");
+    $ix = find_cell_index($header, "type");
+    $ix2 = find_cell_index($header, "count");
+    $ix3 = find_cell_index($header, "size");
 
-    $type = getcellstring(row, $ix);
-    $count = getcellnumeric(row, $ix2);
-    $size = getcellnumeric(row, $ix3);
+    $type = get_cell_string(row, $ix);
+    $count = get_cell_numeric(row, $ix2);
+    $size = get_cell_numeric(row, $ix3);
 
     $v99 = 0;
-    if(stringcontains($type, contains) && stringnotcontains($type, notcontains)){
-        $rowIndex = findrowindex(table2, $ix, $type);
+    if(string_contains($type, contains) && string_not_contains($type, notcontains)){
+        $rowIndex = find_row_index(table2, $ix, $type);
         if($rowIndex>0 && resultopt!=2){
             $row = table2.GetRow($rowIndex);
-            $count2 = getcellnumeric($row, $ix2);
-            $size2 = getcellnumeric($row, $ix3);
+            $count2 = get_cell_numeric($row, $ix2);
+            $size2 = get_cell_numeric($row, $ix3);
             if(abs($count-$count2)>=mindiff && ($count*minmultiple<=$count2 || $count2*minmultiple<=$count) && abs($size-$size2)>=minsizediff){
                 info=format("{0}, count {1}=>{2}, size {3}=>{4}",$type,$count,$count2,$size,$size2);
                 order = $size;

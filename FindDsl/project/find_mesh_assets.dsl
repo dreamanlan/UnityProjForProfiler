@@ -9,13 +9,13 @@ input("*.asset")
 }
 filter
 {
-	if(stringcontains(assetpath,filter)){
-		$v0 = loadasset(assetpath);
+	if(string_contains(asset_path,filter)){
+		$v0 = load_asset(asset_path);
 		$v1 = $v0.name;
-		$v2 = getruntimememory($v0);
-		$v3 = singlemeshinfo($v0);
-		unloadasset($v0);
-		if(isnull($v3) || (readable && !$v3.isReadable)){
+		$v2 = get_runtime_memory_size($v0);
+		$v3 = single_mesh_info($v0);
+		unload_asset($v0);
+		if(is_null($v3) || (readable && !$v3.isReadable)){
 			0;
 		}else{
 			value = $v2;

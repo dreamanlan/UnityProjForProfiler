@@ -13,7 +13,7 @@ input
 	    file("csv");
 	    script("LoadManagedHeaps");
 	};
-	bool("findasset", false);
+	bool("find_asset", false);
 	float("pathwidth",240){range(20,4096);};
 	feature("source", "snapshot");
 	feature("menu", "6.Memory/slowly find memory and mheaps");
@@ -21,17 +21,17 @@ input
 }
 filter
 {
-	if(memory.size >= maxSize && stringcontains(memory.className, classfilter) && stringcontains(memory.name, filter) && stringnotcontains(memory.className, classnotfilter) && stringnotcontains(memory.name, notfilter)){
-		if(findasset){
-    		assetpath = (findasset(memory.name, memory.className))[0];
+	if(memory.size >= maxSize && string_contains(memory.className, classfilter) && string_contains(memory.name, filter) && string_not_contains(memory.className, classnotfilter) && string_not_contains(memory.name, notfilter)){
+		if(find_asset){
+    		asset_path = (find_asset(memory.name, memory.className))[0];
 	    }else{
-		    assetpath = memory.name;
+		    asset_path = memory.name;
 		};
-		if(isnullorempty(assetpath)){
-			assetpath = memory.name;
+		if(is_null_or_empty(asset_path)){
+			asset_path = memory.name;
 		};
-		$v0 = findmanagedheaps(mheaps, memory.address);
-		if(isnull($v0)){
+		$v0 = find_managed_heaps(mheaps, memory.address);
+		if(is_null($v0)){
 		    $v1 = 0;
 		    $v2 = 0;
 		}else{
@@ -39,7 +39,7 @@ filter
 		    $v2 = $v0.vm_start;
 		};
 		if(heapAddr==0 || heapAddr==$v2){
-    		scenepath = format("name:{0} class:{1} size:{2} addr:{3:X}",
+    		scene_path = format("name:{0} class:{1} size:{2} addr:{3:X}",
     	        memory.name, memory.className, memory.size, memory.address
     	        );
     		info = format("mheap_size:{0} mheap:{1:X}",
@@ -60,8 +60,8 @@ filter
 
 script(LoadManagedHeaps)args($paramInfo)
 {
-    if(!isnullorempty($paramInfo.Value)){
-        $paramInfo.Value = loadmanagedheaps($paramInfo.Value);
+    if(!is_null_or_empty($paramInfo.Value)){
+        $paramInfo.Value = load_managed_heaps($paramInfo.Value);
         return(3600.0);
     }else{
         return(1.0);
@@ -69,6 +69,6 @@ script(LoadManagedHeaps)args($paramInfo)
 };
 script(BuildExtraList)args($item)
 {
-	$r = findshortestpathtoroot($item.ExtraObject);
+	$r = find_shortest_path_to_root($item.ExtraObject);
 	return($r);
 };

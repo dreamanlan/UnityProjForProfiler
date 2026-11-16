@@ -7,7 +7,7 @@ input("Transform")
 filter
 {
 	$v0 = getcomponentinchildren(object, "MeshCollider");
-	if(isnull($v0)){
+	if(is_null($v0)){
 		0;
 	}else{
 		1;

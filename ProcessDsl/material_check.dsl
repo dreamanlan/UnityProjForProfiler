@@ -10,20 +10,20 @@ input("*.mat")
 }
 filter
 {
-	if(stringcontainsany(assetpath, pathfilter) || allMaterial){
-		if(checkyaml(assetpath)){
-			if(checkPath && ispathtoolong(assetpath)){
-				info = assetpath + ", path too long";
+	if(string_contains_any(asset_path, pathfilter) || allMaterial){
+		if(checkyaml(asset_path)){
+			if(checkPath && is_path_too_long(asset_path)){
+				info = asset_path + ", path too long";
 				1;
 			}
 			else{
 				0;
 			};
 		}else{
-			$v0 = loadasset(assetpath);
-			$valid = !isnull($v0);
-			unloadasset($v0);
-			info = assetpath + ", there may be conflicts, valid:" + $valid;
+			$v0 = load_asset(asset_path);
+			$valid = !is_null($v0);
+			unload_asset($v0);
+			info = asset_path + ", there may be conflicts, valid:" + $valid;
 			1;
 		};
 	}else{

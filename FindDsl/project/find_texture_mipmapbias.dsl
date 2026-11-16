@@ -14,13 +14,13 @@ input("*.tga","*.png","*.jpg","*.exr")
 filter
 {
     $v99 = 0;
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        $v0 = loadasset(assetpath);
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter)){
+        $v0 = load_asset(asset_path);
         $v1 = $v0.width;
         $v2 = $v0.height;
         $v3 = $v0.mipMapBias;
-        $v4 = gettexturesetting("iPhone");
-        $v5 = gettexturesetting("Android");
+        $v4 = get_texture_setting("iPhone");
+        $v5 = get_texture_setting("Android");
         if(eq && $v3==bias || !eq && $v3<bias){
             if(sizeLE && ($v1 <= maxSize || $v2 <= maxSize) && ($v4.maxTextureSize <= maxSize || $v5.maxTextureSize <= maxSize) ||
                 !sizeLE && ($v1 > maxSize || $v2 > maxSize) && ($v4.maxTextureSizesizeq > maxSize || $v5.maxTextureSize > maxSize)){
@@ -30,7 +30,7 @@ filter
                 $v99 = 1;
             };
         };
-        unloadasset($v0);
+        unload_asset($v0);
     };
     $v99;
 };

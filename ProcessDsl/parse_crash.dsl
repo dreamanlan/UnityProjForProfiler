@@ -33,45 +33,45 @@ filter
 }
 process
 {
-    if(isnull(@syms) && !isnullorempty(il2cpp) || isnull(@syms2) && !isnullorempty(unity) || reloadsymbol){
-        if(!isnullorempty(il2cpp)){
+    if(is_null(@syms) && !is_null_or_empty(il2cpp) || is_null(@syms2) && !is_null_or_empty(unity) || reloadsymbol){
+        if(!is_null_or_empty(il2cpp)){
             if(il2cppsymtype==1){
                 if(crashtype==1){
-                    @syms=loadbuglyandroidsymbols(il2cpp);
+                    @syms=loadbugly_android_symbols(il2cpp);
                 }else{
-                    @syms=loadbuglyiossymbols(il2cpp);
+                    @syms=loadbuglyios_symbols(il2cpp);
                 };
             }else{
-                @syms=loadidaprosymbols(il2cpp);
+                @syms=loadidapro_symbols(il2cpp);
             };
         };
-        if(!isnullorempty(unity)){
+        if(!is_null_or_empty(unity)){
             if(unitysymtype==1){
                 if(crashtype==1){
-                    @syms2=loadbuglyandroidsymbols(unity);
+                    @syms2=loadbugly_android_symbols(unity);
                 }else{
-                    @syms2=loadbuglyiossymbols(unity);
+                    @syms2=loadbuglyios_symbols(unity);
                 };
             }else{
-                @syms2=loadidaprosymbols(unity);
+                @syms2=loadidapro_symbols(unity);
             };
         };
     };
-    $lines=readalllines(crash);
+    $lines=read_all_lines(crash);
     if(crashtype==1){
-        if(!isnull(@syms)){
-            $lines=mapbuglyandroidsymbols($lines,@syms,"libil2cpp");
+        if(!is_null(@syms)){
+            $lines=map_bugly_android_symbols($lines,@syms,"libil2cpp");
         };
-        if(!isnull(@syms2)){
-            $lines=mapbuglyandroidsymbols($lines,@syms2,"libunity");
+        if(!is_null(@syms2)){
+            $lines=map_bugly_android_symbols($lines,@syms2,"libunity");
         };
     }else{
-        if(!isnull(@syms)){
-            $lines=mapbuglyiossymbols($lines,@syms,"qs");
+        if(!is_null(@syms)){
+            $lines=map_buglyios_symbols($lines,@syms,"qs");
         };
-        if(!isnull(@syms2)){
-            $lines=mapbuglyiossymbols($lines,@syms2,"qs");
+        if(!is_null(@syms2)){
+            $lines=map_buglyios_symbols($lines,@syms2,"qs");
         };
     };
-    writealllines(crash_out,$lines);
+    write_all_lines(crash_out,$lines);
 };

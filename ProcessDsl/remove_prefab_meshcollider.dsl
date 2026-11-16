@@ -6,9 +6,9 @@ input("*.prefab")
 }
 filter
 {
-	object = loadasset(assetpath);
+	object = load_asset(asset_path);
 	$v0 = getcomponentinchildren(object, "MeshCollider");
-	if(isnull($v0)){
+	if(is_null($v0)){
 		0;
 	}else{
 		1;
@@ -16,7 +16,7 @@ filter
 }
 process
 {
-	object = loadasset(assetpath);
+	object = load_asset(asset_path);
 	$v0 = getcomponentinchildren(object, "MeshCollider");
 	destroyobject($v0, true);
 };

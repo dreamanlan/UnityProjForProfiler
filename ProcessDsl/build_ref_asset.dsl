@@ -6,5 +6,5 @@ input("CreateRefAsset")
 }
 process
 {	
-	createrefasset("Assets/M1Tool/ref_by_table_or_code.asset", readalllines("stringlist.txt"));
+	create_ref_asset("Assets/M1Tool/ref_by_table_or_code.asset", read_all_lines("stringlist.txt"));
 };

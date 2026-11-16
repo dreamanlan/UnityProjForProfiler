@@ -23,27 +23,27 @@ filter
   String = gettype("System.String");
 	order = row.RowNum;
 	if(isGameTable){
-		if(isnullorempty(fields)){
+		if(is_null_or_empty(fields)){
 			$v1 = [];
-			$v2 = findcellindexes(sheet.GetRow(fieldrow), $v1, "*+", sheet.GetRow(0), sheet.GetRow(1));
-			$v0 = rowtoline(row, skipcols, $v2);
+			$v2 = find_cell_indexes(sheet.GetRow(fieldrow), $v1, "*+", sheet.GetRow(0), sheet.GetRow(1));
+			$v0 = row_to_line(row, skipcols, $v2);
 		}else{
-			$v1 = stringsplit(fields,[","]);
-			$v2 = findcellindexes(sheet.GetRow(fieldrow), $v1, "*+", sheet.GetRow(0), sheet.GetRow(1));
-			$v0 = rowtoline(row, skipcols, $v2);
+			$v1 = string_split(fields,[","]);
+			$v2 = find_cell_indexes(sheet.GetRow(fieldrow), $v1, "*+", sheet.GetRow(0), sheet.GetRow(1));
+			$v0 = row_to_line(row, skipcols, $v2);
 		};
 	}else{
-		if(isnullorempty(fields)){
+		if(is_null_or_empty(fields)){
 			$v1 = [];
-			$v2 = findcellindexes(sheet.GetRow(fieldcol), $v1);
-			$v0 = rowtoline(row, skipcols, $v2);
+			$v2 = find_cell_indexes(sheet.GetRow(fieldcol), $v1);
+			$v0 = row_to_line(row, skipcols, $v2);
 		}else{
-			$v1 = stringsplit(fields,[","]);
-			$v2 = findcellindexes(sheet.GetRow(fieldcol), $v1);
-			$v0 = rowtoline(row, skipcols, $v2);
+			$v1 = string_split(fields,[","]);
+			$v2 = find_cell_indexes(sheet.GetRow(fieldcol), $v1);
+			$v0 = row_to_line(row, skipcols, $v2);
 		};
 	};
-	if(isGameTable && (getcellstring(row,0)=='*' || getcellstring(row,1)=='+') || !isGameTable){
+	if(isGameTable && (get_cell_string(row,0)=='*' || get_cell_string(row,1)=='+') || !isGameTable){
 		if($v0.Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !$v0.Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !$v0.Contains(notcontains2))){
 			info = $v0;
 		  value = 0;

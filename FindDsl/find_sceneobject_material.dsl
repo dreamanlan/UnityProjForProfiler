@@ -12,8 +12,8 @@ filter
 	$v0 = 0;
 	$v1 = getcomponent(object, "Renderer");
 	$v2 = $v1.sharedMaterials;
-	looplist($v2){
-		if(isnull($$))
+	loop_list($v2){
+		if(is_null($$))
 			continue;
 		$v3 = $$.name;
 		$v4 = $$.shader.name;

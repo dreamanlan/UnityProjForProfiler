@@ -9,17 +9,17 @@ input("*.meta")
 }
 filter
 {
-	if(stringcontainsany(assetpath, pathfilter)){
-		if(checkyaml(assetpath)){
-			if(checkPath && ispathtoolong(assetpath)){
-				info = assetpath + ", path too long";
+	if(string_contains_any(asset_path, pathfilter)){
+		if(checkyaml(asset_path)){
+			if(checkPath && is_path_too_long(asset_path)){
+				info = asset_path + ", path too long";
 				1;
 			}
 			else{
 				0;
 			};
 		}else{
-			info = assetpath + ", there may be conflicts";
+			info = asset_path + ", there may be conflicts";
 			1;
 		};
 	}else{

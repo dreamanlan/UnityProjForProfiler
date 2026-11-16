@@ -17,18 +17,18 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter) && stringcontainsany(assetpath, anyfilter) && stringnotcontains(assetpath, anynotfilter)){
-    	$v0 = loadasset(assetpath);
-    	if(isnull($v0)){
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter) && string_contains_any(asset_path, anyfilter) && string_not_contains(asset_path, anynotfilter)){
+    	$v0 = load_asset(asset_path);
+    	if(is_null($v0)){
     		0;
     	} else {
     		$v1 = $v0.width;
     		$v2 = $v0.height;
     		$v3 = importer.isReadable;
     		$v4 = importer.mipmapEnabled;
-    		$v5 = gettexturesetting("iPhone");
-        	$v6 = gettexturesetting("Android");
-			$v7 = getruntimememory($v0);
+    		$v5 = get_texture_setting("iPhone");
+        	$v6 = get_texture_setting("Android");
+			$v7 = get_runtime_memory_size($v0);
     		order = $v1 < $v2 ? $v2 : $v1;
     		if(($v1 > maxSize || $v2 > maxSize) && ($v5.maxTextureSize<$v1 && $v5.maxTextureSize<$v2 || $v6.maxTextureSize<$v1 && $v6.maxTextureSize<$v2) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
     			info = format("size:{0},{1} readable:{2} mipmap:{3} memory:{4}", $v1, $v2, $v3, $v4, $v7);
@@ -36,7 +36,7 @@ filter
     		} else {
     		    $r = 0;
     		};
-			unloadasset($v0);
+			unload_asset($v0);
 			$r;
     	};
     }else{

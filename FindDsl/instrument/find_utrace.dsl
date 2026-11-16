@@ -16,19 +16,19 @@ input
 filter
 {
 	if(1000.0/utraceframe.time <= minFps || utraceframe.time >= maxFrameTime){
-		assetpath = "go";
+		asset_path = "go";
 		extraobject = utraceframe;
 		$maxTotalTimeRecord = null();
 		$maxTotalTime = 0;
 		$maxTotalTimeName = "[null]";
 		$ct = 0;
-		extralist = newextralist();
-		looplist(utraceframe.records){
+		extra_list = new_extra_list();
+		loop_list(utraceframe.records){
 			$record = $$;
-			if($record.depth >= minDepth && inthashcontains(threads, $record.threadId) && ($record.time >= maxTotalTime) && stringcontainsany($record.name, containsAny) && stringnotcontains($record.name, nameNotContains)){
+			if($record.depth >= minDepth && int_hash_contains(threads, $record.threadId) && ($record.time >= maxTotalTime) && string_contains_any($record.name, containsAny) && string_not_contains($record.name, nameNotContains)){
 				$name = $record.depth + ":" + $record.name + "|" + $record.frame + "|" + $record.timelineIndex + "|" + $record.threadId + "|" + utraceframe.threads[$record.threadId].threadName;
 				if($ct < 64){
-					extralistadd(extralist, $name, [utraceframe, $record]);
+					extra_list_add(extra_list, $name, [utraceframe, $record]);
 					$ct = $ct + 1;
 				};
 				if($record.time >= $maxTotalTime){
@@ -43,8 +43,8 @@ filter
 		info = format("frame:{0} fps:{1} time:{2} max time:{3} name:{4}",
 			utraceframe.frame, 1000.0/utraceframe.time, utraceframe.time, $maxTotalTime, $maxTotalTimeName
 		);
-		if(!isnull($maxTotalTimeRecord)){
-			extralistadd(extralist, "*" + $maxTotalTimeName, [utraceframe, $maxTotalTimeRecord]);
+		if(!is_null($maxTotalTimeRecord)){
+			extra_list_add(extra_list, "*" + $maxTotalTimeName, [utraceframe, $maxTotalTimeRecord]);
 		};
 		1;
 	}else{

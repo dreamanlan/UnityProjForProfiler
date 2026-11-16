@@ -16,26 +16,26 @@ input("*.prefab")
 }
 filter
 {
-    $name=getfilenamewithoutextension(assetpath);
-    if(stringcontainsany(assetpath, anyfilter) && stringnotcontains(assetpath, notfilter) && stringhashcontains(hashkeys, $name)){
-        $v0 = loadasset(assetpath);
-        $v1 = collectprefabinfo($v0);
+    $name=get_file_name_without_extension(asset_path);
+    if(string_contains_any(asset_path, anyfilter) && string_not_contains(asset_path, notfilter) && string_hash_contains(hashkeys, $name)){
+        $v0 = load_asset(asset_path);
+        $v1 = collect_prefab_info($v0);
         $v2 = getcomponentinchildren($v0,"Playables.PlayableDirector").gameObject.name;
         if($v1.triangleCount >= maxTriangleCount && (!hasAnimation || $v1.clipCount>0) && (!hasOffscreenUpdate || $v1.updateWhenOffscreenCount>0) && (!hasAlwaysAnimate || $v1.alwaysAnimateCount>0)){
             $ret = 0;
             $key = "";
-            looplist($v1.meshes){
+            loop_list($v1.meshes){
                 $meshInfo = $$;
-                $v3 = getfilename($meshInfo.meshName);
+                $v3 = get_file_name($meshInfo.meshName);
                 $subMeshCount = $meshInfo.subMeshCount;
-                if(stringhashcontains(meshhashkeys, $v3) && $subMeshCount>=subMeshCount){
+                if(string_hash_contains(meshhashkeys, $v3) && $subMeshCount>=subMeshCount){
                     $ret = 1;
                     $key = $$.meshName;
                     break;
                 };
             };
             if($ret){
-                scenepath = $name;
+                scene_path = $name;
                 order = $v1.triangleCount;
                 value = order;
                 info = format("key:{0},timeline:{1},skinned:{2},mesh:{3},vertex:{4},triangle:{5},bone:{6},material:{7},max_tex_size:({8},{9}),max_tex_name:{10}={11},clip:{12},max_keyframe:{13}",
@@ -45,7 +45,7 @@ filter
         }else{
             $ret = 0;
         };
-        unloadasset($v0);
+        unload_asset($v0);
         $ret;
     }else{
         0;

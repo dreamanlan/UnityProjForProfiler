@@ -12,11 +12,11 @@ input("*.fbx","*.FBX")
 }
 filter
 {
-	if(assetpath.Contains(contains) && (isnullorempty(not_contains) || !(assetpath.Contains(not_contains) && !assetpath.Contains(not_contains2)))){
-		if(prop.Contains("1") && importer.optimizeGameObjects || prop.Contains("2") && !isnull(importer.extraExposedTransformPaths) && importer.extraExposedTransformPaths.Length>0){
+	if(asset_path.Contains(contains) && (is_null_or_empty(not_contains) || !(asset_path.Contains(not_contains) && !asset_path.Contains(not_contains2)))){
+		if(prop.Contains("1") && importer.optimizeGameObjects || prop.Contains("2") && !is_null(importer.extraExposedTransformPaths) && importer.extraExposedTransformPaths.Length>0){
 			0;
 		}else{
-			object = loadasset(assetpath);
+			object = load_asset(asset_path);
 			1;
 		};
 	}else{
@@ -26,6 +26,6 @@ filter
 process
 {
 	importer.optimizeGameObjects = true;
-	setextraexposedtransformpaths(object, "*");
-    saveandreimport();
+	set_extra_exposed_transform_paths(object, "*");
+    save_and_reimport();
 };

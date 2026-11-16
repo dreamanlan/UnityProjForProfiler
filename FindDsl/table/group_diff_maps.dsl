@@ -14,25 +14,25 @@ input("dummy")
 }
 filter
 {
-    $maps1 = loadmaps(maps1);
-    $maps2 = loadmaps(maps2);
-    $results = matchmaps($maps1,$maps2);
-    looplist($results){
+    $maps1 = load_maps(maps1);
+    $maps2 = load_maps(maps2);
+    $results = match_maps($maps1,$maps2);
+    loop_list($results){
         $row = $$;
         $left = $row[0];
         $right = $row[1];
-        if(isnull($left) || isnull($right)){
+        if(is_null($left) || is_null($right)){
             $leftInfo = "";
             $rightInfo = "";
             $val = 0;
             $module = "";
-            $item = newitem();
-            if(!isnull($left)){
+            $item = new_item();
+            if(!is_null($left)){
                 $leftInfo = format("{0:X}-{1:X}", $left.vm_start, $left.vm_end);
                 $val = $val - $left.size;
                 $module=$left.module;
             };
-            if(!isnull($right)){
+            if(!is_null($right)){
                 $rightInfo = format("{0:X}-{1:X}", $right.vm_start, $right.vm_end);            
                 $val = $val + $right.size;
                 $module=$right.module;

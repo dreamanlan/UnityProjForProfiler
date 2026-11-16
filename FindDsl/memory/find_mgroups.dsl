@@ -18,12 +18,12 @@ filter
 	order = group_info.size;
 	$v0 = group_info.group;
 	$v1 = group_info.count;
-	if(group_info.size >= maxSize && stringcontainsany($v0,containsany) && stringnotcontains($v0,notcontains) && (String.IsNullOrEmpty(startswith) || $v0.StartsWith(startswith)) && (String.IsNullOrEmpty(endswith) || $v0.EndsWith(endswith)) && $v1>=mincount){
+	if(group_info.size >= maxSize && string_contains_any($v0,containsany) && string_not_contains($v0,notcontains) && (String.IsNullOrEmpty(startswith) || $v0.StartsWith(startswith)) && (String.IsNullOrEmpty(endswith) || $v0.EndsWith(endswith)) && $v1>=mincount){
 		info = format("group:{0} count:{1} size:{2}",
 	        group_info.group, group_info.count, group_info.size
 	        );
         value = group_info.size;
-        setredirect("FindDsl/memory/find_managed_objects.dsl", "class", group_info.group);
+        set_redirect("FindDsl/memory/find_managed_objects.dsl", "class", group_info.group);
         1;
 	}else{
         0;

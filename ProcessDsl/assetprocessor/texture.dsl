@@ -8,11 +8,11 @@ input("*.tga","*.png","*.jpg")
 }
 filter
 {
-	$v0 = loadasset(assetpath);
+	$v0 = load_asset(asset_path);
 	$v1 = $v0.width;
 	$v2 = $v0.height;
-	//unloadasset($v0);
-	if(($v1 > maxSize || $v2 > maxSize) && assetpath.Contains(filter)){
+	//unload_asset($v0);
+	if(($v1 > maxSize || $v2 > maxSize) && asset_path.Contains(filter)){
 		info = "size:" + $v1 + "," + $v2;
 		1;
 	} else {

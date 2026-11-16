@@ -16,19 +16,19 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter) && importer.filterMode==parseenum("FilterMode", oldFilterMode)){
-    	$v0 = loadasset(assetpath);
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter) && importer.filterMode==parseenum("FilterMode", oldFilterMode)){
+    	$v0 = load_asset(asset_path);
     	$v1 = $v0.width;
     	$v2 = $v0.height;
-		$v3 = gettexturesetting("iPhone");
-    	$v4 = gettexturesetting("Android");
+		$v3 = get_texture_setting("iPhone");
+    	$v4 = get_texture_setting("Android");
     	if(($v1 > maxSize || $v2 > maxSize) && ($v3.maxTextureSize > maxSize || $v4.maxTextureSize > maxSize)){
     		info = format("size:{0},{1} filter:{2}", $v1, $v2, importer.filterMode);
     		$r = 1;
     	} else {
     		$r = 0;
     	};
-    	unloadasset($v0);
+    	unload_asset($v0);
 		$r;
     }else{
         0;
@@ -37,5 +37,5 @@ filter
 process
 {
     importer.filterMode = parseenum('FilterMode', filterMode);
-    saveandreimport();
+    save_and_reimport();
 };

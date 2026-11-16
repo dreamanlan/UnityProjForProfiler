@@ -9,7 +9,7 @@ input("*.fbx","*.FBX")
 }
 filter
 {
-	if(assetpath.Contains(contains) && (isnullorempty(not_contains) || !assetpath.Contains(not_contains))){
+	if(asset_path.Contains(contains) && (is_null_or_empty(not_contains) || !asset_path.Contains(not_contains))){
 		if(optimize && !importer.optimizeGameObjects){
 			0;
 		}else{
@@ -22,5 +22,5 @@ filter
 process
 {
 	importer.optimizeGameObjects = false;
-  saveandreimport();
+  save_and_reimport();
 };

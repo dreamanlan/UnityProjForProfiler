@@ -9,20 +9,20 @@ input("*.prefab")
 }
 filter
 {
-    if(assetpath.Contains(filter)){
-        $v0 = loadasset(assetpath);
+    if(asset_path.Contains(filter)){
+        $v0 = load_asset(asset_path);
         $v1 = getcomponentsinchildren($v0,"MonoBehaviour");
-        looplist($v1){
+        loop_list($v1){
             $v2 = $$;
-            if(isnull($v2)){
-                $v99 = newitem();
-                $v99.AssetPath = assetpath;
+            if(is_null($v2)){
+                $v99 = new_item();
+                $v99.AssetPath = asset_path;
                 $v99.Info = "component is null.";
             }else{
-                $v3 = getguidandfileid($v2);
+                $v3 = get_guid_and_file_id($v2);
                 if($v3.Value<minFileId){
-                    $v99 = newitem();
-                    $v99.AssetPath = assetpath;
+                    $v99 = new_item();
+                    $v99.AssetPath = asset_path;
                     $v99.Info = format("name:{0} guid:{1} file_id:{2}", $v2.name, $v3.Key, $v3.Value);
                 };
             };

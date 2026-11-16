@@ -10,20 +10,20 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-    	$v0 = loadasset(assetpath);
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter)){
+    	$v0 = load_asset(asset_path);
     	$v1 = $v0.width;
     	$v2 = $v0.height;
-		  $v3 = gettexturesetting("iPhone");
-    	$v4 = gettexturesetting("Android");
-    	$v5 = getfilenamewithoutextension(assetpath);
-    	if(($v1 > maxSize || $v2 > maxSize) && ($v3.maxTextureSize > maxSize || $v4.maxTextureSize > maxSize) && (stringtolower($v5).EndsWith("_n") || stringtolower($v5).EndsWith("_s")) && !(importer.lowDetail)){
+		  $v3 = get_texture_setting("iPhone");
+    	$v4 = get_texture_setting("Android");
+    	$v5 = get_file_name_without_extension(asset_path);
+    	if(($v1 > maxSize || $v2 > maxSize) && ($v3.maxTextureSize > maxSize || $v4.maxTextureSize > maxSize) && (string_to_lower($v5).EndsWith("_n") || string_to_lower($v5).EndsWith("_s")) && !(importer.lowDetail)){
     		info = "size:" + $v1 + "," + $v2;
     		$r = 1;
     	} else {
     		$r = 0;
     	};
-    	unloadasset($v0);
+    	unload_asset($v0);
 		$r;
 	} else {
 		0;
@@ -32,5 +32,5 @@ filter
 process
 {
 	importer.lowDetail = true;
-  saveandreimport();
+  save_and_reimport();
 };

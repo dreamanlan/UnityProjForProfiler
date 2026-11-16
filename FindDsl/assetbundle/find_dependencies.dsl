@@ -17,13 +17,13 @@ input
 filter
 {
 	str = gettype("System.String");
-	if(assetpath.Contains(assetfilter)){
-		$v0 = getdependencies(assetpath);
+	if(asset_path.Contains(assetfilter)){
+		$v0 = get_dependencies(asset_path);
 		if(!findab){
-			looplist($v0){
+			loop_list($v0){
 				if($$.Contains(dependencefilter)){
-					$v1 = newitem();
-					$v1.AssetPath = assetpath;
+					$v1 = new_item();
+					$v1.AssetPath = asset_path;
 					$v1.Info = $$;
 					$v1.Order = 0;
 					$v1.Value = 0;
@@ -31,14 +31,14 @@ filter
 			};
 		}else{
 			$v10 = all_asset_bundle_info.GetAssetBuildInfoByAssetBundleName(dependenceab);
-			looplist($v0){
-				$v11 = getfilenamewithoutextension($$);
-				looplist($v10.assetNames){
-					$v12 = getfilenamewithoutextension($$);
+			loop_list($v0){
+				$v11 = get_file_name_without_extension($$);
+				loop_list($v10.assetNames){
+					$v12 = get_file_name_without_extension($$);
 					if(str.Compare($v11,$v12,true)==0){
 						debuglog("{0} {1}", $v11, $v12);
-						$v1 = newitem();
-						$v1.AssetPath = assetpath;
+						$v1 = new_item();
+						$v1.AssetPath = asset_path;
 						$v1.Info = $$;
 						$v1.Order = 0;
 						$v1.Value = 0;

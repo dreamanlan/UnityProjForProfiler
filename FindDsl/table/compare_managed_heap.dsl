@@ -25,15 +25,15 @@ filter
     $ix = 1;
     $ix2 = 2;
 
-    $size = getcellnumeric(row, $ix);
-    $addr = getcellstring(row, $ix2);
-    $vaddr = str2ulong($addr);
+    $size = get_cell_numeric(row, $ix);
+    $addr = get_cell_string(row, $ix2);
+    $vaddr = str_2_ulong($addr);
 
     $v99 = 0;
-    $row = findrowfromhashtable(dict2, [$addr]);
-    if(!isnull($row)){
+    $row = find_row_from_hashtable(dict2, [$addr]);
+    if(!is_null($row)){
         if(resultopt!=2){
-            $size2 = getcellnumeric($row, $ix);
+            $size2 = get_cell_numeric($row, $ix);
             info=format("{0:X}, size {1}=>{2}",$vaddr,$size,$size2);
             $v99=1;
         };
@@ -47,6 +47,6 @@ filter
 
 script(buildHashtable)args($paramInfo)
 {
-    $dict = tabletohashtable(hashtableget(params,"table2").Value,1,[2]);
+    $dict = table_to_hashtable(hashtable_get(params,"table2").Value,1,[2]);
     return($dict);
 };

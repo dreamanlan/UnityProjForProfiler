@@ -19,12 +19,12 @@ filter
 {
 	String = gettype("System.String");
 	order = row.RowIndex;
-	if(isnullorempty(fields)){
+	if(is_null_or_empty(fields)){
 		$v0 = row.GetLine();
 	}else{
-		$v1 = stringsplit(fields,[","]);
-		$v2 = findcellindexes(sheet.GetRow(2), $v1);
-		$v0 = rowtoline(row, 0, $v2);
+		$v1 = string_split(fields,[","]);
+		$v2 = find_cell_indexes(sheet.GetRow(2), $v1);
+		$v0 = row_to_line(row, 0, $v2);
 	};
 	if($v0.Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !$v0.Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !$v0.Contains(notcontains2))){
 		info = $v0;

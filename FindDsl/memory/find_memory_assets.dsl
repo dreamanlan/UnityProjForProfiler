@@ -15,12 +15,12 @@ filter
 {
     String = gettype("System.String");
 	order = memory.size;
-	if(memory.size >= maxSize && memory.className == class && stringcontainsany(memory.name,anyfilter)){
-		$v0 = findasset(memory.name, memory.className);
-		assetpath = $v0[0];
-		scenepath = $v0[1];
-		if(isnullorempty(assetpath)){
-			assetpath = memory.name;
+	if(memory.size >= maxSize && memory.className == class && string_contains_any(memory.name,anyfilter)){
+		$v0 = find_asset(memory.name, memory.className);
+		asset_path = $v0[0];
+		scene_path = $v0[1];
+		if(is_null_or_empty(asset_path)){
+			asset_path = memory.name;
 		};
 		info = format("name:{0} class:{1} size:{2} refby:{3}",
             memory.name, memory.className, memory.size, memory.refCount
@@ -36,6 +36,6 @@ filter
 
 script(BuildExtraList)args($item)
 {
-	$r = findshortestpathtoroot($item.ExtraObject);
+	$r = find_shortest_path_to_root($item.ExtraObject);
 	return($r);
 };

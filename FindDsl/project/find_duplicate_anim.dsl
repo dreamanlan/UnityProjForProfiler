@@ -15,32 +15,32 @@ input("*.anim")
 }
 filter
 {
-	$v0 = loadasset(assetpath);
-	if(isnull($v0)){
+	$v0 = load_asset(asset_path);
+	if(is_null($v0)){
 		$r = 0;
 	} else {
-		if(assetpath.Contains(filter) && (isnullorempty(notfilter) || !assetpath.Contains(notfilter))){
-			info = format("{0} guid:{1}", assetpath, assetpath2guid(assetpath));
+		if(asset_path.Contains(filter) && (is_null_or_empty(notfilter) || !asset_path.Contains(notfilter))){
+			info = format("{0} guid:{1}", asset_path, asset_path_2_guid(asset_path));
 			order = value;
-			value = calcassetsize(assetpath);
+			value = calc_asset_size(asset_path);
 			if(duptype==1){
-				group = format("{0}|{1}", value, calcassetmd5(assetpath));
+				group = format("{0}|{1}", value, calc_assetmd5(asset_path));
 			}else{
-				group = format("{0}", assetpath2guid(assetpath));
+				group = format("{0}", asset_path_2_guid(asset_path));
 			};
 			$r = 1;
 		} else {
 			$r = 0;
 		};
 	};
-	unloadasset($v0);
+	unload_asset($v0);
 	$r;
 }
 group
 {
 	if(count>1){
 		order = count;
-		info = format("{0} count:{1} ref by count:{2}", group, count, calcrefbycount(assetpath));
+		info = format("{0} count:{1} ref by count:{2}", group, count, calc_ref_by_count(asset_path));
 		1;
 	}else{
 		0;

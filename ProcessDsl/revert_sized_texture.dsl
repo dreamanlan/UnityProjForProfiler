@@ -17,9 +17,9 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter) && stringcontainsany(assetpath, anyfilter) && stringnotcontainsany(assetpath, anynotfilter)){
-    	$v0 = loadasset(assetpath);
-    	if(isnull($v0)){
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter) && string_contains_any(asset_path, anyfilter) && string_not_contains_any(asset_path, anynotfilter)){
+    	$v0 = load_asset(asset_path);
+    	if(is_null($v0)){
     		0;
     	} else {
     		$v1 = $v0.width;
@@ -27,8 +27,8 @@ filter
     		$v3 = importer.isReadable;
     		$v4 = importer.mipmapEnabled;
 
-    		$v5 = gettexturesetting("iPhone");
-        	$v6 = gettexturesetting("Android");
+    		$v5 = get_texture_setting("iPhone");
+        	$v6 = get_texture_setting("Android");
 
     		order = $v1 < $v2 ? $v2 : $v1;
     		if(($v1 > maxSize || $v2 > maxSize) && ($v5.maxTextureSize<$v1 && $v5.maxTextureSize<$v2 || $v6.maxTextureSize<$v1 && $v6.maxTextureSize<$v2) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
@@ -37,7 +37,7 @@ filter
     		} else {
     		    $r = 0;
     		};
-    		unloadasset($v0);
+    		unload_asset($v0);
 			$r;
     	};
     }else{
@@ -47,25 +47,25 @@ filter
 process
 {
 	/*
-	$v0 = getdefaulttexturesetting();
+	$v0 = get_default_texture_setting();
 	$v0.maxTextureSize = changetype(maxSize, "int");
-	settexturesetting($v0);
+	set_texture_setting($v0);
 
-	$v1 = gettexturesetting("Standalone");
+	$v1 = get_texture_setting("Standalone");
 	$v1.maxTextureSize = changetype(maxSize, "int");
-	settexturesetting($v1);
+	set_texture_setting($v1);
 	*/
-	$v2 = gettexturesetting("iPhone");
+	$v2 = get_texture_setting("iPhone");
 	$v2.overridden=true;
 	$v2.maxTextureSize = 2048;
-	setastctexture($v2);
-	settexturesetting($v2);
+	set_astc_texture($v2);
+	set_texture_setting($v2);
 
-	$v3 = gettexturesetting("Android");
+	$v3 = get_texture_setting("Android");
 	$v3.overridden=true;
 	$v3.maxTextureSize = 2048;
-	setastctexture($v3);
-	settexturesetting($v3);
+	set_astc_texture($v3);
+	set_texture_setting($v3);
 
-  saveandreimport();
+  save_and_reimport();
 };

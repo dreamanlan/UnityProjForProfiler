@@ -10,19 +10,19 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-    	$v0 = loadasset(assetpath);
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter)){
+    	$v0 = load_asset(asset_path);
     	$v1 = $v0.width;
     	$v2 = $v0.height;
-		$v3 = gettexturesetting("iPhone");
-    	$v4 = gettexturesetting("Android");
+		$v3 = get_texture_setting("iPhone");
+    	$v4 = get_texture_setting("Android");
     	if(($v1 > maxSize || $v2 > maxSize) && ($v3.maxTextureSize > maxSize || $v4.maxTextureSize > maxSize)){
     		info = "size:" + $v1 + "," + $v2;
     		$r = 1;
     	} else {
     		$r = 0;
     	};
-    	unloadasset($v0);
+    	unload_asset($v0);
 		$r;
 	} else {
 		0;
@@ -31,25 +31,25 @@ filter
 process
 {
 	/*
-	$v0 = getdefaulttexturesetting();
+	$v0 = get_default_texture_setting();
 	$v0.maxTextureSize = changetype(maxSize, "int");
-	settexturesetting($v0);
+	set_texture_setting($v0);
 
-	$v1 = gettexturesetting("Standalone");
+	$v1 = get_texture_setting("Standalone");
 	$v1.maxTextureSize = changetype(maxSize, "int");
-	settexturesetting($v1);
+	set_texture_setting($v1);
 	*/
-	$v2 = gettexturesetting("iPhone");
+	$v2 = get_texture_setting("iPhone");
 	$v2.overridden=true;
 	$v2.maxTextureSize = changetype(maxSize, "int");
-	setastctexture($v2);
-	settexturesetting($v2);
+	set_astc_texture($v2);
+	set_texture_setting($v2);
 
-	$v3 = gettexturesetting("Android");
+	$v3 = get_texture_setting("Android");
 	$v3.overridden=true;
 	$v3.maxTextureSize = changetype(maxSize, "int");
-	setastctexture($v3);
-	settexturesetting($v3);
+	set_astc_texture($v3);
+	set_texture_setting($v3);
 
-  saveandreimport();
+  save_and_reimport();
 };

@@ -10,8 +10,8 @@ input("*.anim")
 }
 filter
 {
-    if(stringcontains(assetpath, filter) && stringnotcontains(assetpath, notfilter)){
-        $v0 = getanimationclipinfo();
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter)){
+        $v0 = get_animation_clip_info();
         order = $v0.maxKeyFrameCount;
         if($v0.maxKeyFrameCount>=maxKeyFrameCount){
             info = format($v1, "clip_name:{0},max_keyframe_count:{1},curve:{2}",

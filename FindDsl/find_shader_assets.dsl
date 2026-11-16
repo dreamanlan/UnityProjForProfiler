@@ -8,10 +8,10 @@ input("t:shader","t:visualeffect")
 }
 filter
 {
-	if(assetpath.Contains(filter)){
-		$v0 = loadasset(assetpath);
-		order = getshaderpropertycount($v0);
-		info = format("{0} guid:{1} property count:{2} texture count:{3}", getfilename(assetpath), assetpath2guid(assetpath), order, getshaderpropertycount($v0, 4));
+	if(asset_path.Contains(filter)){
+		$v0 = load_asset(asset_path);
+		order = get_shader_property_count($v0);
+		info = format("{0} guid:{1} property count:{2} texture count:{3}", get_file_name(asset_path), asset_path_2_guid(asset_path), order, get_shader_property_count($v0, 4));
 		1;
 	}else{
 		0;

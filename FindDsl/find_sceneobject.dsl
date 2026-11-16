@@ -12,7 +12,7 @@ input("Transform")
 }
 filter
 {
-	if(scenepath.Contains(objectfilter)){
+	if(scene_path.Contains(objectfilter)){
 		1;
 	} else {
 		0;

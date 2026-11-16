@@ -16,7 +16,7 @@ input
         file("csv");
         script("LoadManagedHeaps");
     };
-    bool("findasset", false);
+    bool("find_asset", false);
     float("pathwidth",240){range(20,4096);};
     feature("source", "snapshot");
     feature("menu", "6.Memory/slowly group memory and mheaps");
@@ -24,20 +24,20 @@ input
 }
 filter
 {
-    if(isnull(@hash)){
+    if(is_null(@hash)){
         @hash = hashtable();
     };
-    if(memory.size >= maxSize && stringcontains(memory.className, classfilter) && stringcontains(memory.name, filter) && stringnotcontains(memory.className, classnotfilter) && stringnotcontains(memory.name, notfilter)){
-        if(findasset){
-        		assetpath = (findasset(memory.name, memory.className))[0];
+    if(memory.size >= maxSize && string_contains(memory.className, classfilter) && string_contains(memory.name, filter) && string_not_contains(memory.className, classnotfilter) && string_not_contains(memory.name, notfilter)){
+        if(find_asset){
+        		asset_path = (find_asset(memory.name, memory.className))[0];
         }else{
-            assetpath = memory.name;
+            asset_path = memory.name;
         };
-        if(isnullorempty(assetpath)){
-            assetpath = memory.name;
+        if(is_null_or_empty(asset_path)){
+            asset_path = memory.name;
         };
-        $v0 = findmanagedheaps(mheaps, memory.address);
-        if(isnull($v0)){
+        $v0 = find_managed_heaps(mheaps, memory.address);
+        if(is_null($v0)){
             $v1 = 0;
             $v2 = 0;
         }else{
@@ -46,14 +46,14 @@ filter
         };
         if(heapAddr==0 || heapAddr==$v2){
         		info = format("mheap:{0:X}", $v2);
-        		scenepath = info;
+        		scene_path = info;
             order = $v2;
             value = memory.size;
-            group = assetpath;
-            $key = assetpath+"-"+info;
-            $r = hashtableget(@hash, $key);
-            if(isnull($r)){
-                hashtableadd(@hash, $key, 1);
+            group = asset_path;
+            $key = asset_path+"-"+info;
+            $r = hashtable_get(@hash, $key);
+            if(is_null($r)){
+                hashtable_add(@hash, $key, 1);
                 1;
             }else{
                 0;
@@ -75,8 +75,8 @@ group
 
 script(LoadManagedHeaps)args($paramInfo)
 {
-    if(!isnullorempty($paramInfo.Value)){
-        $paramInfo.Value = loadmanagedheaps($paramInfo.Value);
+    if(!is_null_or_empty($paramInfo.Value)){
+        $paramInfo.Value = load_managed_heaps($paramInfo.Value);
         return(3600.0);
     }else{
         return(1.0);

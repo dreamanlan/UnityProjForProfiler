@@ -8,8 +8,8 @@ input("t:texture","t:mesh","t:model","t:material")
 }
 filter
 {
-    if(assetpath.Contains(filter)){
-        info = assetpath;
+    if(asset_path.Contains(filter)){
+        info = asset_path;
         1;
     }else{
         0;

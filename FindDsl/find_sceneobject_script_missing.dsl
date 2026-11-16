@@ -8,11 +8,11 @@ input("Transform")
 }
 filter
 {
-	if(scenepath.Contains(filter)){
+	if(scene_path.Contains(filter)){
 		$v0 = getcomponents(object, "Component");
 		$v1 = 0;
-		looplist($v0){
-			if(isnull($$)){
+		loop_list($v0){
+			if(is_null($$)){
 				$v1=1;
 			};
 		};

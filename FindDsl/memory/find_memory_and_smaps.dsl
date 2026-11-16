@@ -17,7 +17,7 @@ input
 	    file("txt");
 	    script("LoadMaps");
 	};
-	bool("findasset", false);
+	bool("find_asset", false);
 	float("pathwidth",240){range(20,4096);};
 	feature("source", "snapshot");
 	feature("menu", "6.Memory/slowly find memory and smaps");
@@ -25,18 +25,18 @@ input
 }
 filter
 {
-	if(memory.size >= maxSize && stringcontains(memory.className, classfilter) && stringcontains(memory.name, filter) && stringnotcontains(memory.className, classnotfilter) && stringnotcontains(memory.name, notfilter)){
-		if(findasset){
-    		assetpath = (findasset(memory.name, memory.className))[0];
+	if(memory.size >= maxSize && string_contains(memory.className, classfilter) && string_contains(memory.name, filter) && string_not_contains(memory.className, classnotfilter) && string_not_contains(memory.name, notfilter)){
+		if(find_asset){
+    		asset_path = (find_asset(memory.name, memory.className))[0];
 	    }else{
-		    assetpath = memory.name;
+		    asset_path = memory.name;
 		};
-		if(isnullorempty(assetpath)){
-			assetpath = memory.name;
+		if(is_null_or_empty(asset_path)){
+			asset_path = memory.name;
 		};
 		$v0 = findsmaps(maps, memory.address);
-		$v1 = findmanagedheaps(mheaps, memory.address);
-		if(isnull($v0)){
+		$v1 = find_managed_heaps(mheaps, memory.address);
+		if(is_null($v0)){
 		    $v2 = "unknown";
 		    $v3 = 0;
 		    $v4 = 0;
@@ -49,7 +49,7 @@ filter
 		    $v5 = $v0.rss;
 		    $v6 = $v0.pss;
 		};
-		if(isnull($v1)){
+		if(is_null($v1)){
 		    $v7 = 0;
 		    $v8 = 0;
 		}else{
@@ -57,7 +57,7 @@ filter
 		    $v8 = $v1.vm_start;
 		};
 		if(sectionAddr==0 || sectionAddr==$v4){
-    		scenepath = format("name:{0} class:{1} size:{2} addr:{3:X}",
+    		scene_path = format("name:{0} class:{1} size:{2} addr:{3:X}",
     	        memory.name, memory.className, memory.size, memory.address
     	        );
     		info = format("module:{0} section_size:{1} section_start:{2:X} rss:{3} pss:{4} mheap_size:{5} mheap:{6:X}",
@@ -78,8 +78,8 @@ filter
 
 script(LoadManagedHeaps)args($paramInfo)
 {
-    if(!isnullorempty($paramInfo.Value)){
-        $paramInfo.Value = loadmanagedheaps($paramInfo.Value);
+    if(!is_null_or_empty($paramInfo.Value)){
+        $paramInfo.Value = load_managed_heaps($paramInfo.Value);
         return(3600.0);
     }else{
         return(1.0);
@@ -87,7 +87,7 @@ script(LoadManagedHeaps)args($paramInfo)
 };
 script(LoadMaps)args($paramInfo)
 {
-    if(!isnullorempty($paramInfo.Value)){
+    if(!is_null_or_empty($paramInfo.Value)){
         $paramInfo.Value = loadsmaps($paramInfo.Value);
         return(3600.0);
     }else{
@@ -96,6 +96,6 @@ script(LoadMaps)args($paramInfo)
 };
 script(BuildExtraList)args($item)
 {
-	$r = findshortestpathtoroot($item.ExtraObject);
+	$r = find_shortest_path_to_root($item.ExtraObject);
 	return($r);
 };

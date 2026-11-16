@@ -8,13 +8,13 @@ input("MeshRenderer", "SkinnedMeshRenderer")
 }
 filter
 {
-	$v0 = calcmeshtexratio(object);
+	$v0 = calc_mesh_tex_ratio(object);
 	$v1 = $v0[0];
 	$v2 = $v0[1];
 	$v3 = $v0[2];
 	$v4 = $v0[3];
 	order = changetype($v2 * 1000,"int");
-	if($v2 > 0 && scenepath.Contains(filter)){
+	if($v2 > 0 && scene_path.Contains(filter)){
 		info = $v1;
 		1;
 	}else{

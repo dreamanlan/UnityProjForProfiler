@@ -7,11 +7,11 @@ input("*.asset")
 }
 filter
 {
-	object = loadasset(assetpath);
+	object = load_asset(asset_path);
 	$v0 = gettypename(object);
 	$v1 = gettypefullname(object);
 	$v2 = gettypeassemblyname(object);
-	if(!isnull(object) && $v0=="AnimationReference" && assetpath.Contains(filter) && !assetpath.EndsWith("_split.asset")){
+	if(!is_null(object) && $v0=="AnimationReference" && asset_path.Contains(filter) && !asset_path.EndsWith("_split.asset")){
 		info = $v1+","+$v2;
 		1;
 	}else{
@@ -20,10 +20,10 @@ filter
 }
 process
 {
-	if(assetpath.Contains("/Player/")){
-		splitanimationreference("*",list("Win_Idle"),list("Story_.*"));
+	if(asset_path.Contains("/Player/")){
+		split_animation_reference("*",list("Win_Idle"),list("Story_.*"));
 	}else{
-		splitanimationreference(list("Idle","Idle_.*","Story_Idle","Showup_1","Showup_2","Run","Walk","End","Start","Collision_Before.*","Collision_Behind.*","Idle_Play_.*","StoryAnim.*","AI_.*"),"*",list("Story_.*","dailybehave_.*","Date_.*","HuDong_.*","Baoqi_.*","Beibaoqi_.*","talk_.*","Face.*","Lip_.*"));
+		split_animation_reference(list("Idle","Idle_.*","Story_Idle","Showup_1","Showup_2","Run","Walk","End","Start","Collision_Before.*","Collision_Behind.*","Idle_Play_.*","StoryAnim.*","AI_.*"),"*",list("Story_.*","dailybehave_.*","Date_.*","HuDong_.*","Baoqi_.*","Beibaoqi_.*","talk_.*","Face.*","Lip_.*"));
 	};
 };
 

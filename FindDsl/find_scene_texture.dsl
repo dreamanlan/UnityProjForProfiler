@@ -19,24 +19,24 @@ filter
 	if(order<1){
 		@hash = hashtable();
 	};
-	if(hashtableget(@hash, assetpath, false)){
+	if(hashtable_get(@hash, asset_path, false)){
 		$r = 0;
 	}
 	else{
-		hashtableadd(@hash, assetpath, true);
-		$v0 = loadasset(assetpath);
-		if(isnull($v0)){
+		hashtable_add(@hash, asset_path, true);
+		$v0 = load_asset(asset_path);
+		if(is_null($v0)){
 			$r = 0;
 		} else {
 			$v1 = $v0.width;
 			$v2 = $v0.height;
 			$v3 = importer.isReadable;
 			$v4 = importer.mipmapEnabled;
-			$v5 = gettexturestorage($v0);
-			$v6 = gettexturememory($v0);
+			$v5 = get_texture_storage_memory_size($v0);
+			$v6 = get_texture_runtime_memory_size($v0);
 			order = $v6;
 			value = $v6/1024.0/1024.0;
-			if(($v1 > maxSize || $v2 > maxSize) && stringcontainsany(assetpath, filter) && stringcontainsany(assetpath, filter2) && stringnotcontains(assetpath, notfilter) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
+			if(($v1 > maxSize || $v2 > maxSize) && string_contains_any(asset_path, filter) && string_contains_any(asset_path, filter2) && string_not_contains(asset_path, notfilter) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
 				info = format("size:{0},{1} readable:{2} mipmap:{3} storage:{4:f3}mb runtime memory:{5:f3}mb", $v1, $v2, $v3, $v4, $v5/1024.0/1024.0, $v6/1024.0/1024.0);
 				$r = 1;
 			} else {
@@ -44,6 +44,6 @@ filter
 			};
 		};
 	};
-	unloadasset($v0);
+	unload_asset($v0);
 	$r;
 };

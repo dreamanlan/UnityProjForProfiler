@@ -26,13 +26,13 @@ filter
 {
     String = gettype("System.String");
     $header = mission_event.GetRow(2);
-    $ix = findcellindex($header, "SubType");
-    $ix2 = findcellindex($header, "Target");
-    $ix3 = findcellindex($header, "ScriptFunc");
-    $ix4 = findcellindex($header, "Params");
+    $ix = find_cell_index($header, "SubType");
+    $ix2 = find_cell_index($header, "Target");
+    $ix3 = find_cell_index($header, "ScriptFunc");
+    $ix4 = find_cell_index($header, "Params");
 
-    $mid = getcellstring(row, 0);
-    $erow = mission_event.GetRow(findrowindex(mission_event, 0, $mid));
+    $mid = get_cell_string(row, 0);
+    $erow = mission_event.GetRow(find_row_index(mission_event, 0, $mid));
 
     $sid = 0;
     $sname="";
@@ -40,24 +40,24 @@ filter
     $sendmsg="";
     $scpfunc="";
     $scparg="";
-    if(getcellnumeric($erow, $ix)==4){
-            $sid = getcellnumeric($erow, $ix2);
-            $row = story.GetRow(findrowindex(story, 0, $sid));
-            $sname = getcellstring($row,1);
-            $sbeginmsg = getcellstring($row,2);
-            $sendmsg = getcellstring($row,3);
-    }elseif(getcellnumeric($erow, $ix)==19){
-            $scpfunc = getcellstring($erow, $ix3);
-            $scparg = getcellstring($erow, $ix4);
+    if(get_cell_numeric($erow, $ix)==4){
+            $sid = get_cell_numeric($erow, $ix2);
+            $row = story.GetRow(find_row_index(story, 0, $sid));
+            $sname = get_cell_string($row,1);
+            $sbeginmsg = get_cell_string($row,2);
+            $sendmsg = get_cell_string($row,3);
+    }elseif(get_cell_numeric($erow, $ix)==19){
+            $scpfunc = get_cell_string($erow, $ix3);
+            $scparg = get_cell_string($erow, $ix4);
     };
 
     order = row.RowIndex;
-    if(isnullorempty(fields)){
+    if(is_null_or_empty(fields)){
             $v0 = row.GetLine();
     }else{
-            $v1 = stringsplit(fields,[","]);
-            $v2 = findcellindexes(sheet.GetRow(2), $v1);
-            $v0 = rowtoline(row, 0, $v2);
+            $v1 = string_split(fields,[","]);
+            $v2 = find_cell_indexes(sheet.GetRow(2), $v1);
+            $v0 = row_to_line(row, 0, $v2);
     };
     if((sid=="" || $sid==sid) && (sname=="" || $sname.Contains(sname)) && $v0.Contains(contains) && (String.IsNullOrEmpty(notcontains1) || !$v0.Contains(notcontains1)) && (String.IsNullOrEmpty(notcontains2) || !$v0.Contains(notcontains2))){
             info = $sid+"\t"+$sname+"\t"+$sbeginmsg+"\t"+$sendmsg+"\t"+$scpfunc+"\t"+$scparg+"\t"+$v0;

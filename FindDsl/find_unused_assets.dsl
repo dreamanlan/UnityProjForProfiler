@@ -8,8 +8,8 @@ input("*.tga","*.png","*.jpg","*.fbx","*.FBX","*.exr","*.mat","*.controller","*.
 }
 filter
 {
-    if(assetpath.Contains(filter) && !assetpath.EndsWith(".asset") && !assetpath.EndsWith(".prefab") && !assetpath.EndsWith(".unity")){
-        info = assetpath;
+    if(asset_path.Contains(filter) && !asset_path.EndsWith(".asset") && !asset_path.EndsWith(".prefab") && !asset_path.EndsWith(".unity")){
+        info = asset_path;
         1;
     }else{
         0;

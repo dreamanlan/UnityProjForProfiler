@@ -11,11 +11,11 @@ input("Mesh")
 filter
 {
 	$v0 = object;
-	if(isnull($v0)){
+	if(is_null($v0)){
 		$r = 0;
 	} else {
 		$v1 = $v0.name;
-		$v2 = getruntimememory($v0);
+		$v2 = get_runtime_memory_size($v0);
 		order = $v2;
 		value = $v2/1024.0/1024.0;
 		if($v2 >= maxSize * 1024.0){

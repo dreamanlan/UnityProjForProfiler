@@ -11,10 +11,10 @@ input("dummy")
 }
 filter
 {
-    $maps = loadmaps(maps);
-    looplist($maps){
+    $maps = load_maps(maps);
+    loop_list($maps){
         $row = $$;
-        $item = newitem();
+        $item = new_item();
         $item.AssetPath = $row.module;
         $item.ScenePath = $row.vm_start+"-"+$row.vm_end;
         $item.Info = $row.size + " " + $module;

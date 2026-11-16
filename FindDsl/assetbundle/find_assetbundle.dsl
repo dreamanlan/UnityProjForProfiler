@@ -10,24 +10,24 @@ input
 }
 filter
 {
-	if(stringcontains(assetpath, abfilter)){
+	if(string_contains(asset_path, abfilter)){
 	    $v0 = asset_bundle_info.assetNames;
 	    $v1 = asset_bundle_info.dependencies;
-	    looplist($v0){
+	    loop_list($v0){
 	        $v2 = $$;
-	        if(stringcontains($v2, assetfilter)){
-	            $v10 = newitem();
-	            $v10.AssetPath = assetpath;
+	        if(string_contains($v2, assetfilter)){
+	            $v10 = new_item();
+	            $v10.AssetPath = asset_path;
 				$v10.Info = "asset:"+$v2;
 				$v10.Order = 0;
 				$v10.Value = 0;
 	        };
 	    };
-	    looplist($v1){
+	    loop_list($v1){
 	        $v2 = $$;
-	        if(stringcontains($v2, assetfilter)){
-	            $v10 = newitem();
-	            $v10.AssetPath = assetpath;
+	        if(string_contains($v2, assetfilter)){
+	            $v10 = new_item();
+	            $v10.AssetPath = asset_path;
 				$v10.Info = "dep:"+$v2;
 				$v10.Order = 0;
 				$v10.Value = 0;

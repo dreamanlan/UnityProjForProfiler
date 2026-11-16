@@ -16,17 +16,17 @@ input("dummy")
 }
 filter
 {
-    $maps1 = loadmaps(maps1);
-    $maps2 = loadmaps(maps2);
-    $results = matchmaps($maps1,$maps2);
-    $diffs = calcmatchedmapsdiff($results,1);
+    $maps1 = load_maps(maps1);
+    $maps2 = load_maps(maps2);
+    $results = match_maps($maps1,$maps2);
+    $diffs = calc_matched_maps_diff($results,1);
     $addrs = loadaddrs(addrs);
     $ct = $addrs.Count;
-    looplist($addrs){
+    loop_list($addrs){
         $addr = $$;
-        $r = findmaps($diffs,$addr);
-        if(!isnull($r)){
-            $item = newitem();
+        $r = find_maps($diffs,$addr);
+        if(!is_null($r)){
+            $item = new_item();
             $item.AssetPath = format("{0:X}",$addr);
             $item.ScenePath = $addr;
             $item.Info = $r.vm_start+"-"+$r.vm_end+" "+$r.size+" "+$r.module;

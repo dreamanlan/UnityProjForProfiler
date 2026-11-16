@@ -455,152 +455,152 @@ public static class ResourceEditUtility
     {
         calc.OnLog = msg => { UnityEngine.Debug.LogError(msg); };
         calc.NewApiRegistry();
-        calc.Register("setparamstomodel", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetParamsToModelExp>());
-        calc.Register("getparamsfrommodel", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetParamsFromModelExp>());
-        calc.Register("setparamstotexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetParamsToTextureExp>());
-        calc.Register("getparamsfromtexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetParamsFromTextureExp>());
-        calc.Register("setparamstoprefab", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetParamsToPrefabExp>());
-        calc.Register("getparamsfromprefab", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetParamsFromPrefabExp>());
-        calc.Register("updatemodeldb", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UpdateModelDbExp>());
-        calc.Register("updatetexturedb", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UpdateTextureDbExp>());
-        calc.Register("updateprefabdb", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UpdatePrefabDbExp>());
-        calc.Register("callscript", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CallScriptExp>());
-        calc.Register("setredirect", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetRedirectExp>());
-        calc.Register("newitem", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.NewItemExp>());
-        calc.Register("setextraobject", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetExtraObjectExp>());
-        calc.Register("getextraobject", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetExtraObjectExp>());
-        calc.Register("calcextraobjectfieldcount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcExtraObjectFieldCountExp>());
-        calc.Register("newextralist", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.NewExtraListExp>());
-        calc.Register("extralistadd", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ExtraListAddExp>());
-        calc.Register("extralistclear", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ExtraListClearExp>());
-        calc.Register("getreferenceassets", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetReferenceAssetsExp>());
-        calc.Register("getreferencebyassets", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetReferenceByAssetsExp>());
-        calc.Register("calcrefcount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcRefCountExp>());
-        calc.Register("calcrefbycount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcRefByCountExp>());
-        calc.Register("findasset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindAssetExp>());
-        calc.Register("selectframe", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectFrameExp>());
-        calc.Register("filtercpusample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FilterCpuSampleExp>());
-        calc.Register("filtergpusample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FilterGpuSampleExp>());
-        calc.Register("selectsample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectSampleExp>());
-        calc.Register("selectpropertypath", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectPropertyPathExp>());
-        calc.Register("setmarkerfilter", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMarkerFilterExp>());
-        calc.Register("setmaxrefbynumperobj", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxRefByNumPerObjExp>());
-        calc.Register("findshortestpathtoroot", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindShortestPathToRootExp>());
-        calc.Register("getrefbyobjdata", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetRefByObjectDataExp>());
-        calc.Register("getrefobjdata", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetRefObjectDataExp>());
-        calc.Register("objdatafromaddress", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromAddressExp>());
-        calc.Register("objdatafromunifiedindex", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromUnifiedObjectIndexExp>());
-        calc.Register("objdatafromnativeindex", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromNativeObjectIndexExp>());
-        calc.Register("objdatafrommanagedindex", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromManagedObjectIndexExp>());
-        calc.Register("loadidaprosymbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadIdaproSymbolsExp>());
-        calc.Register("loadxcodesymbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadXcodeSymbolsExp>());
-        calc.Register("loadbuglyandroidsymbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadBuglyAndroidSymbolsExp>());
-        calc.Register("loadbuglyiossymbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadBuglyIosSymbolsExp>());
-        calc.Register("converttorelativeaddrs", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ConvertToRelativeAddrsExp>());
-        calc.Register("mapbuglyandroidsymbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MapBuglyAndroidSymbolsExp>());
-        calc.Register("mapbuglyiossymbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MapBuglyIosSymbolsExp>());
-        calc.Register("mapmyhooksymbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MapMyhookSymbolsExp>());
+        calc.Register("set_params_to_model", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetParamsToModelExp>());
+        calc.Register("get_params_from_model", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetParamsFromModelExp>());
+        calc.Register("set_params_to_texture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetParamsToTextureExp>());
+        calc.Register("get_params_from_texture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetParamsFromTextureExp>());
+        calc.Register("set_params_to_prefab", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetParamsToPrefabExp>());
+        calc.Register("get_params_from_prefab", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetParamsFromPrefabExp>());
+        calc.Register("update_modeldb", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UpdateModelDbExp>());
+        calc.Register("update_texturedb", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UpdateTextureDbExp>());
+        calc.Register("update_prefabdb", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UpdatePrefabDbExp>());
+        calc.Register("call_script", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CallScriptExp>());
+        calc.Register("set_redirect", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetRedirectExp>());
+        calc.Register("new_item", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.NewItemExp>());
+        calc.Register("set_extraobject", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetExtraObjectExp>());
+        calc.Register("get_extraobject", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetExtraObjectExp>());
+        calc.Register("calc_extraobject_field_count", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcExtraObjectFieldCountExp>());
+        calc.Register("new_extra_list", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.NewExtraListExp>());
+        calc.Register("extra_list_add", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ExtraListAddExp>());
+        calc.Register("extra_list_clear", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ExtraListClearExp>());
+        calc.Register("get_reference_assets", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetReferenceAssetsExp>());
+        calc.Register("get_reference_by_assets", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetReferenceByAssetsExp>());
+        calc.Register("calc_ref_count", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcRefCountExp>());
+        calc.Register("calc_ref_by_count", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcRefByCountExp>());
+        calc.Register("find_asset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindAssetExp>());
+        calc.Register("select_frame", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectFrameExp>());
+        calc.Register("filtercpu_sample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FilterCpuSampleExp>());
+        calc.Register("filtergpu_sample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FilterGpuSampleExp>());
+        calc.Register("select_sample", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectSampleExp>());
+        calc.Register("select_property_path", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectPropertyPathExp>());
+        calc.Register("set_marker_filter", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMarkerFilterExp>());
+        calc.Register("set_max_ref_by_num_perobj", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxRefByNumPerObjExp>());
+        calc.Register("find_shortest_path_to_root", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindShortestPathToRootExp>());
+        calc.Register("get_ref_byobject_data", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetRefByObjectDataExp>());
+        calc.Register("get_refobject_data", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetRefObjectDataExp>());
+        calc.Register("object_data_fromaddress", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromAddressExp>());
+        calc.Register("object_data_from_unifiedobject_index", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromUnifiedObjectIndexExp>());
+        calc.Register("object_data_from_nativeobject_index", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromNativeObjectIndexExp>());
+        calc.Register("object_data_from_managedobject_index", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ObjectDataFromManagedObjectIndexExp>());
+        calc.Register("loadidapro_symbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadIdaproSymbolsExp>());
+        calc.Register("loadxcode_symbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadXcodeSymbolsExp>());
+        calc.Register("loadbugly_android_symbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadBuglyAndroidSymbolsExp>());
+        calc.Register("loadbuglyios_symbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadBuglyIosSymbolsExp>());
+        calc.Register("convert_to_relativeaddrs", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ConvertToRelativeAddrsExp>());
+        calc.Register("map_bugly_android_symbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MapBuglyAndroidSymbolsExp>());
+        calc.Register("map_buglyios_symbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MapBuglyIosSymbolsExp>());
+        calc.Register("map_myhook_symbols", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MapMyhookSymbolsExp>());
         calc.Register("grep", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GrepExp>());
         calc.Register("subst", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SubstExp>());
-        calc.Register("setclipboard", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetClipboardExp>());
-        calc.Register("getclipboard", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetClipboardExp>());
+        calc.Register("set_clipboard", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetClipboardExp>());
+        calc.Register("get_clipboard", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetClipboardExp>());
         calc.Register("selectobject", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectObjectExp>());
-        calc.Register("selectprojectobject", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectProjectObjectExp>());
-        calc.Register("selectsceneobject", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectSceneObjectExp>());
-        calc.Register("saveandreimport", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SaveAndReimportExp>());
-        calc.Register("setdirty", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetDirtyExp>());
-        calc.Register("getdefaulttexturesetting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetDefaultTextureSettingExp>());
-        calc.Register("gettexturesetting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureSettingExp>());
-        calc.Register("settexturesetting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetTextureSettingExp>());
-        calc.Register("textureisnotastc", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.TextureIsNotAstcExp>());
-        calc.Register("isastctexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.IsAstcTextureExp>());
-        calc.Register("setastctexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetAstcTextureExp>());
-        calc.Register("issceneastctexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.IsSceneAstcTextureExp>());
-        calc.Register("setsceneastctexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetSceneAstcTextureExp>());
-        calc.Register("istexturenoalphasource", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.IsTextureNoAlphaSourceExp>());
-        calc.Register("doestexturehavealpha", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.DoesTextureHaveAlphaExp>());
-        calc.Register("correctnonealphatexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CorrectNoneAlphaTextureExp>());
-        calc.Register("setnonealphatexture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetNoneAlphaTextureExp>());
-        calc.Register("gettexturecompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureCompressionExp>());
-        calc.Register("settexturecompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetTextureCompressionExp>());
-        calc.Register("gettexturestorage", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureStorageMemorySizeExp>());
-        calc.Register("gettexturememory", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureRuntimeMemorySizeExp>());
-        calc.Register("getruntimememory", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetRuntimeMemorySizeExp>());
-        calc.Register("setmaxboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxBoundingBoxExp>());
-        calc.Register("resetboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ResetBoundingBoxExp>());
-        calc.Register("mergeboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MergeBoundingBoxExp>());
-        calc.Register("getboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetBoundingBoxExp>());
-        calc.Register("addorupdateboundingbox", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddOrUpdateBoundingBoxExp>());
-        calc.Register("getmeshcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetMeshCompressionExp>());
-        calc.Register("setmeshcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshCompressionExp>());
-        calc.Register("setmeshimportexternalmaterials", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshImportExternalMaterialsExp>());
-        calc.Register("setmeshimportinprefabmaterials", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshImportInPrefabMaterialsExp>());
-        calc.Register("closemeshanimationifnoanimation", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CloseMeshAnimationIfNoAnimationExp>());
-        calc.Register("singlemeshinfo", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SingleMeshInfoExp>());
-        calc.Register("collectmeshes", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectMeshesExp>());
-        calc.Register("collectmeshinfo", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectMeshInfoExp>());
-        calc.Register("collectanimatorcontrollerinfo", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectAnimatorControllerInfoExp>());
-        calc.Register("collectprefabinfo", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectPrefabInfoExp>());
-        calc.Register("getanimationclipinfo", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAnimationClipInfoExp>());
-        calc.Register("getanimationcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAnimationCompressionExp>());
-        calc.Register("setanimationcompression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetAnimationCompressionExp>());
-        calc.Register("getanimationtype", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAnimationTypeExp>());
-        calc.Register("setanimationtype", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetAnimationTypeExp>());
-        calc.Register("setextraexposedtransformpaths", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetExtraExposedTransformPathsExp>());
-        calc.Register("clearanimationscalecurve", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ClearAnimationScaleCurveExp>());
-        calc.Register("getaudiosetting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAudioSettingExp>());
-        calc.Register("setaudiosetting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetAudioSettingExp>());
-        calc.Register("splitanimationreference", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SplitAnimationReferenceExp>());
-        calc.Register("calcmeshvertexcomponentcount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMeshVertexComponentCountExp>());
-        calc.Register("calcmeshtexratio", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMeshTexRatioExp>());
-        calc.Register("calcassetmd5", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcAssetMd5Exp>());
-        calc.Register("calcassetsize", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcAssetSizeExp>());
-        calc.Register("deleteasset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.DeleteAssetExp>());
-        calc.Register("getshaderutil", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderUtilExp>());
-        calc.Register("getshaderpropertycount", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyCountExp>());
-        calc.Register("getshaderpropertynames", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyNamesExp>());
-        calc.Register("removeyamlleafproperties", "removeyamlleafproperties(asset_path,property1,property2,...)", new ExpressionFactoryHelper<ResourceEditApi.RemoveYamlLeafPropertiesExp>());
+        calc.Register("select_projectobject", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectProjectObjectExp>());
+        calc.Register("select_sceneobject", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SelectSceneObjectExp>());
+        calc.Register("save_and_reimport", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SaveAndReimportExp>());
+        calc.Register("set_dirty", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetDirtyExp>());
+        calc.Register("get_default_texture_setting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetDefaultTextureSettingExp>());
+        calc.Register("get_texture_setting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureSettingExp>());
+        calc.Register("set_texture_setting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetTextureSettingExp>());
+        calc.Register("texture_is_not_astc", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.TextureIsNotAstcExp>());
+        calc.Register("is_astc_texture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.IsAstcTextureExp>());
+        calc.Register("set_astc_texture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetAstcTextureExp>());
+        calc.Register("is_scene_astc_texture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.IsSceneAstcTextureExp>());
+        calc.Register("set_scene_astc_texture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetSceneAstcTextureExp>());
+        calc.Register("is_texture_no_alpha_source", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.IsTextureNoAlphaSourceExp>());
+        calc.Register("does_texture_have_alpha", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.DoesTextureHaveAlphaExp>());
+        calc.Register("correct_none_alpha_texture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CorrectNoneAlphaTextureExp>());
+        calc.Register("set_none_alpha_texture", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetNoneAlphaTextureExp>());
+        calc.Register("get_texture_compression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureCompressionExp>());
+        calc.Register("set_texture_compression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetTextureCompressionExp>());
+        calc.Register("get_texture_storage_memory_size", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureStorageMemorySizeExp>());
+        calc.Register("get_texture_runtime_memory_size", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetTextureRuntimeMemorySizeExp>());
+        calc.Register("get_runtime_memory_size", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetRuntimeMemorySizeExp>());
+        calc.Register("set_max_bounding_box", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMaxBoundingBoxExp>());
+        calc.Register("reset_bounding_box", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ResetBoundingBoxExp>());
+        calc.Register("merge_bounding_box", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MergeBoundingBoxExp>());
+        calc.Register("get_bounding_box", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetBoundingBoxExp>());
+        calc.Register("add_or_update_bounding_box", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddOrUpdateBoundingBoxExp>());
+        calc.Register("get_mesh_compression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetMeshCompressionExp>());
+        calc.Register("set_mesh_compression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshCompressionExp>());
+        calc.Register("set_mesh_import_external_materials", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshImportExternalMaterialsExp>());
+        calc.Register("set_mesh_import_in_prefab_materials", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetMeshImportInPrefabMaterialsExp>());
+        calc.Register("close_mesh_animation_if_no_animation", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CloseMeshAnimationIfNoAnimationExp>());
+        calc.Register("single_mesh_info", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SingleMeshInfoExp>());
+        calc.Register("collect_meshes", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectMeshesExp>());
+        calc.Register("collect_mesh_info", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectMeshInfoExp>());
+        calc.Register("collect_animator_controller_info", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectAnimatorControllerInfoExp>());
+        calc.Register("collect_prefab_info", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CollectPrefabInfoExp>());
+        calc.Register("get_animation_clip_info", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAnimationClipInfoExp>());
+        calc.Register("get_animation_compression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAnimationCompressionExp>());
+        calc.Register("set_animation_compression", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetAnimationCompressionExp>());
+        calc.Register("get_animation_type", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAnimationTypeExp>());
+        calc.Register("set_animation_type", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetAnimationTypeExp>());
+        calc.Register("set_extra_exposed_transform_paths", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetExtraExposedTransformPathsExp>());
+        calc.Register("clear_animation_scale_curve", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ClearAnimationScaleCurveExp>());
+        calc.Register("get_audiosetting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAudioSettingExp>());
+        calc.Register("set_audiosetting", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SetAudioSettingExp>());
+        calc.Register("split_animation_reference", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.SplitAnimationReferenceExp>());
+        calc.Register("calc_mesh_vertex_component_count", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMeshVertexComponentCountExp>());
+        calc.Register("calc_mesh_tex_ratio", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMeshTexRatioExp>());
+        calc.Register("calc_assetmd5", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcAssetMd5Exp>());
+        calc.Register("calc_asset_size", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcAssetSizeExp>());
+        calc.Register("delete_asset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.DeleteAssetExp>());
+        calc.Register("get_shader_util", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderUtilExp>());
+        calc.Register("get_shader_property_count", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyCountExp>());
+        calc.Register("get_shader_property_names", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderPropertyNamesExp>());
+        calc.Register("removeyaml_leaf_properties", "removeyaml_leaf_properties(asset_path,property1,property2,...)", new ExpressionFactoryHelper<ResourceEditApi.RemoveYamlLeafPropertiesExp>());
         calc.Register("checkyaml", "checkyaml(asset_path[,int_start,int_count,bool_partial_conflict])", new ExpressionFactoryHelper<ResourceEditApi.CheckYamlExp>());
-        calc.Register("ispathtoolong", "ispathtoolong(asset_path)", new ExpressionFactoryHelper<ResourceEditApi.IsPathTooLongExp>());
-        calc.Register("getshadervariants", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderVariantsExp>());
-        calc.Register("addshadertocollection", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddShaderToCollectionExp>());
-        calc.Register("getalldslfiles", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAllDslFilesExp>());
-        calc.Register("buildassetstringlist", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.BuildAssetStringListExp>());
-        calc.Register("createrefasset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CreateRefAssetExp>());
-        calc.Register("findrowindex", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindRowIndexExp>());
-        calc.Register("findrowindexes", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindRowIndexesExp>());
-        calc.Register("findcellindex", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindCellIndexExp>());
-        calc.Register("findcellindexes", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindCellIndexesExp>());
-        calc.Register("getcellvalue", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCellValueExp>());
-        calc.Register("getcellstring", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCellStringExp>());
-        calc.Register("getcellnumeric", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCellNumericExp>());
-        calc.Register("rowtoline", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.RowToLineExp>());
-        calc.Register("tabletohashtable", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.TableToHashtableExp>());
-        calc.Register("findrowfromhashtable", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindRowFromHashtableExp>());
-        calc.Register("loadmanagedheaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadManagedHeapsExp>());
-        calc.Register("findmanagedheaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindManagedHeapsExp>());
-        calc.Register("matchmanagedheaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MatchManagedHeapsExp>());
-        calc.Register("calcmatchedmanagedheapsdiff", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMatchedManagedHeapsDiffExp>());
-        calc.Register("loadmaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadMapsExp>());
-        calc.Register("findmaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindMapsExp>());
-        calc.Register("matchmaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MatchMapsExp>());
-        calc.Register("calcmatchedmapsdiff", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMatchedMapsDiffExp>());
+        calc.Register("is_path_too_long", "is_path_too_long(asset_path)", new ExpressionFactoryHelper<ResourceEditApi.IsPathTooLongExp>());
+        calc.Register("get_shader_variants", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetShaderVariantsExp>());
+        calc.Register("add_shader_to_collection", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.AddShaderToCollectionExp>());
+        calc.Register("get_alldsl_files", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetAllDslFilesExp>());
+        calc.Register("build_asset_string_list", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.BuildAssetStringListExp>());
+        calc.Register("create_ref_asset", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CreateRefAssetExp>());
+        calc.Register("find_row_index", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindRowIndexExp>());
+        calc.Register("find_row_indexes", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindRowIndexesExp>());
+        calc.Register("find_cell_index", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindCellIndexExp>());
+        calc.Register("find_cell_indexes", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindCellIndexesExp>());
+        calc.Register("get_cell_value", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCellValueExp>());
+        calc.Register("get_cell_string", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCellStringExp>());
+        calc.Register("get_cell_numeric", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.GetCellNumericExp>());
+        calc.Register("row_to_line", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.RowToLineExp>());
+        calc.Register("table_to_hashtable", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.TableToHashtableExp>());
+        calc.Register("find_row_from_hashtable", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindRowFromHashtableExp>());
+        calc.Register("load_managed_heaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadManagedHeapsExp>());
+        calc.Register("find_managed_heaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindManagedHeapsExp>());
+        calc.Register("match_managed_heaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MatchManagedHeapsExp>());
+        calc.Register("calc_matched_managed_heaps_diff", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMatchedManagedHeapsDiffExp>());
+        calc.Register("load_maps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadMapsExp>());
+        calc.Register("find_maps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindMapsExp>());
+        calc.Register("match_maps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MatchMapsExp>());
+        calc.Register("calc_matched_maps_diff", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMatchedMapsDiffExp>());
         calc.Register("loadsmaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadSmapsExp>());
         calc.Register("findsmaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FindSmapsExp>());
         calc.Register("matchsmaps", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.MatchSmapsExp>());
-        calc.Register("calcmatchedsmapsdiff", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMatchedSmapsDiffExp>());
+        calc.Register("calc_matchedsmaps_diff", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.CalcMatchedSmapsDiffExp>());
         calc.Register("loadaddrs", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LoadAddrsExp>());
         calc.Register("escapeurl", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.EscapeUrlExp>());
-        calc.Register("unescapeurl", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UnEscapeUrlExp>());
-        calc.Register("parseurlargs", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ParseUrlArgsExp>());
-        calc.Register("parsebuglyinfo", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ParseBuglyInfoExp>());
-        calc.Register("inthashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.IntHashContainsExp>());
-        calc.Register("uinthashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UintHashContainsExp>());
-        calc.Register("longhashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LongHashContainsExp>());
-        calc.Register("ulonghashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UlongHashContainsExp>());
-        calc.Register("floathashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FloatHashContainsExp>());
-        calc.Register("doublehashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.DoubleHashContainsExp>());
-        calc.Register("stringhashcontains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.StringHashContainsExp>());
+        calc.Register("un_escapeurl", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UnEscapeUrlExp>());
+        calc.Register("parseurl_args", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ParseUrlArgsExp>());
+        calc.Register("parse_bugly_info", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.ParseBuglyInfoExp>());
+        calc.Register("int_hash_contains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.IntHashContainsExp>());
+        calc.Register("uint_hash_contains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UintHashContainsExp>());
+        calc.Register("long_hash_contains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.LongHashContainsExp>());
+        calc.Register("ulong_hash_contains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.UlongHashContainsExp>());
+        calc.Register("float_hash_contains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.FloatHashContainsExp>());
+        calc.Register("double_hash_contains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.DoubleHashContainsExp>());
+        calc.Register("string_hash_contains", string.Empty, new ExpressionFactoryHelper<ResourceEditApi.StringHashContainsExp>());
 
         UnityEditorApi.Register(calc);
         if (null != OnRegisterApi) {
@@ -614,8 +614,8 @@ public static class ResourceEditUtility
             results.Clear();
             var ret = BoxedValue.NullObject;
             if (null != calc) {
-                calc.SetGlobalVariable("assetpath", item.AssetPath);
-                calc.SetGlobalVariable("scenepath", item.ScenePath);
+                calc.SetGlobalVariable("asset_path", item.AssetPath);
+                calc.SetGlobalVariable("scene_path", item.ScenePath);
                 calc.SetGlobalVariable("importer", BoxedValue.FromObject(item.Importer));
                 calc.SetGlobalVariable("object", BoxedValue.FromObject(item.Object));
                 calc.SetGlobalVariable("info", item.Info);
@@ -623,9 +623,9 @@ public static class ResourceEditUtility
                 calc.SetGlobalVariable("value", item.Value);
                 calc.SetGlobalVariable("selected", item.Selected);
                 calc.SetGlobalVariable("results", BoxedValue.FromObject(results));
-                calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
-                calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
-                calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
+                calc.SetGlobalVariable("scene_deps", BoxedValue.FromObject(sceneDeps));
+                calc.SetGlobalVariable("ref_dict", BoxedValue.FromObject(refDict));
+                calc.SetGlobalVariable("ref_by_dict", BoxedValue.FromObject(refByDict));
                 if (null != addVars) {
                     foreach (var pair in addVars) {
                         calc.SetGlobalVariable(pair.Key, pair.Value);
@@ -637,19 +637,19 @@ public static class ResourceEditUtility
                     calc.SetGlobalVariable(p.Name, BoxedValue.FromObject(p.Value));
                 }
                 calc.SetGlobalVariable("group", BoxedValue.NullObject);
-                calc.SetGlobalVariable("extralist", BoxedValue.NullObject);
+                calc.SetGlobalVariable("extra_list", BoxedValue.NullObject);
 
                 for (int i = 0; i < indexCount; ++i) {
                     ret = calc.Calc(i.ToString());
                 }
 
                 BoxedValue v;
-                if (calc.TryGetGlobalVariable("assetpath", out v)) {
+                if (calc.TryGetGlobalVariable("asset_path", out v)) {
                     var path = v.AsString;
                     if (!string.IsNullOrEmpty(path))
                         item.AssetPath = path;
                 }
-                if (calc.TryGetGlobalVariable("scenepath", out v)) {
+                if (calc.TryGetGlobalVariable("scene_path", out v)) {
                     var path = v.AsString;
                     if (!string.IsNullOrEmpty(path))
                         item.ScenePath = path;
@@ -691,7 +691,7 @@ public static class ResourceEditUtility
                         item.Group = g;
                     }
                 }
-                if (calc.TryGetGlobalVariable("extralist", out v)) {
+                if (calc.TryGetGlobalVariable("extra_list", out v)) {
                     var list = v.As<IList>();
                     if (null != list) {
                         var pairList = new List<KeyValuePair<string, BoxedValue>>();
@@ -726,10 +726,10 @@ public static class ResourceEditUtility
                         item.ExtraListClickScript = string.Empty;
                     }
                 }
-                if (calc.TryGetGlobalVariable("redirectdsl", out v)) {
+                if (calc.TryGetGlobalVariable("redirect_dsl", out v)) {
                     item.RedirectDsl = v.AsString;
                 }
-                if (calc.TryGetGlobalVariable("redirectargs", out v)) {
+                if (calc.TryGetGlobalVariable("redirect_args", out v)) {
                     var dict = v.As<IDictionary>();
                     if (null != dict) {
                         var strDict = new Dictionary<string, string>();
@@ -765,17 +765,17 @@ public static class ResourceEditUtility
             item.PrepareShowInfo();
             var ret = BoxedValue.NullObject;
             if (null != calc) {
-                calc.SetGlobalVariable("assetpath", item.AssetPath);
-                calc.SetGlobalVariable("scenepath", item.ScenePath);
+                calc.SetGlobalVariable("asset_path", item.AssetPath);
+                calc.SetGlobalVariable("scene_path", item.ScenePath);
                 calc.SetGlobalVariable("importer", BoxedValue.FromObject(item.Importer));
                 calc.SetGlobalVariable("object", BoxedValue.FromObject(item.Object));
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
                 calc.SetGlobalVariable("selected", item.Selected);
-                calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
-                calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
-                calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
+                calc.SetGlobalVariable("scene_deps", BoxedValue.FromObject(sceneDeps));
+                calc.SetGlobalVariable("ref_dict", BoxedValue.FromObject(refDict));
+                calc.SetGlobalVariable("ref_by_dict", BoxedValue.FromObject(refByDict));
                 calc.SetGlobalVariable("params", BoxedValue.FromObject(args));
                 foreach (var pair in args) {
                     var p = pair.Value;
@@ -806,33 +806,33 @@ public static class ResourceEditUtility
                 calc.SetGlobalVariable("min", item.Min);
                 calc.SetGlobalVariable("count", item.Count);
                 calc.SetGlobalVariable("avg", item.Avg);
-                calc.SetGlobalVariable("assetpath", item.AssetPath);
-                calc.SetGlobalVariable("scenepath", item.ScenePath);
+                calc.SetGlobalVariable("asset_path", item.AssetPath);
+                calc.SetGlobalVariable("scene_path", item.ScenePath);
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
                 calc.SetGlobalVariable("selected", item.Selected);
-                calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
-                calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
-                calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
+                calc.SetGlobalVariable("scene_deps", BoxedValue.FromObject(sceneDeps));
+                calc.SetGlobalVariable("ref_dict", BoxedValue.FromObject(refDict));
+                calc.SetGlobalVariable("ref_by_dict", BoxedValue.FromObject(refByDict));
                 calc.SetGlobalVariable("params", BoxedValue.FromObject(args));
                 foreach (var pair in args) {
                     var p = pair.Value;
                     calc.SetGlobalVariable(p.Name, p.Value);
                 }
-                calc.SetGlobalVariable("extralist", BoxedValue.NullObject);
+                calc.SetGlobalVariable("extra_list", BoxedValue.NullObject);
 
                 for (int i = 0; i < indexCount; ++i) {
                     ret = calc.Calc(i.ToString());
                 }
 
                 BoxedValue v;
-                if (calc.TryGetGlobalVariable("assetpath", out v)) {
+                if (calc.TryGetGlobalVariable("asset_path", out v)) {
                     var path = v.AsString;
                     if (!string.IsNullOrEmpty(path))
                         item.AssetPath = path;
                 }
-                if (calc.TryGetGlobalVariable("scenepath", out v)) {
+                if (calc.TryGetGlobalVariable("scene_path", out v)) {
                     var path = v.AsString;
                     if (!string.IsNullOrEmpty(path))
                         item.ScenePath = path;
@@ -858,7 +858,7 @@ public static class ResourceEditUtility
                         item.Selected = v.GetBool();
                     }
                 }
-                if (calc.TryGetGlobalVariable("extralist", out v)) {
+                if (calc.TryGetGlobalVariable("extra_list", out v)) {
                     var list = v.As<IList>();
                     if (null != list) {
                         var pairList = new List<KeyValuePair<string, BoxedValue>>();
@@ -893,10 +893,10 @@ public static class ResourceEditUtility
                         item.ExtraListClickScript = string.Empty;
                     }
                 }
-                if (calc.TryGetGlobalVariable("redirectdsl", out v)) {
+                if (calc.TryGetGlobalVariable("redirect_dsl", out v)) {
                     item.RedirectDsl = v.AsString;
                 }
-                if (calc.TryGetGlobalVariable("redirectargs", out v)) {
+                if (calc.TryGetGlobalVariable("redirect_args", out v)) {
                     var dict = v.As<IDictionary>();
                     if (null != dict) {
                         var strDict = new Dictionary<string, string>();
@@ -932,15 +932,15 @@ public static class ResourceEditUtility
                 calc.SetGlobalVariable("min", item.Min);
                 calc.SetGlobalVariable("count", item.Count);
                 calc.SetGlobalVariable("avg", item.Avg);
-                calc.SetGlobalVariable("assetpath", item.AssetPath);
-                calc.SetGlobalVariable("scenepath", item.ScenePath);
+                calc.SetGlobalVariable("asset_path", item.AssetPath);
+                calc.SetGlobalVariable("scene_path", item.ScenePath);
                 calc.SetGlobalVariable("info", item.Info);
                 calc.SetGlobalVariable("order", item.Order);
                 calc.SetGlobalVariable("value", item.Value);
                 calc.SetGlobalVariable("selected", item.Selected);
-                calc.SetGlobalVariable("scenedeps", BoxedValue.FromObject(sceneDeps));
-                calc.SetGlobalVariable("refdict", BoxedValue.FromObject(refDict));
-                calc.SetGlobalVariable("refbydict", BoxedValue.FromObject(refByDict));
+                calc.SetGlobalVariable("scene_deps", BoxedValue.FromObject(sceneDeps));
+                calc.SetGlobalVariable("ref_dict", BoxedValue.FromObject(refDict));
+                calc.SetGlobalVariable("ref_by_dict", BoxedValue.FromObject(refByDict));
                 calc.SetGlobalVariable("params", BoxedValue.FromObject(args));
                 foreach (var pair in args) {
                     var p = pair.Value;
@@ -2040,8 +2040,8 @@ namespace ResourceEditApi
                             args.Add(key, val);
                         }
                     }
-                    calculator.SetGlobalVariable("redirectdsl", BoxedValue.FromObject(dsl));
-                    calculator.SetGlobalVariable("redirectargs", BoxedValue.FromObject(args));
+                    calculator.SetGlobalVariable("redirect_dsl", BoxedValue.FromObject(dsl));
+                    calculator.SetGlobalVariable("redirect_args", BoxedValue.FromObject(args));
                 }
             }
             return r;
@@ -2213,7 +2213,7 @@ namespace ResourceEditApi
         {
             var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
-                var dict = calculator.GetVariable("refdict").As<Dictionary<string, HashSet<string>>>();
+                var dict = calculator.GetVariable("ref_dict").As<Dictionary<string, HashSet<string>>>();
                 var path = operands[0].AsString;
                 if (null != dict && !string.IsNullOrEmpty(path)) {
                     HashSet<string> refbyset;
@@ -2234,7 +2234,7 @@ namespace ResourceEditApi
         {
             var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
-                var dict = calculator.GetVariable("refbydict").As<Dictionary<string, HashSet<string>>>();
+                var dict = calculator.GetVariable("ref_by_dict").As<Dictionary<string, HashSet<string>>>();
                 var path = operands[0].AsString;
                 if (null != dict && !string.IsNullOrEmpty(path)) {
                     HashSet<string> refbyset;
@@ -2255,7 +2255,7 @@ namespace ResourceEditApi
         {
             var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
-                var refDict = calculator.GetVariable("refdict").As<Dictionary<string, HashSet<string>>>();
+                var refDict = calculator.GetVariable("ref_dict").As<Dictionary<string, HashSet<string>>>();
                 var file = operands[0].AsString;
                 if (null != file) {
                     HashSet<string> hash;
@@ -2276,7 +2276,7 @@ namespace ResourceEditApi
         {
             var r = BoxedValue.NullObject;
             if (operands.Count >= 1) {
-                var refByDict = calculator.GetVariable("refbydict").As<Dictionary<string, HashSet<string>>>();
+                var refByDict = calculator.GetVariable("ref_by_dict").As<Dictionary<string, HashSet<string>>>();
                 var file = operands[0].AsString;
                 if (null != file) {
                     HashSet<string> hash;
@@ -2297,7 +2297,7 @@ namespace ResourceEditApi
         {
             var r = BoxedValue.NullObject;
             if (operands.Count >= 2) {
-                var sceneDeps = calculator.GetVariable("scenedeps").As<ResourceEditUtility.SceneDepInfo>();
+                var sceneDeps = calculator.GetVariable("scene_deps").As<ResourceEditUtility.SceneDepInfo>();
                 var asset = operands[0].AsString;
                 var type = operands[1].AsString;
                 var assetPath = string.Empty;
@@ -4487,7 +4487,7 @@ namespace ResourceEditApi
         {
             var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
-                string assetPath = calculator.GetVariable("assetpath").AsString;
+                string assetPath = calculator.GetVariable("asset_path").AsString;
                 if (!string.IsNullOrEmpty(assetPath)) {
                     var obj = AssetDatabase.LoadMainAssetAtPath(assetPath);
                     if (null != obj) {
@@ -4682,7 +4682,7 @@ namespace ResourceEditApi
         {
             var r = BoxedValue.NullObject;
             if (operands.Count >= 0) {
-                var path = calculator.GetVariable("assetpath").AsString;
+                var path = calculator.GetVariable("asset_path").AsString;
                 if (null != path) {
                     GameObject obj = AssetDatabase.LoadMainAssetAtPath(path) as GameObject;
                     bool modified = false;
@@ -4743,7 +4743,7 @@ namespace ResourceEditApi
             var r = BoxedValue.NullObject;
 #if SPECIAL
             if (operands.Count >= 1) {
-                var path = calculator.GetVariable("assetpath").AsString;
+                var path = calculator.GetVariable("asset_path").AsString;
                 var reference = AssetDatabase.LoadAssetAtPath<AnimationReference>(path);
                 if (null != reference && reference.split) {
                     HashSet<string> hashset = new HashSet<string>();

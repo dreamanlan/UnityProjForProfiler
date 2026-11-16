@@ -8,12 +8,12 @@ input("*.prefab")
 }
 filter
 {
-	if(assetpath.Contains(filter)){
-    $v0 = loadasset(assetpath);
+	if(asset_path.Contains(filter)){
+    $v0 = load_asset(asset_path);
 	  $v1 = getcomponentsinchildren($v0, "MeshFilter");
 	  $v2 = 0;
-	  looplist($v1){
-	    if(isnull($$.sharedMesh)){
+	  loop_list($v1){
+	    if(is_null($$.sharedMesh)){
 	    	$v2=1;
 	    };
 	  };
