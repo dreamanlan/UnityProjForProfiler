@@ -104,7 +104,7 @@ public class TextureImporterParamsDBInspector : Editor
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button(TextureImporterParamsDB.SYNC_ALL)) {
-                ResourceEditUtility.ResetResourceParamsCalculator();
+                EditorDslProcessorUtility.ResetResourceParamsCalculator();
                 TextureImporterParamsDB.UpdateAllTextures();
             }
             GUILayout.EndHorizontal();

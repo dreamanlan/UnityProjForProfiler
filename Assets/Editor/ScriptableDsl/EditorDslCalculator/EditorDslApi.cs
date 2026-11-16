@@ -1640,7 +1640,7 @@ namespace StoryScript.DslExpression
         private List<IExpression> m_Args = new List<IExpression>();
     }
 #endif
-    public sealed class UnityEditorApi
+    public sealed class EditorDslApi
     {
         public static void Register(DslCalculator calculator)
         {
@@ -1691,7 +1691,8 @@ namespace StoryScript.DslExpression
             calculator.Register("save_folder_panel", "save_folder_panel(title,dir,def) api", new ExpressionFactoryHelper<SaveFolderPanelExp>());
             calculator.Register("display_dialog", "display_dialog(title,msg,ok[,cancel[,alt]]) api", new ExpressionFactoryHelper<DisplayDialogExp>());
             calculator.Register("has_cmd_arg", "has_cmd_arg(name) api, return (bool,string)", new ExpressionFactoryHelper<HasCmdArgExp>());
-            calculator.Register("strlen", "strlen(str) api", new ExpressionFactoryHelper<StrLenExp>());
+            calculator.Register("str_len", "str_len(str) api", new ExpressionFactoryHelper<StrLenExp>());
+			calculator.Register("strlen", "strlen(str) api", new ExpressionFactoryHelper<StrLenExp>());
 #if USE_GM_STORY
             calculator.Register("story_var", "story_var(name,val) or story_var(name) api", new ExpressionFactoryHelper<StoryVarExp>());
             calculator.Register("call_story", "call_story(msgId...) or call_story(apiOrMsgId(...)) api", new ExpressionFactoryHelper<CallStoryExp>());

@@ -106,10 +106,10 @@ public class ModelImporterParamsDB : ScriptableObject
 
     private static bool UpdateModel(ResourceParams param, ModelImporter modelImporter, bool onlySetting)
     {
-        bool rt = ResourceEditUtility.SetParamsToResource("modelsetparams", param, modelImporter);
-        rt = rt || ResourceEditUtility.ForceSaveAndReimport;
+        bool rt = EditorDslProcessorUtility.SetParamsToResource("modelsetparams", param, modelImporter);
+        rt = rt || EditorDslProcessorUtility.ForceSaveAndReimport;
         if (!onlySetting && rt) {
-            if (ResourceEditUtility.EnableSaveAndReimport) {
+            if (EditorDslProcessorUtility.EnableSaveAndReimport) {
                 //modelImporter.SaveAndReimport();
                 AssetDatabase.ImportAsset(modelImporter.assetPath);
             }
@@ -128,7 +128,7 @@ public class ModelImporterParamsDB : ScriptableObject
         } else {
 
         }
-        bool rt = ResourceEditUtility.GetParamsFromResource("modelgetparams", param, modelImporter);
+        bool rt = EditorDslProcessorUtility.GetParamsFromResource("modelgetparams", param, modelImporter);
         return rt;
     }
 

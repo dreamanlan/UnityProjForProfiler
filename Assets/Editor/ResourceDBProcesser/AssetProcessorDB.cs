@@ -77,7 +77,7 @@ public class AssetProcessorInfo
     {
         if (Filters.Count <= 0 && Processes.Count <= 0) {
             List<string> processes = new List<string>();
-            ResourceProcessor.ReadFiltersAndAssetProcessors(DslPath, Filters, processes);
+            EditorDslProcessor.ReadFiltersAndAssetProcessors(DslPath, Filters, processes);
             var enumNames = Enum.GetNames(typeof(AssetProcessorEnum));
             var enumValues = Enum.GetValues(typeof(AssetProcessorEnum));
             foreach (string processor in processes) {
@@ -278,8 +278,8 @@ public class AssetProcessorDB : ScriptableObject
     private static int SetAllAssetInDbOnce(int type)
     {
         int totalModifiedCount = 0;
-        ResourceEditUtility.UseSpecificSettingDB = true;
-        ResourceEditUtility.EnableSaveAndReimport = true;
+        EditorDslProcessorUtility.UseSpecificSettingDB = true;
+        EditorDslProcessorUtility.EnableSaveAndReimport = true;
         try {
             AssetDatabase.StartAssetEditing();
             var processedAssets = new HashSet<string>();
@@ -294,13 +294,13 @@ public class AssetProcessorDB : ScriptableObject
                     continue;
                 }
 
-                ResourceProcessor.Instance.SelectDsl(param.DslPath);
-                ResourceProcessor.Instance.CollectPath = param.ResPath;
-                ResourceProcessor.Instance.OverridedProgressTitle = string.Format("{0}/{1}", i + 1, count);
-                ResourceProcessor.Instance.Refresh(true);
-                ResourceProcessor.Instance.OverridedProgressTitle = string.Format("{0}/{1}", i + 1, count);
-                ResourceProcessor.Instance.SelectAll();
-                int ct = ResourceProcessor.Instance.Process(true);
+                EditorDslProcessor.Instance.SelectDsl(param.DslPath);
+                EditorDslProcessor.Instance.CollectPath = param.ResPath;
+                EditorDslProcessor.Instance.OverridedProgressTitle = string.Format("{0}/{1}", i + 1, count);
+                EditorDslProcessor.Instance.Refresh(true);
+                EditorDslProcessor.Instance.OverridedProgressTitle = string.Format("{0}/{1}", i + 1, count);
+                EditorDslProcessor.Instance.SelectAll();
+                int ct = EditorDslProcessor.Instance.Process(true);
                 if (ct > 0)
                     totalModifiedCount += ct;
             }
@@ -310,7 +310,7 @@ public class AssetProcessorDB : ScriptableObject
 
             return totalModifiedCount;
         } finally {
-            ResourceEditUtility.EnableSaveAndReimport = false;
+            EditorDslProcessorUtility.EnableSaveAndReimport = false;
             AssetDatabase.StopAssetEditing();
             AssetDatabase.SaveAssets();
 
@@ -857,7 +857,7 @@ public class AssetProcessorDB : ScriptableObject
     //---------------------------------------------------
     public static bool SetDirty(UnityEngine.Object ai, bool onlySetting, bool handled)
     {
-        handled = handled || ResourceEditUtility.ForceSaveAndReimport;
+        handled = handled || EditorDslProcessorUtility.ForceSaveAndReimport;
         if (handled && !onlySetting) {
             EditorUtility.SetDirty(ai);
         }
@@ -866,8 +866,8 @@ public class AssetProcessorDB : ScriptableObject
 
     public static bool SaveAndReimport(UnityEngine.Object ai, bool onlySetting, bool handled)
     {
-        handled = handled || ResourceEditUtility.ForceSaveAndReimport;
-        if (handled && !onlySetting && ResourceEditUtility.EnableSaveAndReimport) {
+        handled = handled || EditorDslProcessorUtility.ForceSaveAndReimport;
+        if (handled && !onlySetting && EditorDslProcessorUtility.EnableSaveAndReimport) {
             var assetImporter = ai as UnityEditor.AssetImporter;
             if (null != assetImporter) {
                 //assetImporter.SaveAndReimport();

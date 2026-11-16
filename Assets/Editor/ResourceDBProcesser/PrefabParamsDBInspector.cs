@@ -103,7 +103,7 @@ public class PrefabParamsDBInspector : Editor
             }
             GUILayout.BeginHorizontal();
             if (GUILayout.Button(PrefabParamsDB.SYNC_ALL)) {
-                ResourceEditUtility.ResetResourceParamsCalculator();
+                EditorDslProcessorUtility.ResetResourceParamsCalculator();
                 PrefabParamsDB.UpdateAllPrefabs();
             }
             GUILayout.EndHorizontal();

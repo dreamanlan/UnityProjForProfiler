@@ -18,14 +18,14 @@ using StoryScript;
 
 public class BatchResourceProcessWindow : EditorWindow
 {
-    internal static void InitWindow(ResourceEditWindow resEdit)
+    internal static void InitWindow(EditorDslEditWindow resEdit)
     {
         BatchResourceProcessWindow window = (BatchResourceProcessWindow)EditorWindow.GetWindow(typeof(BatchResourceProcessWindow));
         window.Init(resEdit);
         window.Show();
     }
 
-    private void Init(ResourceEditWindow resEdit)
+    private void Init(EditorDslEditWindow resEdit)
     {
         m_ResourceEditWindow = resEdit;
         m_IsReady = true;
@@ -36,9 +36,9 @@ public class BatchResourceProcessWindow : EditorWindow
         bool handle = false;
         int deleteIndex = -1;
         EditorGUILayout.BeginHorizontal();
-        ResourceEditUtility.EnableSaveAndReimport = EditorGUILayout.Toggle("允许SaveAndReimport", ResourceEditUtility.EnableSaveAndReimport);
-        ResourceEditUtility.UseSpecificSettingDB = EditorGUILayout.Toggle("使用特殊设置DB数据", ResourceEditUtility.UseSpecificSettingDB);
-        ResourceEditUtility.ForceSaveAndReimport = EditorGUILayout.Toggle("强制SaveAndReimport", ResourceEditUtility.ForceSaveAndReimport);
+        EditorDslProcessorUtility.EnableSaveAndReimport = EditorGUILayout.Toggle("允许SaveAndReimport", EditorDslProcessorUtility.EnableSaveAndReimport);
+        EditorDslProcessorUtility.UseSpecificSettingDB = EditorGUILayout.Toggle("使用特殊设置DB数据", EditorDslProcessorUtility.UseSpecificSettingDB);
+        EditorDslProcessorUtility.ForceSaveAndReimport = EditorGUILayout.Toggle("强制SaveAndReimport", EditorDslProcessorUtility.ForceSaveAndReimport);
         EditorGUILayout.EndHorizontal();
         var rt = EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("加载", EditorStyles.toolbarButton)) {
@@ -51,10 +51,10 @@ public class BatchResourceProcessWindow : EditorWindow
             m_IsReady = false;
             if (m_List.Count > 0) {
                 var last = m_List[m_List.Count - 1];
-                m_List.Add(new ResourceEditUtility.BatchProcessInfo { DslPath = last.DslPath, ResPath = last.ResPath });
+                m_List.Add(new EditorDslProcessorUtility.BatchProcessInfo { DslPath = last.DslPath, ResPath = last.ResPath });
             }
             else {
-                m_List.Add(new ResourceEditUtility.BatchProcessInfo());
+                m_List.Add(new EditorDslProcessorUtility.BatchProcessInfo());
             }
             m_IsReady = true;
         }
@@ -167,7 +167,7 @@ public class BatchResourceProcessWindow : EditorWindow
                         var resPath = fields[0];
                         var dslPath = fields[1];
 
-                        var item = new ResourceEditUtility.BatchProcessInfo { ResPath = resPath, DslPath = dslPath };
+                        var item = new EditorDslProcessorUtility.BatchProcessInfo { ResPath = resPath, DslPath = dslPath };
                         m_List.Add(item);
 
                         ++curCount;
@@ -225,7 +225,7 @@ public class BatchResourceProcessWindow : EditorWindow
             m_List.Clear();
             for (int i = 0; i < AssetProcessorDB.DBInstance.Count; ++i) {
                 var info = AssetProcessorDB.DBInstance[i];
-                m_List.Add(new ResourceEditUtility.BatchProcessInfo { ResPath = info.ResPath, DslPath = info.DslPath });
+                m_List.Add(new EditorDslProcessorUtility.BatchProcessInfo { ResPath = info.ResPath, DslPath = info.DslPath });
             }
         }
         finally {
@@ -255,28 +255,28 @@ public class BatchResourceProcessWindow : EditorWindow
 
     private bool IsAssetPath(string path)
     {
-        return ResourceEditUtility.IsAssetPath(path);
+        return EditorDslProcessorUtility.IsAssetPath(path);
     }
     private string FilePathToRelativePath(string path)
     {
-        return ResourceEditUtility.FilePathToRelativePath(path);
+        return EditorDslProcessorUtility.FilePathToRelativePath(path);
     }
     private string RelativePathToFilePath(string path)
     {
-        return ResourceEditUtility.RelativePathToFilePath(path);
+        return EditorDslProcessorUtility.RelativePathToFilePath(path);
     }
     private string GetRootPath()
     {
-        return ResourceEditUtility.GetRootPath();
+        return EditorDslProcessorUtility.GetRootPath();
     }
 
     private bool m_IsReady = false;
     private bool m_InActions = false;
     private Queue<Action<BatchResourceProcessWindow>> m_Actions = new Queue<Action<BatchResourceProcessWindow>>();
 
-    private ResourceEditWindow m_ResourceEditWindow = null;
+    private EditorDslEditWindow m_ResourceEditWindow = null;
     private bool m_UseReimport = false;
-    private List<ResourceEditUtility.BatchProcessInfo> m_List = new List<ResourceEditUtility.BatchProcessInfo>();
+    private List<EditorDslProcessorUtility.BatchProcessInfo> m_List = new List<EditorDslProcessorUtility.BatchProcessInfo>();
     private Vector2 m_Pos = Vector2.zero;
 }
 
@@ -374,7 +374,7 @@ public class BatchLoadWindow : EditorWindow
                                 var size = cachedSnapshot.ManagedHeapSections.SectionSize[i];
                                 var addr = cachedSnapshot.ManagedHeapSections.StartAddress[i];
                                 sw.WriteLine("Managed," + size + "," + addr);
-                                ResourceProcessor.Instance.DisplayProgressBar("write managed heap ...", i, ct);
+                                EditorDslProcessor.Instance.DisplayProgressBar("write managed heap ...", i, ct);
                             }
                             sw.Flush();
                             sw.Close();
@@ -422,7 +422,7 @@ public class BatchLoadWindow : EditorWindow
                                     m_ManagedGroups.Add(typeName, info);
                                 }
                                 if (i % 1000 == 0) {
-                                    ResourceProcessor.Instance.DisplayProgressBar("write managed objects ...", i, ct);
+                                    EditorDslProcessor.Instance.DisplayProgressBar("write managed objects ...", i, ct);
                                 }
                             }
                             sw.Flush();
@@ -445,7 +445,7 @@ public class BatchLoadWindow : EditorWindow
                                         lastGroup = info.Group;
                                     outsw.WriteLine("\"{0}\",\"{1}\",{2},{3}", g, info.Type, info.Count, info.Size);
                                     if (curCt % 100 == 0) {
-                                        ResourceProcessor.Instance.DisplayProgressBar("write managed object group ...", curCt, totalCt);
+                                        EditorDslProcessor.Instance.DisplayProgressBar("write managed object group ...", curCt, totalCt);
                                     }
                                     ++curCt;
                                 }
@@ -459,7 +459,7 @@ public class BatchLoadWindow : EditorWindow
                                     var info = pair.Value;
                                     outsw.WriteLine("\"{0}\",{1},{2}", info.Type, info.Count, info.Size);
                                     if (curCt % 100 == 0) {
-                                        ResourceProcessor.Instance.DisplayProgressBar("write managed object group for cmp ...", curCt, totalCt);
+                                        EditorDslProcessor.Instance.DisplayProgressBar("write managed object group for cmp ...", curCt, totalCt);
                                     }
                                     ++curCt;
                                 }
@@ -500,7 +500,7 @@ public class BatchLoadWindow : EditorWindow
                                     m_NativeGroups.Add(typeName, info);
                                 }
                                 if (i % 100 == 0) {
-                                    ResourceProcessor.Instance.DisplayProgressBar("write native objects ...", i, ct);
+                                    EditorDslProcessor.Instance.DisplayProgressBar("write native objects ...", i, ct);
                                 }
                             }
                             sw.Flush();
@@ -516,7 +516,7 @@ public class BatchLoadWindow : EditorWindow
                                 foreach (var pair in m_NativeGroups) {
                                     var info = pair.Value;
                                     outsw.WriteLine("\"{0}\",{1},{2}", info.Type, info.Count, info.Size);
-                                    ResourceProcessor.Instance.DisplayProgressBar("write native object group ...", curCt, totalCt);
+                                    EditorDslProcessor.Instance.DisplayProgressBar("write native object group ...", curCt, totalCt);
                                     ++curCt;
                                 }
                             }

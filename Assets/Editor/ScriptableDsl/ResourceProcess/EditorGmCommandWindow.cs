@@ -13,15 +13,14 @@ using UnityEditorInternal;
 using Unity.Profiling;
 using StoryScript;
 
-public class ResourceCommandWindow : EditorWindow
+public class EditorGmCommandWindow : EditorWindow
 {
-    [InitializeOnLoadMethod]
-    internal static void RunOnEditorStartup()
+    public static void RunOnEditorStartup()
     {
-        const string path = "./editor_startup.dsl";
+        const string path = "./tools/dsl_scripts/editor_startup.dsl";
         if (File.Exists(path)) {
-            ResourceEditUtility.ResetCommandCalculator();
-            var calculator = ResourceEditUtility.GetCommandCalculator();
+            EditorDslProcessorUtility.ResetCommandCalculator();
+            var calculator = EditorDslProcessorUtility.GetCommandCalculator();
             string scriptName = string.Empty;
             Dsl.DslFile file = new Dsl.DslFile();
             if (file.Load(path, (string msg) => { Debug.LogError(msg); })) {
@@ -65,14 +64,14 @@ public class ResourceCommandWindow : EditorWindow
             }
         }
     }
-    internal static void InitWindow(ResourceEditWindow resEdit, string content, BoxedValue obj, BoxedValue item)
+    internal static void InitWindow(EditorDslEditWindow resEdit, string content, BoxedValue obj, BoxedValue item)
     {
-        ResourceCommandWindow window = (ResourceCommandWindow)EditorWindow.GetWindow(typeof(ResourceCommandWindow));
+        EditorGmCommandWindow window = (EditorGmCommandWindow)EditorWindow.GetWindow(typeof(EditorGmCommandWindow));
         window.Init(resEdit, content, obj, item);
         window.Show();
     }
 
-    private void Init(ResourceEditWindow resEdit, string content, BoxedValue obj, BoxedValue item)
+    private void Init(EditorDslEditWindow resEdit, string content, BoxedValue obj, BoxedValue item)
     {
         m_ResourceEditWindow = resEdit;
         m_Content = content;
@@ -92,12 +91,12 @@ public class ResourceCommandWindow : EditorWindow
             m_Menus = null;
             m_Files = null;
             m_SelectedIndex = 0;
-            DeferAction(obj => { ResourceProcessor.Instance.ClearDsl(); });
+            DeferAction(obj => { EditorDslProcessor.Instance.ClearDsl(); });
         }
         if (null == m_Menus || m_Menus.Length <= 0) {
             SortedDictionary<string, string> dslFiles = new SortedDictionary<string, string>();
             dslFiles.Add("0.Empty", string.Empty);
-            var files = Directory.GetFiles("./CommandDsl", "*.dsl", SearchOption.AllDirectories);
+            var files = Directory.GetFiles("./tools/dsl_scripts/CommandDsl", "*.dsl", SearchOption.AllDirectories);
             foreach (var file in files) {
                 string name, desc;
                 if (ReadMenuAndDescription(file, out name, out desc)) {
@@ -151,17 +150,17 @@ public class ResourceCommandWindow : EditorWindow
     private void Run()
     {
         m_ScriptableInfo.Content = m_Content;
-        m_ScriptableInfo.Items = ResourceProcessor.Instance.ItemList;
-        m_ScriptableInfo.Groups = ResourceProcessor.Instance.GroupList;
+        m_ScriptableInfo.Items = EditorDslProcessor.Instance.ItemList;
+        m_ScriptableInfo.Groups = EditorDslProcessor.Instance.GroupList;
         m_ScriptableInfo.Results = m_Results;
-        m_ScriptableInfo.ResourceEditWindow = m_ResourceEditWindow;
-        m_ScriptableInfo.ResourceProcessor = ResourceProcessor.Instance;
-        m_ScriptableInfo.ResourceEditWindowType = typeof(ResourceEditWindow);
-        m_ScriptableInfo.ResourceProcessorType = typeof(ResourceProcessor);
-        m_ScriptableInfo.ResourceEditUtilityType = typeof(ResourceEditUtility);
+        m_ScriptableInfo.EditorDslEditWindow = m_ResourceEditWindow;
+        m_ScriptableInfo.EditorDslProcessor = EditorDslProcessor.Instance;
+        m_ScriptableInfo.ResourceEditWindowType = typeof(EditorDslEditWindow);
+        m_ScriptableInfo.ResourceProcessorType = typeof(EditorDslProcessor);
+        m_ScriptableInfo.ResourceEditUtilityType = typeof(EditorDslProcessorUtility);
 
         if (string.IsNullOrEmpty(m_Command)) {
-            var r = ResourceEditUtility.RunCommandScript(m_ScriptName, m_Object, m_Item, ResourceProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(m_ScriptableInfo) } });
+            var r = EditorDslProcessorUtility.RunCommandScript(m_ScriptName, m_Object, m_Item, EditorDslProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(m_ScriptableInfo) } });
             if (!r.IsNullObject) {
                 m_Results.Enqueue(string.Format("script:{0} result:{1}", m_ScriptName, r.ToString()));
             }
@@ -170,8 +169,8 @@ public class ResourceCommandWindow : EditorWindow
             }
         }
         else {
-            if (ResourceEditUtility.LoadCommand(m_Command, ResourceProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(m_ScriptableInfo) } })) {
-                var r = ResourceEditUtility.EvalCommand(m_Object, m_Item);
+            if (EditorDslProcessorUtility.LoadCommand(m_Command, EditorDslProcessor.Instance.Params, new Dictionary<string, BoxedValue> { { "@context", BoxedValue.FromObject(m_ScriptableInfo) } })) {
+                var r = EditorDslProcessorUtility.EvalCommand(m_Object, m_Item);
                 if (!r.IsNullObject) {
                     m_Results.Enqueue(string.Format("cmd:{0} result:{1}", m_Command, r.ToString()));
                 }
@@ -200,7 +199,7 @@ public class ResourceCommandWindow : EditorWindow
             m_InActions = false;
         }
     }
-    private void DeferAction(Action<ResourceCommandWindow> action)
+    private void DeferAction(Action<EditorGmCommandWindow> action)
     {
         m_Actions.Enqueue(action);
     }
@@ -209,13 +208,13 @@ public class ResourceCommandWindow : EditorWindow
     {
         m_Command = string.Empty;
         m_ScriptName = string.Empty;
-        ResourceEditUtility.ResetCommandCalculator();
+        EditorDslProcessorUtility.ResetCommandCalculator();
     }
     internal void SelectDsl(string path)
     {
         ClearDsl();
         if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
-            var calculator = ResourceEditUtility.GetCommandCalculator();
+            var calculator = EditorDslProcessorUtility.GetCommandCalculator();
             Dsl.DslFile file = new Dsl.DslFile();
             if (file.Load(path, (string msg) => { Debug.LogError(msg); })) {
                 bool haveError = false;
@@ -283,11 +282,11 @@ public class ResourceCommandWindow : EditorWindow
     internal class ScriptableInfo
     {
         internal string Content;
-        internal List<ResourceEditUtility.ItemInfo> Items;
-        internal List<ResourceEditUtility.GroupInfo> Groups;
+        internal List<EditorDslProcessorUtility.ItemInfo> Items;
+        internal List<EditorDslProcessorUtility.GroupInfo> Groups;
         internal Queue<string> Results;
-        internal ResourceEditWindow ResourceEditWindow;
-        internal ResourceProcessor ResourceProcessor;
+        internal EditorDslEditWindow EditorDslEditWindow;
+        internal EditorDslProcessor EditorDslProcessor;
         internal Type ResourceEditWindowType;
         internal Type ResourceProcessorType;
         internal Type ResourceEditUtilityType;
@@ -296,7 +295,7 @@ public class ResourceCommandWindow : EditorWindow
 
     private bool m_IsReady = false;
     private bool m_InActions = false;
-    private Queue<Action<ResourceCommandWindow>> m_Actions = new Queue<Action<ResourceCommandWindow>>();
+    private Queue<Action<EditorGmCommandWindow>> m_Actions = new Queue<Action<EditorGmCommandWindow>>();
 
     private string[] m_Menus = null;
     private string[] m_Files = null;
@@ -305,10 +304,10 @@ public class ResourceCommandWindow : EditorWindow
 
     private string m_Content = string.Empty;
     private Queue<string> m_Results = new Queue<string>();
-    private string m_Command = string.Empty;
+    private string m_Command = "@context.Content=check_pipeline_asset_guid()+'\\n'+check_pipeline_assets();";
     private BoxedValue m_Object = BoxedValue.NullObject;
     private BoxedValue m_Item = BoxedValue.NullObject;
-    private ResourceEditWindow m_ResourceEditWindow = null;
+    private EditorDslEditWindow m_ResourceEditWindow = null;
     private Vector2 m_Pos = Vector2.zero;
 
     private static bool ReadMenuAndDescription(string path, out string menu, out string desc)

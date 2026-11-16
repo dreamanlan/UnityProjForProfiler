@@ -103,7 +103,7 @@ public class FBXImporterParamsDBInspector : Editor
             }
             GUILayout.BeginHorizontal();
             if (GUILayout.Button(ModelImporterParamsDB.SYNC_ALL)) {
-                ResourceEditUtility.ResetResourceParamsCalculator();
+                EditorDslProcessorUtility.ResetResourceParamsCalculator();
                 ModelImporterParamsDB.UpdateAllModels();
             }
             GUILayout.EndHorizontal();
