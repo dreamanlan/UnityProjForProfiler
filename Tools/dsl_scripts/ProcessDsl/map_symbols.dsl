@@ -29,16 +29,16 @@ process
     if(is_null(@syms) && !is_null_or_empty(il2cpp) || is_null(@syms2) && !is_null_or_empty(unity) || reloadsymbol){
         if(!is_null_or_empty(il2cpp)){
             if(il2cppsymtype==1){
-                @syms=loadbugly_android_symbols(il2cpp);
+                @syms=load_bugly_android_symbols(il2cpp);
             }else{
-                @syms=loadidapro_symbols(il2cpp);
+                @syms=load_idapro_symbols(il2cpp);
             };
         };
         if(!is_null_or_empty(unity)){
             if(unitysymtype==1){
-                @syms2=loadbugly_android_symbols(unity);
+                @syms2=load_bugly_android_symbols(unity);
             }else{
-                @syms2=loadidapro_symbols(unity);
+                @syms2=load_idapro_symbols(unity);
             };
         };
     };

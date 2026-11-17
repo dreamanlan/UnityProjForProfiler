@@ -49,5 +49,5 @@ filter
 
 script(OnClickExtraListItem)args($obj,$item)
 {
-    select_projectobject($obj.Value);
+    select_project_object($obj.Value);
 };

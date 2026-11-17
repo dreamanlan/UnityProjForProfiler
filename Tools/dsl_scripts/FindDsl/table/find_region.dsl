@@ -26,7 +26,7 @@ input
 }
 filter
 {
-    String = gettype("System.String");
+    String = get_type("System.String");
     $header = sheet.GetRow(2);
 		$ix = find_cell_index($header, "Type");
 		$ix2 = find_cell_index($header, "Para1");

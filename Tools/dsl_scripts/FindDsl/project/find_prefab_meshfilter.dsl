@@ -10,7 +10,7 @@ filter
 {
 	if(asset_path.Contains(filter)){
     $v0 = load_asset(asset_path);
-	  $v1 = getcomponentsinchildren($v0, "MeshFilter");
+	  $v1 = get_components_in_children($v0, "MeshFilter");
 	  $v2 = 0;
 	  loop_list($v1){
 	    if(is_null($$.sharedMesh)){

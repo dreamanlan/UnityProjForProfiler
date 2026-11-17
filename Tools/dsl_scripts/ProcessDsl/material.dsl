@@ -26,7 +26,7 @@ filter
 process
 {
   $v0 = load_asset(asset_path);
-  $v0.shader = gettype("Shader").Find(replaceWithShaderName);
+  $v0.shader = get_type("Shader").Find(replaceWithShaderName);
 	unload_asset($v0);
   save_and_reimport();
 };

@@ -8,9 +8,9 @@ input("*.asset")
 filter
 {
 	object = load_asset(asset_path);
-	$v0 = gettypename(object);
-	$v1 = gettypefullname(object);
-	$v2 = gettypeassemblyname(object);
+	$v0 = get_type_name(object);
+	$v1 = get_type_full_name(object);
+	$v2 = get_type_assembly_name(object);
 	if(!is_null(object) && $v0=="AnimationReference" && asset_path.Contains(filter) && !asset_path.EndsWith("_split.asset")){
 		info = $v1+","+$v2;
 		1;

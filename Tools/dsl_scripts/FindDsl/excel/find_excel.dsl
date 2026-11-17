@@ -20,7 +20,7 @@ input
 }
 filter
 {
-  String = gettype("System.String");
+  String = get_type("System.String");
 	order = row.RowNum;
 	if(isGameTable){
 		if(is_null_or_empty(fields)){

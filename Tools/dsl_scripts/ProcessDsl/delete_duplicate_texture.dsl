@@ -28,7 +28,7 @@ filter
 		if(($v1 > maxSize || $v2 > maxSize) && asset_path.Contains(filter) && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){
 			info = format("{0} size:{1},{2}", asset_path, $v1, $v2);
 			value = calc_asset_size(asset_path);
-			group = format("{0}|{1}", value, calc_assetmd5(asset_path));
+			group = format("{0}|{1}", value, calc_asset_md5(asset_path));
 			$r = 1;
 		} else {
 			$r = 0;

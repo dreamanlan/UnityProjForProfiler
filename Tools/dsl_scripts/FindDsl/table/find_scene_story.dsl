@@ -17,7 +17,7 @@ input
 }
 filter
 {
-    String = gettype("System.String");
+    String = get_type("System.String");
 		order = row.RowNum;
 		$header = sheet.GetRow(2);
 		$ix = find_cell_index($header, "SceneDslFile");
@@ -34,13 +34,13 @@ filter
 		$v6 = get_alldsl_files(get_cell_numeric(row, 0));
 		$v7 = string_join(";",$v6);
 		loop_list($v1){
-				if(!fileexist("../../Product/DslFile/"+$$+".dsl")){
+				if(!file_exist("../../Product/DslFile/"+$$+".dsl")){
 						$v4 = 0;
 						list_add($v5,$$);
 				};
 		};
 		loop_list($v6){
-				if(!fileexist("../../Product/DslFile/"+$$+".dsl")){
+				if(!file_exist("../../Product/DslFile/"+$$+".dsl")){
 						$v4 = 0;
 						list_add($v5,$$);
 				};

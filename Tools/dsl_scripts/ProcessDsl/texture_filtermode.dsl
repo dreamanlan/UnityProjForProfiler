@@ -16,7 +16,7 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter) && importer.filterMode==parseenum("FilterMode", oldFilterMode)){
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter) && importer.filterMode==parse_enum("FilterMode", oldFilterMode)){
     	$v0 = load_asset(asset_path);
     	$v1 = $v0.width;
     	$v2 = $v0.height;
@@ -36,6 +36,6 @@ filter
 }
 process
 {
-    importer.filterMode = parseenum('FilterMode', filterMode);
+    importer.filterMode = parse_enum('FilterMode', filterMode);
     save_and_reimport();
 };

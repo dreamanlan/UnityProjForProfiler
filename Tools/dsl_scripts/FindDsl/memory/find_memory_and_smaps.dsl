@@ -34,7 +34,7 @@ filter
 		if(is_null_or_empty(asset_path)){
 			asset_path = memory.name;
 		};
-		$v0 = findsmaps(maps, memory.address);
+		$v0 = find_smaps(maps, memory.address);
 		$v1 = find_managed_heaps(mheaps, memory.address);
 		if(is_null($v0)){
 		    $v2 = "unknown";
@@ -88,7 +88,7 @@ script(LoadManagedHeaps)args($paramInfo)
 script(LoadMaps)args($paramInfo)
 {
     if(!is_null_or_empty($paramInfo.Value)){
-        $paramInfo.Value = loadsmaps($paramInfo.Value);
+        $paramInfo.Value = load_smaps($paramInfo.Value);
         return(3600.0);
     }else{
         return(1.0);

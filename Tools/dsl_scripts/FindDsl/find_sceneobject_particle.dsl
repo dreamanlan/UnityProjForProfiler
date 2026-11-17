@@ -8,7 +8,7 @@ input("ParticleSystem")
 }
 filter
 {
-	$v0 = getcomponent(object,"ParticleSystem");
+	$v0 = get_component(object,"ParticleSystem");
 	if(asset_path.Contains(filter)){
 		$v1 = $v0.emission.rateOverTime;
 		$v2 = $v0.main.startDelay;

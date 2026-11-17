@@ -27,5 +27,5 @@ filter
 }
 process
 {
-  removeyaml_leaf_properties(asset_path, "- vs_cbuf10_2:", "- vs_cbuf15_54:");
+  remove_yaml_leaf_properties(asset_path, "- vs_cbuf10_2:", "- vs_cbuf15_54:");
 };

@@ -19,7 +19,7 @@ input("*.tga","*.png","*.jpg","*.exr")
 }
 filter
 {
-    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter) && (filterMode=="Any" || importer.filterMode==parseenum("FilterMode", filterMode))){
+    if(string_contains(asset_path, filter) && string_not_contains(asset_path, notfilter) && (filterMode=="Any" || importer.filterMode==parse_enum("FilterMode", filterMode))){
     	$v0 = load_asset(asset_path);
     	if(is_null($v0)){
     		0;

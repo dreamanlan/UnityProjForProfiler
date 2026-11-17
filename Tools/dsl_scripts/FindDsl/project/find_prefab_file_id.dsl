@@ -11,7 +11,7 @@ filter
 {
     if(asset_path.Contains(filter)){
         $v0 = load_asset(asset_path);
-        $v1 = getcomponentsinchildren($v0,"MonoBehaviour");
+        $v1 = get_components_in_children($v0,"MonoBehaviour");
         loop_list($v1){
             $v2 = $$;
             if(is_null($v2)){

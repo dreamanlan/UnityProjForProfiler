@@ -16,14 +16,14 @@ filter
         order = $v1.maxKeyFrameCount;
         if($v1.maxKeyFrameCount >= maxKeyFrameCount){
             $v2 = $v1.clips.orderbydesc($$.maxKeyFrameCount).top(4);
-            $v3 = newstringbuilder();
-            appendlineformat($v3, "clip name:{0}, total max keyframe count:{1}, layer count:{2}, state count:{3}, sub state machine count:{4}",
+            $v3 = new_string_builder();
+            append_format_line($v3, "clip name:{0}, total max keyframe count:{1}, layer count:{2}, state count:{3}, sub state machine count:{4}",
                 $v1.maxKeyFrameClipName, $v1.maxKeyFrameCount, $v1.layerCount, $v1.stateCount, $v1.subStateMachineCount
                 );
             loop_list($v2){
-                appendlineformat($v3, "clip name:{0}, max keyframe count:{1}", $$.clipName, $$.maxKeyFrameCount);
+                append_format_line($v3, "clip name:{0}, max keyframe count:{1}", $$.clipName, $$.maxKeyFrameCount);
             };
-            info = stringbuildertostring($v3);
+            info = stringbuilder_tostring($v3);
             $r = 1;
         }else{
             $r = 0;

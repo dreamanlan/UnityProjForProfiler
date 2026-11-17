@@ -19,7 +19,7 @@ input
 }
 filter
 {
-    String = gettype("System.String");
+    String = get_type("System.String");
 	order = row.RowIndex;
 	$v0 = get_cell_string(row, 0);
 	$v1 = get_cell_numeric(row, 1);

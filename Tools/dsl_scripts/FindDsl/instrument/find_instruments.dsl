@@ -71,10 +71,10 @@ script(OnClickExtraListItem)args($obj,$item)
 	}
 	else{
 		if($record.threadIndex == 1){
-			filtergpu_sample($record.name);
+			filter_gpu_sample($record.name);
 		}
 		else{
-			filtercpu_sample($record.name, $record.threadIndex);
+			filter_cpu_sample($record.name, $record.threadIndex);
 		};
 		select_sample($instrument, $record, $thread);
 	};

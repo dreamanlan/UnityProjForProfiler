@@ -8,7 +8,7 @@ input("Transform")
 }
 filter
 {
-    $v0 = getcomponentinchildren(object, "MeshFilter");
+    $v0 = get_component_in_children(object, "MeshFilter");
     $v1 = 0;
     if(!is_null($v0)){
         if(is_null($v0.sharedMesh)){

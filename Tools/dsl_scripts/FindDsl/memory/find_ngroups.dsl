@@ -14,7 +14,7 @@ input
 }
 filter
 {
-    String = gettype("System.String");
+    String = get_type("System.String");
 	order = group_info.size;
 	$v0 = group_info.group;
 	$v1 = group_info.count;

@@ -37,23 +37,23 @@ process
         if(!is_null_or_empty(il2cpp)){
             if(il2cppsymtype==1){
                 if(crashtype==1){
-                    @syms=loadbugly_android_symbols(il2cpp);
+                    @syms=load_bugly_android_symbols(il2cpp);
                 }else{
-                    @syms=loadbuglyios_symbols(il2cpp);
+                    @syms=load_bugly_ios_symbols(il2cpp);
                 };
             }else{
-                @syms=loadidapro_symbols(il2cpp);
+                @syms=load_idapro_symbols(il2cpp);
             };
         };
         if(!is_null_or_empty(unity)){
             if(unitysymtype==1){
                 if(crashtype==1){
-                    @syms2=loadbugly_android_symbols(unity);
+                    @syms2=load_bugly_android_symbols(unity);
                 }else{
-                    @syms2=loadbuglyios_symbols(unity);
+                    @syms2=load_bugly_ios_symbols(unity);
                 };
             }else{
-                @syms2=loadidapro_symbols(unity);
+                @syms2=load_idapro_symbols(unity);
             };
         };
     };
@@ -67,10 +67,10 @@ process
         };
     }else{
         if(!is_null(@syms)){
-            $lines=map_buglyios_symbols($lines,@syms,"qs");
+            $lines=map_bugly_ios_symbols($lines,@syms,"qs");
         };
         if(!is_null(@syms2)){
-            $lines=map_buglyios_symbols($lines,@syms2,"qs");
+            $lines=map_bugly_ios_symbols($lines,@syms2,"qs");
         };
     };
     write_all_lines(crash_out,$lines);

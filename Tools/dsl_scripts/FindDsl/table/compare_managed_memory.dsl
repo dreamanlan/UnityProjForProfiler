@@ -22,7 +22,7 @@ input
 }
 filter
 {
-    String = gettype("System.String");
+    String = get_type("System.String");
     $header = sheet.GetRow(0);
     $ix = 1;
     $ix2 = 3;

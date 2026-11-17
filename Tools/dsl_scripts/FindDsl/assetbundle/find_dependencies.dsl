@@ -16,7 +16,7 @@ input
 }
 filter
 {
-	str = gettype("System.String");
+	str = get_type("System.String");
 	if(asset_path.Contains(assetfilter)){
 		$v0 = get_dependencies(asset_path);
 		if(!findab){
@@ -36,7 +36,7 @@ filter
 				loop_list($v10.assetNames){
 					$v12 = get_file_name_without_extension($$);
 					if(str.Compare($v11,$v12,true)==0){
-						debuglog("{0} {1}", $v11, $v12);
+						debug_log("{0} {1}", $v11, $v12);
 						$v1 = new_item();
 						$v1.AssetPath = asset_path;
 						$v1.Info = $$;

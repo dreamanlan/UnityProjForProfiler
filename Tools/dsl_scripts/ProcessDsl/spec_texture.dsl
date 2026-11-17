@@ -86,11 +86,11 @@ script(SetTexture)args($maxSize)
 {
 	/*
 	$v0 = get_default_texture_setting();
-	$v0.maxTextureSize = changetype(maxSize, "int");
+	$v0.maxTextureSize = change_type(maxSize, "int");
 	set_texture_setting($v0);
 
 	$v1 = get_texture_setting("Standalone");
-	$v1.maxTextureSize = changetype(maxSize, "int");
+	$v1.maxTextureSize = change_type(maxSize, "int");
 	set_texture_setting($v1);
 	*/
 

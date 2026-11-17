@@ -13,7 +13,7 @@ input
 }
 filter
 {
-    String = gettype("System.String");
+    String = get_type("System.String");
 	order = memory.size;
 	if(memory.size >= maxSize && memory.className == class && string_contains_any(memory.name,anyfilter)){
 		$v0 = find_asset(memory.name, memory.className);

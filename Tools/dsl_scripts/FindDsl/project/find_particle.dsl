@@ -13,7 +13,7 @@ input("*.prefab")
 filter
 {
     object = load_asset(asset_path);
-    $v0 = getcomponentsinchildren(object,"ParticleSystem");
+    $v0 = get_components_in_children(object,"ParticleSystem");
     $v1 = $v0.Length;
     $name = get_file_name_without_extension(asset_path);
     if($v1>maxSize && string_contains_any(asset_path, anyfilter) && string_hash_contains(hashkeys, $name)){

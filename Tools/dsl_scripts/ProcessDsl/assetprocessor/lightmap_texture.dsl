@@ -14,7 +14,7 @@ filter
 	$v0 = load_asset(asset_path);
 	$v1 = $v0.width;
 	$v2 = $v0.height;
-	$v3 = importer.textureShape == parseenum("TextureImporterShape", "TextureCube");
+	$v3 = importer.textureShape == parse_enum("TextureImporterShape", "TextureCube");
 	$v4 = importer.mipmapEnabled;
 	//unload_asset($v0);
 	if(($v1 > maxSize || $v2 > maxSize) && string_contains(asset_path, filter) && string_not_contains(asset_path, "SplatAlpha") && (prop.Contains("1") && $v3 || !prop.Contains("1")) && (prop.Contains("2") && $v4 || !prop.Contains("2"))){

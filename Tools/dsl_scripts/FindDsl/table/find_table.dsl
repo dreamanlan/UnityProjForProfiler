@@ -17,7 +17,7 @@ input
 }
 filter
 {
-	String = gettype("System.String");
+	String = get_type("System.String");
 	order = row.RowIndex;
 	if(is_null_or_empty(fields)){
 		$v0 = row.GetLine();

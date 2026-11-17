@@ -25,22 +25,22 @@ process
 {
 	/*
 	$v0 = get_default_texture_setting();
-	$v0.maxTextureSize = changetype(maxSize, "int");
+	$v0.maxTextureSize = change_type(maxSize, "int");
 	set_texture_setting($v0);
 
 	$v1 = get_texture_setting("Standalone");
-	$v1.maxTextureSize = changetype(maxSize, "int");
+	$v1.maxTextureSize = change_type(maxSize, "int");
 	set_texture_setting($v1);
 	*/
 	$v2 = get_texture_setting("iPhone");
 	$v2.overridden=true;
-	$v2.maxTextureSize = changetype(maxSize, "int");
+	$v2.maxTextureSize = change_type(maxSize, "int");
 	set_scene_astc_texture($v2);
 	set_texture_setting($v2);
 
 	$v3 = get_texture_setting("Android");
 	$v3.overridden=true;
-	$v3.maxTextureSize = changetype(maxSize, "int");
+	$v3.maxTextureSize = change_type(maxSize, "int");
 	set_scene_astc_texture($v3);
 	set_texture_setting($v3);
 

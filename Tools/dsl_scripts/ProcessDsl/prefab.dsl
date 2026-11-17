@@ -7,7 +7,7 @@ input("*.prefab")
 filter
 {
 	object = load_asset(asset_path);
-	$v0 = getcomponentinchildren(object,"SkinnedMeshRenderer");
+	$v0 = get_component_in_children(object,"SkinnedMeshRenderer");
 	if(!is_null($v0)){
 		1;
 	}else{
@@ -16,10 +16,10 @@ filter
 }
 process
 {
-	loop_list(getcomponentsinchildren(object,"SkinnedMeshRenderer")){
+	loop_list(get_components_in_children(object,"SkinnedMeshRenderer")){
 		$$.skinnedMotionVectors=false;
 	};
-	loop_list(getcomponentsinchildren(object,"Playables.PlayableDirector")){
+	loop_list(get_components_in_children(object,"Playables.PlayableDirector")){
 		$$.playOnAwake=false;
 	};
 };

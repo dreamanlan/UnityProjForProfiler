@@ -10,7 +10,7 @@ input("Renderer")
 filter
 {
 	$v0 = 0;
-	$v1 = getcomponent(object, "Renderer");
+	$v1 = get_component(object, "Renderer");
 	$v2 = $v1.sharedMaterials;
 	loop_list($v2){
 		if(is_null($$))

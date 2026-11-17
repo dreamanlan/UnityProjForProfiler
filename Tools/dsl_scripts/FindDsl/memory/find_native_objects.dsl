@@ -16,7 +16,7 @@ input
 }
 filter
 {
-    String = gettype("System.String");
+    String = get_type("System.String");
 	order = memory.size;
 	if(memory.size >= maxSize && memory.className == class && string_contains_any(memory.name,anyfilter) && memory.refCount>=minRefCount && memory.refCount<=maxRefCount){
 		asset_path = memory.name;

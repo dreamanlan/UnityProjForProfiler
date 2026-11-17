@@ -42,7 +42,7 @@ input
     feature("menu", "9.Table/find bugly table");
     feature("description", "just so so");
     feature("itemcommand", "$item.Group = $item.ScenePath");
-    feature("groupcommand", "if($item.Items.Count>100){$item.Info=format(\"Count:{0},DevCount:{1},UserCount:{2}\",$item.Items.Count,calc_extraobject_field_count($item.Items,8),calc_extraobject_field_count($item.Items,16));$exinfo=$item.Items[0].ExtraObject[18]+'\\n\\n'+$item.Items[0].ExtraObject[19]+'\\n\\n'+string_replace(un_escapeurl($item.Items[0].ExtraObject[32]),';','\\n')+'\\n\\n'+un_escapeurl($item.Items[0].ExtraObject[34],'+')+'\\n\\n'+call_script('parseCrash',un_escapeurl($item.Items[0].ExtraObject[33],'+'));$item.ExtraList=new_extra_list($exinfo=>$exinfo);1;}else{0;};");
+    feature("groupcommand", "if($item.Items.Count>100){$item.Info=format(\"Count:{0},DevCount:{1},UserCount:{2}\",$item.Items.Count,calc_extra_object_field_count($item.Items,8),calc_extra_object_field_count($item.Items,16));$exinfo=$item.Items[0].ExtraObject[18]+'\\n\\n'+$item.Items[0].ExtraObject[19]+'\\n\\n'+string_replace(unescape_url($item.Items[0].ExtraObject[32]),';','\\n')+'\\n\\n'+unescape_url($item.Items[0].ExtraObject[34],'+')+'\\n\\n'+call_script('parseCrash',unescape_url($item.Items[0].ExtraObject[33],'+'));$item.ExtraList=new_extra_list($exinfo=>$exinfo);1;}else{0;};");
 }
 filter
 {
@@ -66,7 +66,7 @@ filter
         $v1 = string_split($fields,[","]);
         $v2 = find_cell_indexes($header, $v1);
         $v3 = call_script("getfieldstring", $header, row, "kv");
-        $v4 = parseurl_args($v3, "+");
+        $v4 = parse_url_args($v3, "+");
         $v5 = hashtable_get($v4, "C03_B1");
         $v6 = hashtable_get($v4, "C03_B2");
         $v7 = hashtable_get($v4, "C03_B3");
@@ -76,34 +76,34 @@ filter
         $v11 = call_script("getfieldstring", $header, row, "user");
 
         $f_kv = $v3;
-        $ukv = string_replace(un_escapeurl($f_kv), ";", "\n");
+        $ukv = string_replace(unescape_url($f_kv), ";", "\n");
 
         //device_id,hardware,os,cpu_name,exception_type,stack,exception_message
         $txt = call_script("getfieldstring", $header, row, "device_id");
-        $device_id = un_escapeurl($txt, "+");
+        $device_id = unescape_url($txt, "+");
 
         $txt = call_script("getfieldstring", $header, row, "hardware");
-        $hardware = un_escapeurl($txt, "+");
+        $hardware = unescape_url($txt, "+");
 
         $txt = call_script("getfieldstring", $header, row, "os");
-        $uos = string_replace(un_escapeurl($txt, "+"), ",", "|");
+        $uos = string_replace(unescape_url($txt, "+"), ",", "|");
 
         $txt = call_script("getfieldstring", $header, row, "cpu_name");
-        $cpu_name = un_escapeurl($txt, "+");
+        $cpu_name = unescape_url($txt, "+");
 
         $txt = call_script("getfieldstring", $header, row, "exception_type");
-        $exception_type = un_escapeurl($txt, "+");
+        $exception_type = unescape_url($txt, "+");
 
         $txt = call_script("getfieldstring", $header, row, "stack");
         $f_stack = $txt;
-        $cstack = un_escapeurl($txt, "+");
+        $cstack = unescape_url($txt, "+");
         if(is_null($cstack)){
             $cstack = "";
         };
 
         $txt = call_script("getfieldstring", $header, row, "exception_message");
         $f_exception = $txt;
-        $exception_message = un_escapeurl($txt, "+");
+        $exception_message = unescape_url($txt, "+");
         if(is_null($exception_message)){
             $exception_message = "";
         };
@@ -157,23 +157,23 @@ script(parseCrash)args($crashStack)
         if(!is_null_or_empty(il2cpp)){
             if(il2cppsymtype==1){
                 if(crashtype==1){
-                    @syms=loadbugly_android_symbols(il2cpp);
+                    @syms=load_bugly_android_symbols(il2cpp);
                 }else{
-                    @syms=loadbuglyios_symbols(il2cpp);
+                    @syms=load_bugly_ios_symbols(il2cpp);
                 };
             }else{
-                @syms=loadidapro_symbols(il2cpp);
+                @syms=load_idapro_symbols(il2cpp);
             };
         };
         if(!is_null_or_empty(unity)){
             if(unitysymtype==1){
                 if(crashtype==1){
-                    @syms2=loadbugly_android_symbols(unity);
+                    @syms2=load_bugly_android_symbols(unity);
                 }else{
-                    @syms2=loadbuglyios_symbols(unity);
+                    @syms2=load_bugly_ios_symbols(unity);
                 };
             }else{
-                @syms2=loadidapro_symbols(unity);
+                @syms2=load_idapro_symbols(unity);
             };
         };
     };
@@ -188,10 +188,10 @@ script(parseCrash)args($crashStack)
         };
     }else{
         if(!is_null(@syms)){
-            $lines=map_buglyios_symbols($lines,@syms,"libil2cpp","0 ");
+            $lines=map_bugly_ios_symbols($lines,@syms,"libil2cpp","0 ");
         };
         if(!is_null(@syms2)){
-            $lines=map_buglyios_symbols($lines,@syms2,"libunity","0 ");
+            $lines=map_bugly_ios_symbols($lines,@syms2,"libunity","0 ");
         };
     };
     $txt=string_join("\r\n", $lines);

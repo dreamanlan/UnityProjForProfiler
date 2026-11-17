@@ -20,7 +20,7 @@ filter
         $v0 = get_directory_name(asset_path);
         $v1 = get_file_name_without_extension(asset_path);
         $v2 = $v0+"/"+$v1+"_Lod.prefab";
-        if(fileexist($v2)){
+        if(file_exist($v2)){
             if(lodtype==0 || lodtype==2){
                 $v3 = load_asset($v2);
                 $v4 = collect_meshes($v3, true);

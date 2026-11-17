@@ -10,7 +10,7 @@ input("*.meta")
 filter
 {
 	if(string_contains_any(asset_path, pathfilter)){
-		if(checkyaml(asset_path)){
+		if(check_yaml(asset_path)){
 			if(checkPath && is_path_too_long(asset_path)){
 				info = asset_path + ", path too long";
 				1;

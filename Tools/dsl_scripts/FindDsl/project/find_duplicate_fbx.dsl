@@ -24,7 +24,7 @@ filter
 			order = value;
 			value = calc_asset_size(asset_path);
 			if(duptype==1){
-				group = format("{0}|{1}", value, calc_assetmd5(asset_path));
+				group = format("{0}|{1}", value, calc_asset_md5(asset_path));
 			}else{
 				group = format("{0}", asset_path_2_guid(asset_path));
 			};

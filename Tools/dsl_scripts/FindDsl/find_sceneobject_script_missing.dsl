@@ -9,7 +9,7 @@ input("Transform")
 filter
 {
 	if(scene_path.Contains(filter)){
-		$v0 = getcomponents(object, "Component");
+		$v0 = get_components(object, "Component");
 		$v1 = 0;
 		loop_list($v0){
 			if(is_null($$)){

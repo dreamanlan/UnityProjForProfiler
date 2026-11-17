@@ -8,7 +8,7 @@ input("*.prefab")
 filter
 {
 	object = load_asset(asset_path);
-	$v0 = getcomponent(object, "MeshCollider");
+	$v0 = get_component(object, "MeshCollider");
 	if(is_null($v0)){
 		0;
 	}else{

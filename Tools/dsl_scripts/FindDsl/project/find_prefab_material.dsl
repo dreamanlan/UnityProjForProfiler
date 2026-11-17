@@ -11,7 +11,7 @@ filter
 {
 	$v10 = 0;
   $v0 = load_asset(asset_path);
-  $v1 = getcomponentsinchildren($v0, "Renderer");
+  $v1 = get_components_in_children($v0, "Renderer");
   loop_list($v1){
   	$v2 = $$.sharedMaterials;
   	loop_list($v2){

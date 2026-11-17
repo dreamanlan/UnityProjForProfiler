@@ -12,7 +12,7 @@ input
 }
 filter
 {
-  String = gettype("System.String");
+  String = get_type("System.String");
 	order = row.RowNum;
 	$header = sheet.GetRow(3);
 	$ix = find_cell_index($header, "SceneDslFile");
@@ -26,7 +26,7 @@ filter
 	$v3 = get_cell_numeric(row, $ix3);
 	$v4 = get_cell_numeric(row, $ix4);
 	loop_list($v1){
-		if(!fileexist("../../Product/DslFile/"+$$+".dsl")){
+		if(!file_exist("../../Product/DslFile/"+$$+".dsl")){
 			$v2 = 0;
 		};
 	};

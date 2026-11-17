@@ -20,7 +20,7 @@ filter
     $maps2 = load_maps(maps2);
     $results = match_maps($maps1,$maps2);
     $diffs = calc_matched_maps_diff($results,1);
-    $addrs = loadaddrs(addrs);
+    $addrs = load_addrs(addrs);
     $ct = $addrs.Count;
     loop_list($addrs){
         $addr = $$;

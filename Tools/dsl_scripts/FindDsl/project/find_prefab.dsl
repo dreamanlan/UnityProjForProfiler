@@ -20,7 +20,7 @@ filter
     if(string_contains_any(asset_path, anyfilter) && string_not_contains(asset_path, notfilter) && string_hash_contains(hashkeys, $name)){
         $v0 = load_asset(asset_path);
         $v1 = collect_prefab_info($v0);
-        $v2 = getcomponentinchildren($v0,"Playables.PlayableDirector").gameObject.name;
+        $v2 = get_component_in_children($v0,"Playables.PlayableDirector").gameObject.name;
         if($v1.triangleCount >= maxTriangleCount && (!hasAnimation || $v1.clipCount>0) && (!hasOffscreenUpdate || $v1.updateWhenOffscreenCount>0) && (!hasAlwaysAnimate || $v1.alwaysAnimateCount>0)){
             $ret = 0;
             $key = "";

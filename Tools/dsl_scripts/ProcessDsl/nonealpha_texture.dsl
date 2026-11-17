@@ -22,6 +22,6 @@ filter
 process
 {
 	set_none_alpha_texture();
-	debuglog("processed:{0}",asset_path);
+	debug_log("processed:{0}",asset_path);
 	save_and_reimport();
 };

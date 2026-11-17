@@ -25,7 +25,7 @@ input
 }
 filter
 {
-    String = gettype("System.String");
+    String = get_type("System.String");
     $header = mevent.GetRow(2);
 	$ix = find_cell_index($header, "SubType");
 	$ix2 = find_cell_index($header, "Target");
